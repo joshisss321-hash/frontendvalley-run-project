@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-50 text-gray-900;
+}
+/* ================= NAVBAR FONT POLISH ================= */
+
+/* Navbar container agar class .navbar hai */
+.navbar {
+  font-family: var(--font-heading);
+}
+
+/* Logo text */
+.navbar .logo {
+  font-size: 1.35rem;       /* pehle jaisa feel, bas thoda sharp */
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Nav links */
+.navbar ul li a {
+  font-size: 0.95rem;       /* clean & readable */
+  font-weight: 500;
+  letter-spacing: 0.04em;  /* premium look */
+  text-transform: uppercase;
+}
+
+/* Active / hover (sirf font effect, color same rahega) */
+.navbar ul li a:hover {
+  letter-spacing: 0.06em;
+}
+.input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  outline: none;
+}
+
+.input:focus {
+  border-color: black;
+}
+
+.chip {
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.chip.active {
+  background: black;
+  color: white;
+}
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 12px;
+  outline: none;
+}
+.input:focus {
+  border-color: #dc2626;
+}
