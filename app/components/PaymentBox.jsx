@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
-export default function PaymentBox({ order, eventSlug, form, router }) {
+export default function PaymentBox({ order, eventSlug, form }) {
   const rzpRef = useRef(null);
-  const [loading, setLoading] = useState(false);
 
-  // Load Razorpay script once
   useEffect(() => {
-    if (typeof window !== "undefined" && !window.Razorpay) {
+    if (!window.Razorpay) {
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
       script.async = true;
@@ -22,15 +20,12 @@ export default function PaymentBox({ order, eventSlug, form, router }) {
       return;
     }
 
-    if (loading) return; // 🔒 prevent double click
-    setLoading(true);
-
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: order.amount, // paise (backend se)
+      amount: order.amount, // paise
       currency: "INR",
       name: "Valley Run",
-      description: "Event Registration",
+      description: "Challenge Registration",
       order_id: order.id,
 
       handler: async function (response) {
@@ -51,28 +46,28 @@ export default function PaymentBox({ order, eventSlug, form, router }) {
           const data = await res.json();
 
           if (data.success) {
-            // ✅ HARD redirect (fast + reliable)
-            window.location.assign(
-              `/success?event=${eventSlug}&name=${encodeURIComponent(form.name)}`
+            // ✅ FORCE HARD REDIRECT (NO RE-RENDER)
+            window.location.replace(
+              `/success?event=${eventSlug}&name=${encodeURIComponent(
+                form.name
+              )}`
             );
           } else {
             alert("Payment verification failed");
-            setLoading(false);
           }
         } catch (err) {
           alert("Server error after payment");
-          setLoading(false);
         }
       },
 
       modal: {
         ondismiss: function () {
-          setLoading(false); // user closed popup
+          // ❌ DO NOTHING (reload hata diya)
         },
       },
 
       theme: {
-        color: "#dc2626",
+        color: "#16a34a",
       },
     };
 
@@ -82,15 +77,11 @@ export default function PaymentBox({ order, eventSlug, form, router }) {
 
   return (
     <button
+      type="button"
       onClick={handlePayment}
-      disabled={loading}
-      className={`mt-6 w-full py-4 rounded-full font-semibold text-white ${
-        loading
-          ? "bg-gray-400 cursor-not-allowed"
-          : "bg-green-600 hover:bg-green-700"
-      }`}
+      className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-full font-semibold"
     >
-      {loading ? "Processing..." : "Pay Now"}
+      Pay Now
     </button>
   );
 }
