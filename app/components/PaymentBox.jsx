@@ -1,87 +1,88 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import Script from "next/script";
 
-export default function PaymentBox({ order, eventSlug, form }) {
-  const rzpRef = useRef(null);
+export default function PaymentBox({ eventSlug, form }) {
 
-  useEffect(() => {
-    if (!window.Razorpay) {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.async = true;
-      document.body.appendChild(script);
-    }
-  }, []);
-
-  const handlePayment = () => {
-    if (!window.Razorpay) {
-      alert("Payment system loading, please try again");
+  const handlePayment = async () => {
+    // 🔴 Razorpay must exist
+    if (typeof window === "undefined" || !window.Razorpay) {
+      alert("Razorpay not loaded, refresh page");
       return;
     }
 
+    // 1️⃣ Create order
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/payment/create-order`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: 349 }),
+      }
+    );
+
+    const data = await res.json();
+    if (!data.success) {
+      alert("Order failed");
+      return;
+    }
+
+    // 2️⃣ Razorpay popup
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: order.amount, // paise
+      amount: data.order.amount,
       currency: "INR",
       name: "Valley Run",
-      description: "Challenge Registration",
-      order_id: order.id,
+      description: "Event Registration",
+      order_id: data.order.id,
 
       handler: async function (response) {
-        try {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/payment/verify-payment`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                ...response,
-                ...form,
-                eventSlug,
-              }),
-            }
-          );
-
-          const data = await res.json();
-
-          if (data.success) {
-            // ✅ FORCE HARD REDIRECT (NO RE-RENDER)
-            window.location.replace(
-              `/success?event=${eventSlug}&name=${encodeURIComponent(
-                form.name
-              )}`
-            );
-          } else {
-            alert("Payment verification failed");
+        const verify = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/payment/verify-payment`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...response,
+              ...form,
+              eventSlug,
+            }),
           }
-        } catch (err) {
-          alert("Server error after payment");
+        );
+
+        const result = await verify.json();
+
+        if (result.success) {
+          window.location.href = `/success?event=${eventSlug}&name=${encodeURIComponent(
+            form.name
+          )}`;
+        } else {
+          alert("Payment verification failed");
         }
       },
 
-      modal: {
-        ondismiss: function () {
-          // ❌ DO NOTHING (reload hata diya)
-        },
-      },
-
-      theme: {
-        color: "#16a34a",
-      },
+      theme: { color: "#dc2626" },
     };
 
-    rzpRef.current = new window.Razorpay(options);
-    rzpRef.current.open();
+    const rzp = new window.Razorpay(options);
+    rzp.open();
   };
 
   return (
-    <button
-      type="button"
-      onClick={handlePayment}
-      className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-full font-semibold"
-    >
-      Pay Now
-    </button>
+    <>
+      {/* 🔥 THIS IS THE FIX */}
+      <Script
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        strategy="afterInteractive"
+      />
+
+      <button
+        type="button"   // 🚨 VERY IMPORTANT
+        onClick={handlePayment}
+        className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-full font-semibold"
+      >
+        Pay Now ₹349
+      </button>
+    </>
   );
 }
