@@ -1,44 +1,38 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 
 export default function SuccessClient() {
-  const router = useRouter();
   const params = useSearchParams();
+  const name = params.get("name") || "Runner";
+  const event = params.get("event") || "Valley Run";
 
-  const paymentId = params.get("paymentId");
-
+  // ❌ reload block
   useEffect(() => {
-    if (!paymentId) {
-      // direct access hua toh home bhej do
-      router.push("/");
+    if (typeof window !== "undefined") {
+      window.history.replaceState({}, "", window.location.pathname);
     }
-  }, [paymentId, router]);
+  }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-6">
-      <div className="bg-white rounded-2xl shadow-xl p-10 max-w-md text-center">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="bg-white shadow-xl rounded-2xl p-10 max-w-md text-center">
         <h1 className="text-3xl font-bold text-green-600 mb-4">
           Payment Successful 🎉
         </h1>
 
-        <p className="text-gray-600 mb-6">
-          Thank you for registering with <b>Valley Run</b>.<br />
-          Your payment has been received successfully.
+        <p className="text-gray-700 mb-2">
+          Congratulations <b>{name}</b>
         </p>
 
-        <div className="bg-gray-100 rounded-lg p-4 text-sm text-gray-700 mb-6">
-          <p className="font-semibold">Payment ID</p>
-          <p className="break-all">{paymentId}</p>
-        </div>
+        <p className="text-gray-600 mb-6">
+          You are registered for <b>{event}</b>
+        </p>
 
-        <button
-          onClick={() => router.push("/")}
-          className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-full font-semibold"
-        >
-          Go to Home
-        </button>
+        <p className="text-sm text-gray-500">
+          Confirmation email will reach you shortly 📩
+        </p>
       </div>
     </div>
   );
