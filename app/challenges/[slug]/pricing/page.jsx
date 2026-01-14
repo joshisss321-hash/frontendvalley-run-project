@@ -255,6 +255,7 @@ export default function PricingPage() {
               <li>✔ Name on Finishers List</li>
               <li>✔ Community Gallery Feature</li>
               <li>✔ Free Shipping (India)</li>
+              <li>✔ Top performers on the leaderboard will receive exciting gift hampers.</li>
             </ul>
 
             <button

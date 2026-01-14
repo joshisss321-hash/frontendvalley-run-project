@@ -206,6 +206,7 @@ export default function ChallengeDetailPage() {
               <li>🏆 Leaderboard Recognition</li>
               <li>⏳ Fixed Deadline = Real Discipline</li>
               <li>📸 Featured in Community Gallery</li>
+              <li>🏆Top performers on the leaderboard will receive exciting gift hampers.</li>
             </ul>
 
             <p className="text-sm text-gray-500 mb-8">

@@ -14,7 +14,7 @@ export default function ChallengeDetails() {
       <div className="grid md:grid-cols-2 gap-8">
         <div>
           <h3 className="text-xl font-semibold mb-2">📅 Challenge Dates</h3>
-          <p>22Jan – 27 jan 2026</p>
+          <p>15Jan – 27 jan 2026</p>
 
           <h3 className="text-xl font-semibold mt-4 mb-2">🏃 Categories</h3>
           <p>Running/Walking: 5km, 10km, 21km</p>
@@ -28,6 +28,7 @@ export default function ChallengeDetails() {
             <li>✔ Personalized E-Certificate</li>
             <li>✔ Leaderboard Access</li>
             <li>✔ Free Shipping</li>
+            <li>✔ Top performers on the leaderboard will receive exciting gift hampers.</li>
           </ul>
 
           <Link

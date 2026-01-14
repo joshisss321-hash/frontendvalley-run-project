@@ -24,6 +24,7 @@ export default function PricingSidebar({ event }) {
         <li>Premium Medal</li>
         <li>Certificate of Completion</li>
         <li>Access to Leaderboard</li>
+        <li>Top performers on the leaderboard will receive exciting gift hampers.</li>
       </ul>
 
       <button
