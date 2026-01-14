@@ -114,24 +114,42 @@
 // }
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function PaymentBox({ order, eventSlug, form, router }) {
+  const [ready, setReady] = useState(false);
 
+  // ✅ Load Razorpay script safely
   useEffect(() => {
-    if (!window.Razorpay) {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.async = true;
-      document.body.appendChild(script);
+    if (window.Razorpay) {
+      setReady(true);
+      return;
     }
+
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+
+    script.onload = () => {
+      setReady(true);
+    };
+
+    document.body.appendChild(script);
   }, []);
 
   const handlePayment = () => {
+    if (!ready) {
+      alert("Payment system loading, please wait...");
+      return;
+    }
+
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: order.amount, // paise (backend se)
+
+      // ⚠️ amount ALREADY in paise from backend
+      amount: order.amount,
       currency: "INR",
+
       name: "Valley Run",
       description: "Event Registration",
       order_id: order.id,
@@ -144,7 +162,9 @@ export default function PaymentBox({ order, eventSlug, form, router }) {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                ...response,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
                 ...form,
                 eventSlug,
               }),
@@ -154,7 +174,7 @@ export default function PaymentBox({ order, eventSlug, form, router }) {
           const data = await res.json();
 
           if (data.success) {
-            // ✅ GUARANTEED REDIRECT
+            // ✅ NO reload, NO double redirect
             router.replace(
               `/success?event=${eventSlug}&name=${encodeURIComponent(
                 form.name
@@ -162,18 +182,16 @@ export default function PaymentBox({ order, eventSlug, form, router }) {
             );
           } else {
             alert("Payment verification failed");
-            window.location.reload();
           }
-        } catch (err) {
-          alert("Server error after payment");
-          window.location.reload();
+        } catch (error) {
+          alert("Payment completed but verification failed");
         }
       },
 
       modal: {
+        // ❌ NO reload on dismiss
         ondismiss: function () {
-          // user closes Razorpay popup
-          window.location.reload();
+          console.log("Payment popup closed by user");
         },
       },
 
@@ -188,10 +206,13 @@ export default function PaymentBox({ order, eventSlug, form, router }) {
 
   return (
     <button
+      disabled={!ready}
       onClick={handlePayment}
-      className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-full font-semibold"
+      className={`mt-6 w-full py-4 rounded-full font-semibold text-white transition
+        ${ready ? "bg-green-600 hover:bg-green-700" : "bg-gray-400 cursor-not-allowed"}
+      `}
     >
-      Pay Now
+      {ready ? "Pay Now" : "Loading Payment..."}
     </button>
   );
 }
