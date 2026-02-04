@@ -1,16 +1,3 @@
-// import { Suspense } from "react";
-// import SuccessClient from "./SuccessClient";
-
-// export const dynamic = "force-dynamic";
-// export const revalidate = 0;
-
-// export default function Page() {
-//   return (
-//     <Suspense fallback={<div className="pt-40 text-center">Loading...</div>}>
-//       <SuccessClient />
-//     </Suspense>
-//   );
-// }
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
@@ -23,11 +10,10 @@ export default function SuccessPage() {
 
   const name = params.get("name");
 
-  // optional auto redirect after few seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       router.replace("/");
-    }, 8000);
+    }, 7000);
 
     return () => clearTimeout(timer);
   }, [router]);
