@@ -90,56 +90,64 @@
 
 import Script from "next/script";
 
-export default function PaymentBox({ eventSlug, form, order }) {
-  const handlePayment = async (e) => {
-    e.preventDefault();
+export default function PaymentBox({ eventSlug, form }) {
 
+  const handlePayment = async () => {
     if (!window.Razorpay) {
-      alert("Razorpay not loaded");
+      alert("Payment system loading, refresh once");
       return;
     }
 
+    // 1️⃣ Create order
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/payment/create-order`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: 349 }),
+      }
+    );
+
+    const data = await res.json();
+    if (!data.success) {
+      alert("Order failed");
+      return;
+    }
+
+    // 2️⃣ Razorpay
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: order.amount,
+      amount: data.order.amount,
       currency: "INR",
       name: "Valley Run",
       description: "Event Registration",
-      order_id: order.id,
+      order_id: data.order.id,
 
       handler: async function (response) {
-        try {
-          const verifyRes = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/payment/verify-payment`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_signature: response.razorpay_signature,
-
-                eventSlug,
-                ...form,
-              }),
-            }
-          );
-
-          const result = await verifyRes.json();
-
-          if (result.success) {
-            // ✅ FINAL HARD REDIRECT
-            window.location.replace(
-              `/success?event=${encodeURIComponent(
-                eventSlug
-              )}&name=${encodeURIComponent(form.name)}`
-            );
-          } else {
-            alert("Payment verification failed");
+        const verify = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/payment/verify-payment`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...response,
+              ...form,
+              eventSlug,
+            }),
           }
-        } catch (err) {
-          console.error(err);
-          alert("Something went wrong after payment");
+        );
+
+        const result = await verify.json();
+
+        if (result.success) {
+          // 🔥 HARD redirect + state clear
+          window.location.replace(
+            `/success?event=${eventSlug}&name=${encodeURIComponent(
+              form.name
+            )}`
+          );
+        } else {
+          alert("Payment verification failed");
         }
       },
 
@@ -162,7 +170,7 @@ export default function PaymentBox({ eventSlug, form, order }) {
         onClick={handlePayment}
         className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-full font-semibold"
       >
-        Complete Payment
+        Pay Now ₹349
       </button>
     </>
   );
