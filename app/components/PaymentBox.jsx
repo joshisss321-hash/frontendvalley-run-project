@@ -88,87 +88,90 @@
 // }
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function PaymentBox({ order, eventSlug, form }) {
-  const rzpRef = useRef(null);
+export default function PaymentBox({ eventSlug, form }) {
   const [ready, setReady] = useState(false);
 
+  // load razorpay
   useEffect(() => {
-    if (!window.Razorpay) {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => setReady(true);
-      document.body.appendChild(script);
-    } else {
+    if (window.Razorpay) {
       setReady(true);
+      return;
     }
+
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => setReady(true);
+    document.body.appendChild(script);
   }, []);
 
   const handlePayment = async () => {
     if (!ready) {
-      alert("Payment system loading… please wait");
+      alert("Payment system loading…");
       return;
     }
 
-    if (!order?.id || !order?.amount) {
-      alert("Order not ready. Please refresh.");
+    // ✅ CREATE ORDER (CORRECT API)
+    const orderRes = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/payment/create-order`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: form.amount }),
+      }
+    );
+
+    const orderData = await orderRes.json();
+    if (!orderData.success) {
+      alert("Order creation failed");
       return;
     }
 
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: order.amount,
+      amount: orderData.order.amount,
       currency: "INR",
       name: "Valley Run",
       description: "Event Registration",
-      order_id: order.id,
+      order_id: orderData.order.id,
 
       handler: async (response) => {
-        try {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/payment/verify-payment`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                ...response,
-                ...form,
-                eventSlug,
-              }),
-            }
-          );
-
-          const data = await res.json();
-
-          if (data.success) {
-            window.location.href =
-              `/success?event=${eventSlug}&name=${encodeURIComponent(form.name)}`;
-          } else {
-            alert("Payment verification failed");
+        // ✅ VERIFY PAYMENT (CORRECT API)
+        const verifyRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/payment/verify-payment`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...response,
+              ...form,
+              eventSlug,
+            }),
           }
-        } catch (err) {
-          alert("Server error after payment");
-        }
-      },
+        );
 
-      modal: {
-        ondismiss: () => {
-          console.log("Razorpay closed");
-        },
+        const verifyData = await verifyRes.json();
+
+        if (verifyData.success) {
+          window.location.href =
+            `/success?event=${eventSlug}&name=${encodeURIComponent(form.name)}`;
+        } else {
+          alert("Payment verification failed");
+        }
       },
 
       theme: { color: "#16a34a" },
     };
 
-    rzpRef.current = new window.Razorpay(options);
-    rzpRef.current.open();
+    const rzp = new window.Razorpay(options);
+    rzp.open();
   };
 
   return (
     <button
       onClick={handlePayment}
-      className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-full font-semibold"
+      className="w-full bg-green-600 text-white py-4 rounded-full font-semibold"
     >
       Pay Now
     </button>
