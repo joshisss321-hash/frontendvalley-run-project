@@ -11,7 +11,7 @@ export const challenges = [
   },
   {
     title: "Cycle Challenge 2026",
-    slug: "cycling-challenge",
+    slug: "Strong Women. Strong Valley",
     dates: "15 Feb – 20 Feb 2026",
     description:
       "Join the cycling challenge and earn a premium medal. Compete with cyclists across India.",
@@ -21,7 +21,7 @@ export const challenges = [
   },
   {
     title: "Monthly Marathon 2026",
-    slug: "monthly-marathon",
+    slug: "🇮🇳 Shaheed Diwas – A run to honor courage, sacrifice & patriotism",
     dates: "1 Mar – 31 Mar 2026",
     description:
       "Participate in our monthly marathon challenge and earn your medal.",
