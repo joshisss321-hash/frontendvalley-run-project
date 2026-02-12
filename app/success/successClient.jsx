@@ -1,20 +1,24 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 export default function SuccessClient() {
-  const params = useSearchParams();
-  const name = params.get("name");
-
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="bg-white p-10 rounded-xl shadow-lg text-center">
-        <h1 className="text-3xl font-bold text-green-600">
-          Payment Successful 🎉
-        </h1>
-        <p className="mt-4">Thank you <b>{name}</b></p>
-        <p>You are successfully registered.</p>
-      </div>
+    <div className="min-h-screen flex flex-col justify-center items-center bg-white text-center px-6">
+      <h1 className="text-4xl font-bold text-green-600 mb-4">
+        🎉 Registration Successful!
+      </h1>
+
+      <p className="text-lg text-gray-700 mb-6">
+        Your payment has been verified successfully.
+      </p>
+
+      <Link
+        href="/"
+        className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition"
+      >
+        Back to Home
+      </Link>
     </div>
   );
 }
