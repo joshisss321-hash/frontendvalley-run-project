@@ -236,41 +236,53 @@ export default function PaymentBox({ eventSlug, form }) {
         description: "Event Registration",
         order_id: orderData.order.id,
 
-        handler: async function (response) {
-          try {
-            // ✅ VERIFY PAYMENT (IMPORTANT: /api prefix)
-            const verifyRes = await fetch(
-              `${process.env.NEXT_PUBLIC_API_URL}/api/payment/verify-payment`,
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  ...response,
-                  ...form,
-                  eventSlug,
-                }),
-              }
-            );
+       handler: async function (response) {
+  try {
+    console.log("Razorpay response:", response);
 
-            const verifyData = await verifyRes.json();
+    if (
+      !response.razorpay_order_id ||
+      !response.razorpay_payment_id ||
+      !response.razorpay_signature
+    ) {
+      alert("Invalid payment response");
+      setLoading(false);
+      return;
+    }
 
-            if (verifyData.success) {
-              // 🔥 HARD REDIRECT (NO RELOAD LOOP)
-              window.location.replace(
-                `/success?event=${eventSlug}&name=${encodeURIComponent(
-                  form.name
-                )}`
-              );
-            } else {
-              alert("Payment verification failed");
-              setLoading(false);
-            }
-          } catch (err) {
-            console.error("Verify error:", err);
-            alert("Server error during verification");
-            setLoading(false);
-          }
-        },
+    const verifyRes = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/payment/verify-payment`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_signature,
+          eventSlug,
+          ...form,
+        }),
+      }
+    );
+
+    const verifyData = await verifyRes.json();
+
+    console.log("Verify Response:", verifyData);
+
+    if (verifyData.success) {
+      window.location.replace(
+        `/success?event=${eventSlug}&name=${encodeURIComponent(form.name)}`
+      );
+    } else {
+      alert("Payment verification failed");
+      setLoading(false);
+    }
+  } catch (err) {
+    console.error("Verification error:", err);
+    alert("Verification server error");
+    setLoading(false);
+  }
+},
 
         modal: {
           ondismiss: function () {
