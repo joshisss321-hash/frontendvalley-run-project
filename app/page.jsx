@@ -249,7 +249,7 @@ export default function HomePage() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events`)
       .then(res => res.json())
       .then(data => {
         if (data.success) setEvents(data.events);
