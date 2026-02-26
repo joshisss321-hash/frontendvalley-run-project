@@ -44,7 +44,7 @@ export default function ChallengesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`)
       .then(res => res.json())
       .then(data => {
         if (data.success) {
