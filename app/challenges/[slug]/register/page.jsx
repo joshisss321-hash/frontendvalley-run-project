@@ -79,7 +79,7 @@ export default function RegisterPage() {
   /* ================= CREATE ORDER ================= */
   const createOrder = async (e) => {
     if (e) e.preventDefault(); // 🔥 prevent form auto submit
-
+     console.log("EVENT PRICE:", eventPrice);
     if (!isFormValid || loading) return;
 
     setLoading(true);
