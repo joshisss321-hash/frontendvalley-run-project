@@ -618,7 +618,7 @@ export default function RegisterPage() {
     const fetchEvent = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/events/${slug}`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/events/${slug}`
         );
         const data = await res.json();
 
