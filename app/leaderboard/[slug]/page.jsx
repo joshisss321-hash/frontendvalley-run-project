@@ -29,7 +29,7 @@ export default function LeaderboardPage() {
     if (!eventId) return;
 
     fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/leaderboard/event/${eventId}`
+      `${process.env.NEXT_PUBLIC_API_URL}/api/leaderboard/event/${eventId}`
     )
       .then(res => res.json())
       .then(data => {
