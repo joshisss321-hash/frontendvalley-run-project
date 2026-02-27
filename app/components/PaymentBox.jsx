@@ -6,7 +6,7 @@ export default function PaymentBox({ eventSlug, form, order }) {
   const [ready, setReady] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Load Razorpay script
+  /* ================= LOAD RAZORPAY SCRIPT ================= */
   useEffect(() => {
     if (window.Razorpay) {
       setReady(true);
@@ -20,9 +20,15 @@ export default function PaymentBox({ eventSlug, form, order }) {
     document.body.appendChild(script);
   }, []);
 
+  /* ================= HANDLE PAYMENT ================= */
   const handlePayment = async () => {
     if (!ready) {
-      alert("Payment system loading…");
+      alert("Payment system loading...");
+      return;
+    }
+
+    if (!order) {
+      alert("Order not found");
       return;
     }
 
@@ -45,7 +51,9 @@ export default function PaymentBox({ eventSlug, form, order }) {
               `${process.env.NEXT_PUBLIC_API_URL}/api/payment/verify-payment`,
               {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                  "Content-Type": "application/json",
+                },
                 body: JSON.stringify({
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
@@ -60,9 +68,7 @@ export default function PaymentBox({ eventSlug, form, order }) {
 
             if (verifyData.success) {
               window.location.replace(
-                `/success?event=${eventSlug}&name=${encodeURIComponent(
-                  form.name
-                )}`
+                `/success?event=${eventSlug}&name=${encodeURIComponent(form.name)}`
               );
             } else {
               alert("Payment verification failed");
