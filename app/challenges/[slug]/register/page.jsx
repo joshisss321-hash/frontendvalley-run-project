@@ -743,7 +743,7 @@ export default function RegisterPage() {
               <option>Instagram</option>
               <option>WhatsApp</option>
               <option>Friend</option>
-              <option>Google</option>
+              <option>other</option>
             </select>
 
             <Input name="coupon" placeholder="Coupon Code (optional)" onChange={handleChange} />
