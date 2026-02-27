@@ -770,6 +770,7 @@ export default function RegisterPage() {
 
             {!order ? (
               <button
+               type="button" 
                 disabled={!isFormValid || loading}
                 onClick={createOrder}
                 className={`w-full py-4 rounded-full text-white font-semibold text-lg transition
