@@ -611,9 +611,7 @@ export default function RegisterPage() {
     coupon: "",
   });
 
-  /* ===============================
-     FETCH EVENT (GUARD FIX)
-  ================================ */
+  /* ================= FETCH EVENT ================= */
   useEffect(() => {
     const fetchEvent = async () => {
       try {
@@ -622,7 +620,6 @@ export default function RegisterPage() {
         );
         const data = await res.json();
 
-        // 🔴 EVENT DELETED / NOT FOUND
         if (!data.success) {
           router.replace("/challenges");
           return;
@@ -639,9 +636,7 @@ export default function RegisterPage() {
     fetchEvent();
   }, [slug, router]);
 
-  /* ===============================
-     FORM HANDLER
-  ================================ */
+  /* ================= FORM HANDLER ================= */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -663,9 +658,7 @@ export default function RegisterPage() {
     form.category &&
     form.source;
 
-  /* ===============================
-     CREATE ORDER
-  ================================ */
+  /* ================= CREATE ORDER ================= */
   const createOrder = async () => {
     if (!isFormValid || loading) return;
 
@@ -696,45 +689,101 @@ export default function RegisterPage() {
     <main className="bg-gray-50 min-h-screen">
       <Navbar />
 
-      <section className="pt-12 pb-20 max-w-7xl mx-auto px-6">
+      <section className="py-20 px-6 max-w-7xl mx-auto">
+
+        {/* HEADER */}
+        <div className="text-center mb-14">
+          <h1 className="text-4xl font-extrabold mb-3">
+            Premium Registration Form
+          </h1>
+          <p className="text-gray-600">
+            Step 1: Fill the registration form <br />
+            Step 2: Complete payment to confirm your entry
+          </p>
+        </div>
+
         <div className="grid lg:grid-cols-3 gap-10">
-          <form className="lg:col-span-2 bg-white p-8 rounded-3xl shadow space-y-6">
-            <input name="name" onChange={handleChange} className="input" placeholder="Name" />
-            <input name="email" onChange={handleChange} className="input" placeholder="Email" />
-            <input name="phone" onChange={handleChange} className="input" placeholder="Phone" />
-            <input name="phone2" onChange={handleChange} className="input" placeholder="Re-enter Phone" />
-            <input name="address1" onChange={handleChange} className="input" placeholder="House" />
-            <input name="address2" onChange={handleChange} className="input" placeholder="Street" />
-            <input name="pincode" onChange={handleChange} className="input" placeholder="Pincode" />
-            <input name="city" onChange={handleChange} className="input" placeholder="City" />
-            <input name="state" onChange={handleChange} className="input" placeholder="State" />
+
+          {/* ================= LEFT FORM ================= */}
+          <form className="lg:col-span-2 bg-white p-10 rounded-3xl shadow-xl space-y-6">
+
+            <h2 className="text-2xl font-bold mb-4">
+              Personal Details
+            </h2>
+
+            <Input name="name" placeholder="Full Name *" onChange={handleChange} />
+            <Input name="email" placeholder="Email *" onChange={handleChange} />
+            <Input name="phone" placeholder="Phone *" onChange={handleChange} />
+            <Input name="phone2" placeholder="Re-enter Phone *" onChange={handleChange} />
+
+            <h2 className="text-2xl font-bold pt-6">
+              Address Details
+            </h2>
+
+            <Input name="address1" placeholder="House / Flat *" onChange={handleChange} />
+            <Input name="address2" placeholder="Street / Area *" onChange={handleChange} />
+            <Input name="landmark" placeholder="Landmark" onChange={handleChange} />
+            <Input name="pincode" placeholder="Pincode *" onChange={handleChange} />
+            <Input name="city" placeholder="City *" onChange={handleChange} />
+            <Input name="state" placeholder="State *" onChange={handleChange} />
+
+            <h2 className="text-2xl font-bold pt-6">
+              Challenge Details
+            </h2>
+
             <select name="category" onChange={handleChange} className="input">
-              <option value="">Select Category</option>
+              <option value="">Select Category *</option>
               <option>5 Km</option>
               <option>10 Km</option>
               <option>21 Km</option>
             </select>
+
             <select name="source" onChange={handleChange} className="input">
-              <option value="">Source</option>
+              <option value="">How did you find us? *</option>
               <option>Instagram</option>
               <option>WhatsApp</option>
               <option>Friend</option>
+              <option>Google</option>
             </select>
+
+            <Input name="coupon" placeholder="Coupon Code (optional)" onChange={handleChange} />
+
           </form>
 
-          <div className="bg-white p-8 rounded-3xl shadow">
+          {/* ================= RIGHT SUMMARY ================= */}
+          <div className="bg-white p-10 rounded-3xl shadow-xl h-fit sticky top-28">
+
+            <h2 className="text-2xl font-bold mb-6">
+              Order Summary
+            </h2>
+
+            <ul className="space-y-3 text-gray-700 mb-6">
+              <li>✔ Premium Metal Medal</li>
+              <li>✔ Digital Certificate</li>
+              <li>✔ Free Shipping</li>
+            </ul>
+
+            <div className="border-t pt-4 flex justify-between font-semibold text-lg mb-6">
+              <span>Total</span>
+              <span>₹{eventPrice}</span>
+            </div>
+
             {!order ? (
               <button
                 disabled={!isFormValid || loading}
                 onClick={createOrder}
-                className="w-full bg-red-600 text-white py-4 rounded-full"
+                className={`w-full py-4 rounded-full text-white font-semibold text-lg transition
+                ${isFormValid ? "bg-red-600 hover:bg-red-700 hover:scale-105"
+                : "bg-gray-400 cursor-not-allowed"}`}
               >
-                Pay ₹{eventPrice}
+                {loading ? "Processing..." : `Pay ₹${eventPrice}`}
               </button>
             ) : (
               <PaymentBox eventSlug={slug} form={form} order={order} />
             )}
+
           </div>
+
         </div>
       </section>
 
@@ -742,10 +791,28 @@ export default function RegisterPage() {
         .input {
           width: 100%;
           padding: 14px;
-          border: 1px solid #d1d5db;
-          border-radius: 12px;
+          border: 1px solid #e5e7eb;
+          border-radius: 14px;
+          outline: none;
+          transition: 0.3s;
+        }
+        .input:focus {
+          border-color: #dc2626;
+          box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
         }
       `}</style>
     </main>
+  );
+}
+
+/* ================= REUSABLE INPUT ================= */
+function Input({ name, placeholder, onChange }) {
+  return (
+    <input
+      name={name}
+      placeholder={placeholder}
+      onChange={onChange}
+      className="input"
+    />
   );
 }
