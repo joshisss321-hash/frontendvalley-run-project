@@ -135,8 +135,6 @@ export default function RegistrationForm({ event, router }) {
             <option>Facebook</option>
             <option>WhatsApp</option>
             <option>Friend/Family</option>
-            <option>Google Search</option>
-            <option>Previous Event</option>
             <option>Other</option>
           </select>
         </div>

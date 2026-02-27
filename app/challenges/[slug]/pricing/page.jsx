@@ -303,7 +303,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Navbar from "../../../components/Navbar";
 
 export default function PricingPage() {
   const { slug } = useParams();
@@ -314,36 +313,29 @@ export default function PricingPage() {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${slug}`)
       .then(res => res.json())
       .then(data => {
-        // 🔴 GUARD: event DB me nahi mila
         if (!data.success) {
           router.replace("/challenges");
           return;
         }
         setEvent(data.event);
       })
-      .catch(() => {
-        router.replace("/challenges");
-      });
+      .catch(() => router.replace("/challenges"));
   }, [slug, router]);
 
   if (!event) {
     return (
-      <>
-        <Navbar />
-        <div className="pt-40 text-center text-gray-500">
-          Loading pricing...
-        </div>
-      </>
+      <div className="pt-32 text-center text-gray-500">
+        Loading pricing...
+      </div>
     );
   }
 
   return (
-    <>
-      <Navbar />
+    <section className="min-h-screen bg-gray-50 py-24 px-6">
+      <div className="max-w-6xl mx-auto">
 
-      <section className="pt-32 pb-20 max-w-7xl mx-auto px-6">
-        <div className="text-center mb-14">
-          <h1 className="text-4xl font-extrabold mb-3">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl font-extrabold mb-4">
             Limited Time Early Bird Pricing
           </h1>
           <p className="text-gray-600">
@@ -351,10 +343,16 @@ export default function PricingPage() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
-          {/* PREMIUM */}
-          <div className="border-2 border-red-600 rounded-3xl p-8 shadow-xl bg-white">
-            <h2 className="text-2xl font-bold text-center mb-2">
+        <div className="grid md:grid-cols-2 gap-10">
+
+          {/* PREMIUM CARD */}
+          <div className="relative bg-white rounded-3xl shadow-2xl border-2 border-red-600 p-10">
+
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-1 rounded-full text-sm font-semibold shadow">
+              🏆 Most Popular
+            </div>
+
+            <h2 className="text-2xl font-bold text-center mb-4">
               Premium Pass
             </h2>
 
@@ -362,21 +360,36 @@ export default function PricingPage() {
               <span className="text-4xl font-extrabold text-red-600">
                 ₹{event.price}
               </span>
+              <span className="text-gray-400 line-through ml-3">
+                ₹449
+              </span>
+              <p className="text-green-600 font-semibold mt-1">
+                Early Bird Offer
+              </p>
             </div>
+
+            <ul className="space-y-3 text-gray-700 mb-8">
+              <li>✔ 3-inch Premium Metal Medal</li>
+              <li>✔ Digital E-Certificate</li>
+              <li>✔ Name on Finishers List</li>
+              <li>✔ Community Gallery Feature</li>
+              <li>✔ Free Shipping (India)</li>
+            </ul>
 
             <button
               onClick={() => router.push(`/challenges/${slug}/register`)}
-              className="w-full bg-red-600 hover:bg-red-700 text-white py-4 rounded-full font-semibold text-lg"
+              className="w-full bg-red-600 hover:bg-red-700 text-white py-4 rounded-full font-semibold text-lg transition duration-300 hover:scale-105"
             >
               Get My Medal
             </button>
           </div>
 
-          {/* FREE */}
-          <div className="border rounded-3xl p-8 shadow bg-white">
-            <h2 className="text-2xl font-bold text-center mb-2">
+          {/* FREE CARD */}
+          <div className="bg-white rounded-3xl shadow-lg p-10 border">
+            <h2 className="text-2xl font-bold text-center mb-4">
               Free Pass
             </h2>
+
             <button
               disabled
               className="w-full border border-gray-400 py-4 rounded-full font-semibold text-gray-400 cursor-not-allowed"
@@ -384,8 +397,9 @@ export default function PricingPage() {
               Continue with Free
             </button>
           </div>
+
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

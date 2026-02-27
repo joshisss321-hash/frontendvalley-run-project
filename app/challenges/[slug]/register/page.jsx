@@ -665,7 +665,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/payment/create-order`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/payment/create-order`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
