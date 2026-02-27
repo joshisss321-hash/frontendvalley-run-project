@@ -311,7 +311,7 @@ export default function PricingPage() {
   const [event, setEvent] = useState(null);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/events/${slug}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${slug}`)
       .then(res => res.json())
       .then(data => {
         // 🔴 GUARD: event DB me nahi mila
