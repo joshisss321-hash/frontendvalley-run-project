@@ -32,10 +32,9 @@ export default function Footer() {
         <div>
           <h3 className="font-bold text-gray-900 mb-4">Contact Us</h3>
           <p className="mb-2">
-            📞 <span className="font-semibold">Call:</span> 
+            📞 <span className="font-semibold">Call:</span> 8171794766 | 70601 48183
           </p>
-          <p>8171794766</p>
-           <p>7060148183</p>
+          
           <p>
             📧 <span className="font-semibold">Email:</span>{" "}
             <a
