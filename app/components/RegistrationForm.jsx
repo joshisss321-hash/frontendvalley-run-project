@@ -115,6 +115,8 @@ export default function RegistrationForm({ event, router }) {
           <label>Select Challenge Category</label>
           <select name="category" value={formData.category} onChange={handleChange} className="w-full p-2 rounded bg-gray-700">
             <optgroup label="Running/Walking">
+            <option>Running 1600mtr</option>
+             <option>Running 3.2Km</option>
               <option>Running 5Km</option>
               <option>Running 10Km</option>
               <option>Running 21Km</option>
@@ -138,11 +140,11 @@ export default function RegistrationForm({ event, router }) {
             <option>Other</option>
           </select>
         </div>
-
+{/* 
         <div>
           <label>Coupon Code</label>
           <input type="text" name="coupon" value={formData.coupon} onChange={handleChange} className="w-full p-2 rounded bg-gray-700" />
-        </div>
+        </div> */}
 
         <button type="submit" className="w-full py-2 mt-2 bg-red-600 rounded font-bold hover:scale-105 transition">
           Submit
