@@ -130,7 +130,7 @@ export default function RegisterPage() {
           </section>
 
           {/* COUPON */}
-          <section>
+          {/* <section>
             <h2 className="text-xl font-bold mb-4">Have a Coupon Code?</h2>
             <div className="flex gap-3">
               <input className="input flex-1" placeholder="Enter coupon code" />
@@ -138,7 +138,7 @@ export default function RegisterPage() {
                 Apply
               </button>
             </div>
-          </section>
+          </section> */}
         </form>
 
         {/* RIGHT SUMMARY */}
