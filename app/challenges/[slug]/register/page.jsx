@@ -401,6 +401,8 @@ export default function RegisterPage() {
 
             <select name="category" onChange={handleChange} className="input">
               <option value="">Select Category *</option>
+              <option>1600 mtr</option>
+              <option>3.2 Km</option>
               <option>5 Km</option>
               <option>10 Km</option>
               <option>21 Km</option>
@@ -414,7 +416,7 @@ export default function RegisterPage() {
               <option>Other</option>
             </select>
 
-            <Input name="coupon" placeholder="Coupon Code (optional)" onChange={handleChange} />
+            {/* <Input name="coupon" placeholder="Coupon Code (optional)" onChange={handleChange} /> */}
           </div>
 
           {/* RIGHT SUMMARY */}
