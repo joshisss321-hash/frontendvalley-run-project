@@ -8,13 +8,12 @@ const [query,setQuery] = useState("");
 const [runner,setRunner] = useState(null);
 const [step,setStep] = useState("search");
 
-// ✅ NEW STATES
 const [distance,setDistance] = useState("");
 const [file,setFile] = useState(null);
 
 async function searchRunner(){
 
-const res = await fetch("/api/search-runner",{
+const res = await fetch("https://valleyrunproject.onrender.com/api/search-runner",{
 method:"POST",
 headers:{ "Content-Type":"application/json"},
 body:JSON.stringify({query})
@@ -31,10 +30,9 @@ alert("Registration not found");
 
 }
 
-// ✅ NEW SUBMIT FUNCTION
 const submit = async () => {
 
-const res = await fetch("/api/submit-run", {
+const res = await fetch("https://valleyrunproject.onrender.com/api/submit-run", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
@@ -200,7 +198,7 @@ Submit Activity
 )}
 
 
-{/* Medal Review Section */}
+{/* Medal Review */}
 
 <div className="mt-16 bg-gray-50 p-8 rounded-xl text-center">
 
@@ -209,13 +207,72 @@ After Receiving Your Medal 🎉
 </h3>
 
 <p className="text-gray-600 mb-4">
-Once your medal reaches you, come back here and upload your
-photo with the medal along with your feedback.
+Once your medal reaches you, come back here and upload your photo with the medal along with your feedback.
 </p>
 
 <p className="text-sm text-gray-500">
 Selected photos will be featured on our official page.
 </p>
+
+</div>
+
+
+{/* 🔥 FAQ SECTION */}
+
+<div className="mt-16">
+
+<h2 className="text-2xl font-bold text-center mb-8">
+Frequently Asked Questions
+</h2>
+
+<div className="space-y-4">
+
+{[
+{
+q:"When should I complete the challenge?",
+a:"You can complete your run anytime between 23 March and 28 March."
+},
+{
+q:"How do I submit my activity?",
+a:"After completing your run, come back to this page and upload your running app screenshot."
+},
+{
+q:"Which apps are valid?",
+a:"Strava, Garmin, Nike Run Club or any app showing distance and time."
+},
+{
+q:"Is there a time limit?",
+a:"No strict time limit, but distance must be completed in one session."
+},
+{
+q:"Can I take breaks?",
+a:"Yes, short breaks are allowed during your run."
+},
+{
+q:"Can I split distance?",
+a:"No, it must be completed in a single session."
+},
+{
+q:"When will I receive my medal?",
+a:"Medals are delivered within 1–7 days after verification."
+}
+].map((item,index)=>(
+
+<details key={index} className="bg-white p-5 rounded-lg shadow cursor-pointer transition hover:shadow-md">
+
+<summary className="font-semibold">
+{item.q}
+</summary>
+
+<p className="text-gray-600 mt-2">
+{item.a}
+</p>
+
+</details>
+
+))}
+
+</div>
 
 </div>
 
