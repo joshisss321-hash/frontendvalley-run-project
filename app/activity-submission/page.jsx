@@ -42,12 +42,16 @@ toast.error("Server error");
 // 📤 SUBMIT (CLOUDINARY SUPPORT)
 const submit = async () => {
 
+if(loading) return; // 🚫 double click block
+
 try{
 
 if(!file){
 toast.error("Please upload screenshot 📸");
 return;
 }
+
+setLoading(true); // start loading
 
 const formData = new FormData();
 
@@ -81,8 +85,11 @@ console.log(err);
 toast.error("Something went wrong");
 }
 
-};
+finally{
+setLoading(false); // stop loading
+}
 
+};
 return (
 
 <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-10">
@@ -174,10 +181,13 @@ onChange={(e)=>setQuery(e.target.value)}
 />
 
 <button
-onClick={searchRunner}
-className="bg-orange-500 text-white px-6 rounded hover:bg-orange-600"
+onClick={submit}
+disabled={loading}
+className={`px-6 py-3 rounded text-white ${
+loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
+}`}
 >
-Search
+{loading ? "Submitting..." : "Submit Activity"}
 </button>
 
 </div>
