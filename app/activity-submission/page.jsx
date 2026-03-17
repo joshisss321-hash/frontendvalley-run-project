@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function ActivitySubmission() {
 
@@ -11,7 +12,9 @@ const [step,setStep] = useState("search");
 const [distance,setDistance] = useState("");
 const [file,setFile] = useState(null);
 
+// 🔍 SEARCH
 async function searchRunner(){
+try{
 
 const res = await fetch("https://valleyrunproject.onrender.com/api/search-runner",{
 method:"POST",
@@ -24,33 +27,58 @@ const data = await res.json();
 if(data.runner){
 setRunner(data.runner);
 setStep("submit");
+toast.success("Registration found ✅");
 }else{
-alert("Registration not found");
+toast.error("Registration not found ❌");
 }
 
+}catch(err){
+console.log(err);
+toast.error("Server error");
+}
 }
 
+
+// 📤 SUBMIT (CLOUDINARY SUPPORT)
 const submit = async () => {
 
+try{
+
+if(!file){
+toast.error("Please upload screenshot 📸");
+return;
+}
+
+const formData = new FormData();
+
+formData.append("name", runner.name);
+formData.append("email", runner.email);
+formData.append("phone", runner.phone);
+formData.append("distance", distance);
+formData.append("image", file);
+
 const res = await fetch("https://valleyrunproject.onrender.com/api/submit-run", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    name: runner.name,
-    email: runner.email,
-    phone: runner.phone,
-    distance
-  })
+method: "POST",
+body: formData
 });
 
 const data = await res.json();
 
 if (data.error) {
-  alert(data.error);
+toast.error(data.error);
 } else {
-  alert("Activity submitted successfully ✅");
+toast.success("Activity submitted successfully 🎉");
+
+// reset
+setStep("search");
+setQuery("");
+setDistance("");
+setFile(null);
+}
+
+}catch(err){
+console.log(err);
+toast.error("Something went wrong");
 }
 
 };
@@ -147,7 +175,7 @@ onChange={(e)=>setQuery(e.target.value)}
 
 <button
 onClick={searchRunner}
-className="bg-orange-500 text-white px-6 rounded"
+className="bg-orange-500 text-white px-6 rounded hover:bg-orange-600"
 >
 Search
 </button>
@@ -188,7 +216,7 @@ className="border p-3 w-full mb-3"
 
 <button
 onClick={submit}
-className="bg-green-600 text-white px-6 py-3 rounded"
+className="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700"
 >
 Submit Activity
 </button>
@@ -217,7 +245,7 @@ Selected photos will be featured on our official page.
 </div>
 
 
-{/* 🔥 FAQ SECTION */}
+{/* FAQ */}
 
 <div className="mt-16">
 
@@ -228,46 +256,18 @@ Frequently Asked Questions
 <div className="space-y-4">
 
 {[
-{
-q:"When should I complete the challenge?",
-a:"You can complete your run anytime between 23 March and 28 March."
-},
-{
-q:"How do I submit my activity?",
-a:"After completing your run, come back to this page and upload your running app screenshot."
-},
-{
-q:"Which apps are valid?",
-a:"Strava, Garmin, Nike Run Club or any app showing distance and time."
-},
-{
-q:"Is there a time limit?",
-a:"No strict time limit, but distance must be completed in one session."
-},
-{
-q:"Can I take breaks?",
-a:"Yes, short breaks are allowed during your run."
-},
-{
-q:"Can I split distance?",
-a:"No, it must be completed in a single session."
-},
-{
-q:"When will I receive my medal?",
-a:"Medals are delivered within 1–7 days after verification."
-}
+{q:"When should I complete the challenge?",a:"You can complete your run anytime between 23 March and 28 March."},
+{q:"How do I submit my activity?",a:"After completing your run, come back here and upload your running app screenshot."},
+{q:"Which apps are valid?",a:"Strava, Garmin, Nike Run Club or any app showing distance and time."},
+{q:"Is there a time limit?",a:"No strict time limit, but distance must be completed in one session."},
+{q:"Can I take breaks?",a:"Yes, short breaks are allowed."},
+{q:"Can I split distance?",a:"No, it must be completed in one session."},
+{q:"When will I receive my medal?",a:"Within 1–7 days after verification."}
 ].map((item,index)=>(
 
-<details key={index} className="bg-white p-5 rounded-lg shadow cursor-pointer transition hover:shadow-md">
-
-<summary className="font-semibold">
-{item.q}
-</summary>
-
-<p className="text-gray-600 mt-2">
-{item.a}
-</p>
-
+<details key={index} className="bg-white p-5 rounded-lg shadow cursor-pointer hover:shadow-md">
+<summary className="font-semibold">{item.q}</summary>
+<p className="text-gray-600 mt-2">{item.a}</p>
 </details>
 
 ))}
@@ -281,5 +281,4 @@ a:"Medals are delivered within 1–7 days after verification."
 </div>
 
 );
-
 }
