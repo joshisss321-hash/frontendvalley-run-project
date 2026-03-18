@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-const [loading, setLoading] = useState(false);
+
 
 
 export default function ActivitySubmission() {
@@ -14,6 +14,8 @@ const [step,setStep] = useState("search");
 
 const [distance,setDistance] = useState("");
 const [file,setFile] = useState(null);
+
+const [loading, setLoading] = useState(false);
 
 // 🔍 SEARCH
 async function searchRunner(){
