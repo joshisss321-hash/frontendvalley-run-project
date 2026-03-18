@@ -228,12 +228,14 @@ value={distance}
 onChange={(e)=>setDistance(e.target.value)}
 className="border p-3 w-full mb-3"
 />
-
 <button
 onClick={submit}
-className="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700"
+disabled={loading}
+className={`px-6 py-3 rounded text-white ${
+loading ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+}`}
 >
-Submit Activity
+{loading ? "Submitting..." : "Submit Activity"}
 </button>
 
 </div>
