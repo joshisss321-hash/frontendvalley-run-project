@@ -238,12 +238,8 @@ import { useEffect, useRef, useState } from "react";
 import Navbar from "./components/Navbar";
 import { useRouter } from "next/navigation";
 
-// ============================================================
-// ⚙️  SIRF YE 2 LINES CHANGE KARO
-// ============================================================
 const WHATSAPP_URL = "https://whatsapp.com/channel/0029VbCM5KOBVJl3FdMMHI3M";
-const REGISTRATION_DEADLINE = "2026-03-22T12:30:00.000Z"; // 22 March 6PM IST
-// ============================================================
+const REGISTRATION_DEADLINE = "2026-03-22T12:30:00.000Z";
 
 export default function HomePage() {
   const router = useRouter();
@@ -274,6 +270,55 @@ export default function HomePage() {
   );
 }
 
+/* ═══════════════════════════════════════════════════
+   DATE HELPER — handles all MongoDB date formats:
+   1. Normal ISO string: "2026-03-22T12:30:00.000Z"
+   2. MongoDB $date object: { $date: "2026-03-22..." }
+   3. String with $date key: '{"$date":"2026-03-22..."}'
+   4. Date object
+═══════════════════════════════════════════════════ */
+function safeDate(val) {
+  if (!val) return null;
+
+  // Already a Date object
+  if (val instanceof Date) {
+    return isNaN(val.getTime()) ? null : val;
+  }
+
+  // Object with $date key — { $date: "..." }
+  if (typeof val === "object" && val.$date) {
+    const d = new Date(val.$date);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  // String
+  if (typeof val === "string") {
+    // Try to parse as JSON first — handles '{"$date":"..."}'
+    try {
+      const parsed = JSON.parse(val);
+      if (parsed && parsed.$date) {
+        const d = new Date(parsed.$date);
+        return isNaN(d.getTime()) ? null : d;
+      }
+    } catch (_) {}
+
+    // Direct ISO string
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  return null;
+}
+
+/* isClosed — only runs on client, never on server */
+function isClosed(deadline) {
+  if (!deadline) return false;
+  if (typeof window === "undefined") return false; // SSR pe false
+  const d = safeDate(deadline);
+  if (!d) return false;
+  return d.getTime() < Date.now();
+}
+
 /* ═══════════════ HERO ═══════════════ */
 function HeroSection({ router }) {
   const [count, setCount] = useState(0);
@@ -284,8 +329,7 @@ function HeroSection({ router }) {
   }, []);
 
   const scrollToHowItWorks = () => {
-    document.getElementById("how-it-works")
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -293,7 +337,6 @@ function HeroSection({ router }) {
       style={{ backgroundImage:"url('/hero.jpg')", backgroundSize:"cover", backgroundPosition:"center" }}>
       <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/30" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
         <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/25 rounded-full px-4 py-2 mb-6">
           <span className="relative flex h-2 w-2">
@@ -302,17 +345,13 @@ function HeroSection({ router }) {
           </span>
           <span className="text-sm font-semibold text-green-300">{count}+ runners joined from across India</span>
         </div>
-
         <p className="text-white/70 uppercase tracking-widest text-xs sm:text-sm font-semibold mb-4">Virtual Fitness Challenges</p>
-
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-black leading-tight tracking-tight text-white mb-6">
           Discipline Builds<br /><span className="text-red-500">Legends.</span>
         </h1>
-
         <p className="max-w-lg text-base sm:text-lg text-white/80 mb-8 leading-relaxed">
           Anyone can start. Very few finish. Valley Run exists for those who choose consistency over comfort.
         </p>
-
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <button onClick={() => router.push("/challenges")}
             className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-bold text-base transition-all duration-200 shadow-lg hover:scale-105 text-center">
@@ -323,7 +362,6 @@ function HeroSection({ router }) {
             How It Works ↓
           </button>
         </div>
-
         <div className="flex flex-wrap gap-6 sm:gap-10 mt-12 pt-8 border-t border-white/20">
           {[["100+","Runners"],["Pan India","Delivery"],["100%","Real Medals"]].map(([n,l]) => (
             <div key={l}>
@@ -345,8 +383,7 @@ function TrustBar() {
       <div className="flex gap-10 w-max" style={{ animation:"trustscroll 25s linear infinite" }}>
         {[...items,...items].map((item,i) => (
           <span key={i} className="text-sm font-bold whitespace-nowrap flex items-center gap-3" style={{ color: "rgba(255,255,255,0.75)" }}>
-            {item}
-            <span style={{ color: "rgba(255,255,255,0.2)" }}>·</span>
+            {item}<span style={{ color: "rgba(255,255,255,0.2)" }}>·</span>
           </span>
         ))}
       </div>
@@ -435,26 +472,7 @@ function HowItWorksSection() {
   );
 }
 
-/* ═══════════════════════════════════════════
-   COUNTDOWN — NaN fix:
-   MongoDB se date string alag format mein aa
-   sakti hai, isliye safeDate() helper banaya
-═══════════════════════════════════════════ */
-function safeDate(val) {
-  if (!val) return null;
-  // MongoDB se { $date: "..." } ya string ya Date object aa sakta hai
-  if (typeof val === "object" && val.$date) return new Date(val.$date);
-  const d = new Date(val);
-  return isNaN(d.getTime()) ? null : d;
-}
-
-function isClosed(deadline) {
-  if (!deadline) return false;
-  const d = safeDate(deadline);
-  if (!d) return false;
-  return d.getTime() < Date.now();
-}
-
+/* ═══════════════ COUNTDOWN ═══════════════ */
 function MiniCountdown({ deadline }) {
   const calc = (val) => {
     const d = safeDate(val);
@@ -480,10 +498,7 @@ function MiniCountdown({ deadline }) {
   }, [deadline]);
 
   if (!mounted) return null;
-
-  if (!t) return (
-    <span className="text-xs text-red-500 font-bold">Registration Closed</span>
-  );
+  if (!t) return <span className="text-xs text-red-500 font-bold">Registration Closed</span>;
 
   return (
     <div className="flex items-center gap-1 flex-wrap">
@@ -499,6 +514,9 @@ function MiniCountdown({ deadline }) {
 
 /* ═══════════════ ACTIVE CHALLENGES ═══════════════ */
 function ActiveChallengesSection({ events, router, deadline }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   return (
     <section className="py-20 sm:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -512,7 +530,8 @@ function ActiveChallengesSection({ events, router, deadline }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {events.map((event) => {
-            const closed = isClosed(event.registrationDeadline || deadline);
+            // Only check closed on client side after mount
+            const closed = mounted ? isClosed(event.registrationDeadline || deadline) : false;
             return (
               <div key={event._id} className={`relative rounded-3xl overflow-hidden border-2 transition-all duration-300 bg-white ${closed ? "border-gray-200 opacity-80" : "border-gray-200 hover:border-red-300 hover:shadow-xl hover:-translate-y-1"}`}>
                 {closed && <div className="absolute inset-0 z-10 bg-white/40 backdrop-grayscale pointer-events-none rounded-3xl" />}
@@ -524,33 +543,49 @@ function ActiveChallengesSection({ events, router, deadline }) {
                   <div className="absolute top-3 left-3 z-20">
                     {closed ? (
                       <span className="flex items-center gap-1.5 bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow">
-                        <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"/><span className="relative inline-flex rounded-full h-2 w-2 bg-white"/></span>
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"/>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-white"/>
+                        </span>
                         Event Running
                       </span>
                     ) : (
                       <span className="bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow">🔴 LIVE</span>
                     )}
                   </div>
-                  {closed && <div className="absolute top-3 right-3 z-20"><span className="bg-black/60 text-gray-200 text-xs font-bold px-2.5 py-1 rounded-full">🔒 Reg. Closed</span></div>}
+                  {closed && (
+                    <div className="absolute top-3 right-3 z-20">
+                      <span className="bg-black/60 text-gray-200 text-xs font-bold px-2.5 py-1 rounded-full">🔒 Reg. Closed</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="relative z-20 p-5 sm:p-6">
                   <h3 className={`text-lg font-bold mb-1 ${closed?"text-gray-400":"text-gray-900"}`}>{event.title}</h3>
                   <p className="text-gray-500 text-sm mb-3">{event.dates}</p>
                   {!closed && event.registrationDeadline && (
-                    <div className="mb-4">
-                      <MiniCountdown deadline={event.registrationDeadline} />
-                    </div>
+                    <div className="mb-4"><MiniCountdown deadline={event.registrationDeadline} /></div>
                   )}
                   {closed ? (
                     <>
-                      <button disabled className="w-full bg-gray-100 text-gray-400 py-3 rounded-full font-bold text-sm cursor-not-allowed border border-gray-200 mb-2">Registration Closed</button>
-                      <button onClick={() => router.push(`/challenges/${event.slug}`)} className="w-full border-2 border-gray-200 hover:border-gray-400 text-gray-500 hover:text-gray-700 py-3 rounded-full font-semibold text-sm transition-colors">View Details →</button>
+                      <button disabled className="w-full bg-gray-100 text-gray-400 py-3 rounded-full font-bold text-sm cursor-not-allowed border border-gray-200 mb-2">
+                        Registration Closed
+                      </button>
+                      <button onClick={() => router.push(`/challenges/${event.slug}`)}
+                        className="w-full border-2 border-gray-200 hover:border-gray-400 text-gray-500 hover:text-gray-700 py-3 rounded-full font-semibold text-sm transition-colors">
+                        View Details →
+                      </button>
                     </>
                   ) : (
                     <div className="flex gap-3">
-                      <button onClick={() => router.push(`/challenges/${event.slug}`)} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-full font-bold text-sm transition-all hover:shadow-lg hover:shadow-red-200">Register Now</button>
-                      <button onClick={() => router.push(`/challenges/${event.slug}`)} className="border-2 border-gray-200 hover:border-gray-400 px-4 py-3 rounded-full text-sm font-semibold text-gray-600 transition-colors">Details</button>
+                      <button onClick={() => router.push(`/challenges/${event.slug}`)}
+                        className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-full font-bold text-sm transition-all hover:shadow-lg hover:shadow-red-200">
+                        Register Now
+                      </button>
+                      <button onClick={() => router.push(`/challenges/${event.slug}`)}
+                        className="border-2 border-gray-200 hover:border-gray-400 px-4 py-3 rounded-full text-sm font-semibold text-gray-600 transition-colors">
+                        Details
+                      </button>
                     </div>
                   )}
                 </div>
@@ -584,69 +619,66 @@ function MedalShowcaseSection({ events }) {
         </div>
 
         {events.length>0 && (
-          <div className="flex flex-wrap justify-center gap-8 sm:gap-12 mb-14">
+          <div className="flex flex-wrap justify-center gap-10 sm:gap-16 mb-14">
             {events.map((event) => (
               <div key={event._id} className="flex flex-col items-center gap-5">
-                <div className="relative w-52 sm:w-60 h-64 sm:h-72 cursor-pointer" style={{perspective:"1000px"}} onClick={()=>toggle(event._id)}>
+
+                {/* ✅ BIGGER card: w-72 h-96 (was w-52/w-60 h-64/h-72) */}
+                <div className="relative w-72 sm:w-80 h-96 sm:h-[420px] cursor-pointer"
+                  style={{perspective:"1200px"}} onClick={()=>toggle(event._id)}>
                   <div className="relative w-full h-full transition-all duration-700"
                     style={{transformStyle:"preserve-3d", transform:flipped[event._id]?"rotateY(180deg)":"rotateY(0deg)"}}>
 
-                    {/* ── FRONT — full image cover ── */}
-                    <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-xl border-2 border-yellow-200"
+                    {/* FRONT — full image */}
+                    <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-2xl border-2 border-yellow-200"
                       style={{backfaceVisibility:"hidden"}}>
-
-                      {/* Medal image — full card cover */}
                       {event.medalImage ? (
-                        <img
-                          src={event.medalImage}
-                          alt="medal"
-                          className="absolute inset-0 w-full h-full object-cover"
-                        />
+                        <img src={event.medalImage} alt="medal"
+                          className="absolute inset-0 w-full h-full object-cover" />
                       ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-amber-500" />
                       )}
-
-                      {/* Dark gradient overlay at bottom for text */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-
-                      {/* FRONT badge */}
-                      <div className="absolute top-3 right-3 bg-black/30 backdrop-blur-sm text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                      <div className="absolute top-4 right-4 bg-black/30 backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1 rounded-full">
                         FRONT
                       </div>
-
-                      {/* Title at bottom */}
-                      <div className="absolute bottom-0 left-0 right-0 p-5 text-center">
-                        <p className="font-black text-sm sm:text-base text-white leading-tight">{event.title}</p>
-                        <p className="text-white/70 text-xs mt-1">Finisher Medal</p>
+                      <div className="absolute bottom-0 left-0 right-0 p-6 text-center">
+                        <p className="font-black text-base text-white leading-snug">{event.title}</p>
+                        <p className="text-white/70 text-sm mt-1">Finisher Medal</p>
                       </div>
                     </div>
 
-                    {/* ── BACK ── */}
-                    <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-xl border-2 border-gray-200"
+                    {/* BACK */}
+                    <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-2xl border-2 border-gray-200"
                       style={{backfaceVisibility:"hidden", transform:"rotateY(180deg)"}}>
                       <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200"/>
-                      <div className="absolute top-3 right-3 bg-gray-400/30 text-gray-600 text-xs font-bold px-2 py-0.5 rounded-full">BACK</div>
-                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6">
-                        <div className="w-28 h-28 rounded-full bg-gray-300 border-4 border-gray-400 flex items-center justify-center text-5xl">🇮🇳</div>
+                      <div className="absolute top-4 right-4 bg-gray-400/30 text-gray-600 text-xs font-bold px-2.5 py-1 rounded-full">BACK</div>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 p-8">
+                        <div className="w-36 h-36 rounded-full bg-gray-300 border-4 border-gray-400 flex items-center justify-center text-6xl">🇮🇳</div>
                         <div className="text-center">
-                          <p className="font-bold text-gray-800 text-sm">{event.title}</p>
-                          <p className="text-gray-500 text-xs mt-1">{event.dates}</p>
+                          <p className="font-bold text-gray-800 text-base">{event.title}</p>
+                          <p className="text-gray-500 text-sm mt-1">{event.dates}</p>
                         </div>
                       </div>
                     </div>
 
                   </div>
                 </div>
+
                 <p className="text-xs text-gray-400">{flipped[event._id]?"← Flip back":"Click to flip →"}</p>
 
-                {/* ✅ Weight 100g updated */}
-                <div className="bg-white border-2 border-gray-100 rounded-2xl p-4 w-52 sm:w-60 shadow-sm">
-                  <div className="grid grid-cols-2 gap-3 text-xs">
+                {/* Specs card — also wider */}
+                <div className="bg-white border-2 border-gray-100 rounded-2xl p-5 w-72 sm:w-80 shadow-sm">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
                     {[["Weight","100g"],["Diameter","70mm"],["Material","Zinc Alloy"],["Delivery","Free"]].map(([k,v])=>(
-                      <div key={k}><p className="text-gray-400">{k}</p><p className="font-bold text-gray-800 mt-0.5">{v}</p></div>
+                      <div key={k}>
+                        <p className="text-gray-400 text-xs">{k}</p>
+                        <p className="font-bold text-gray-800 mt-0.5">{v}</p>
+                      </div>
                     ))}
                   </div>
                 </div>
+
               </div>
             ))}
           </div>
@@ -743,7 +775,6 @@ function GallerySection({ events }) {
 }
 
 /* ═══════════════ TESTIMONIALS ═══════════════ */
-// Commented out — real reviews aane ke baad uncomment karna
 // function TestimonialsSection() { ... }
 
 /* ═══════════════ WHATSAPP ═══════════════ */
