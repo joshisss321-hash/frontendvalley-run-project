@@ -283,7 +283,6 @@ function HeroSection({ router }) {
     return () => clearInterval(t);
   }, []);
 
-  // ── Smooth scroll to How It Works ──
   const scrollToHowItWorks = () => {
     document.getElementById("how-it-works")
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -319,10 +318,7 @@ function HeroSection({ router }) {
             className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-bold text-base transition-all duration-200 shadow-lg hover:scale-105 text-center">
             Explore Challenges →
           </button>
-
-          {/* ✅ CHANGED: router.push hataya, smooth scroll lagaya */}
-          <button
-            onClick={scrollToHowItWorks}
+          <button onClick={scrollToHowItWorks}
             className="border-2 border-white/50 hover:border-white text-white px-8 py-4 rounded-full font-bold text-base transition-all duration-200 hover:bg-white/10 text-center">
             How It Works ↓
           </button>
@@ -342,7 +338,6 @@ function HeroSection({ router }) {
 }
 
 /* ═══════════════ TRUST BAR ═══════════════ */
-// ✅ CHANGED: Red se dark charcoal/slate color — premium look
 function TrustBar() {
   const items = ["🏅 Real Metal Medals","📦 Free Pan-India Delivery","📸 Any GPS App Accepted","⚡ Results in 24 hrs","🇮🇳 Made for Indian Runners","🔒 Secure Razorpay Payments"];
   return (
@@ -404,7 +399,6 @@ function HowItWorksSection() {
   useEffect(() => { const t = setInterval(() => setActive(p => (p+1)%4), 3000); return () => clearInterval(t); }, []);
 
   return (
-    // ✅ CHANGED: id="how-it-works" add kiya — scroll target
     <section id="how-it-works" className="py-20 sm:py-28 bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
@@ -441,10 +435,31 @@ function HowItWorksSection() {
   );
 }
 
-/* ═══════════════ COUNTDOWN ═══════════════ */
+/* ═══════════════════════════════════════════
+   COUNTDOWN — NaN fix:
+   MongoDB se date string alag format mein aa
+   sakti hai, isliye safeDate() helper banaya
+═══════════════════════════════════════════ */
+function safeDate(val) {
+  if (!val) return null;
+  // MongoDB se { $date: "..." } ya string ya Date object aa sakta hai
+  if (typeof val === "object" && val.$date) return new Date(val.$date);
+  const d = new Date(val);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function isClosed(deadline) {
+  if (!deadline) return false;
+  const d = safeDate(deadline);
+  if (!d) return false;
+  return d.getTime() < Date.now();
+}
+
 function MiniCountdown({ deadline }) {
-  const calc = (d) => {
-    const diff = new Date(d).getTime() - Date.now();
+  const calc = (val) => {
+    const d = safeDate(val);
+    if (!d) return null;
+    const diff = d.getTime() - Date.now();
     if (diff <= 0) return null;
     return {
       d: Math.floor(diff / 86400000),
@@ -464,13 +479,10 @@ function MiniCountdown({ deadline }) {
     return () => clearInterval(i);
   }, [deadline]);
 
-  // Server pe kuch render mat karo — hydration error fix
   if (!mounted) return null;
 
   if (!t) return (
-    <span className="text-xs text-red-500 font-bold">
-      Registration Closed
-    </span>
+    <span className="text-xs text-red-500 font-bold">Registration Closed</span>
   );
 
   return (
@@ -486,8 +498,6 @@ function MiniCountdown({ deadline }) {
 }
 
 /* ═══════════════ ACTIVE CHALLENGES ═══════════════ */
-function isClosed(deadline) { if(!deadline)return false; return new Date(deadline).getTime()<Date.now(); }
-
 function ActiveChallengesSection({ events, router, deadline }) {
   return (
     <section className="py-20 sm:py-28 bg-white">
@@ -527,7 +537,11 @@ function ActiveChallengesSection({ events, router, deadline }) {
                 <div className="relative z-20 p-5 sm:p-6">
                   <h3 className={`text-lg font-bold mb-1 ${closed?"text-gray-400":"text-gray-900"}`}>{event.title}</h3>
                   <p className="text-gray-500 text-sm mb-3">{event.dates}</p>
-                  {!closed && event.registrationDeadline && <div className="mb-4"><MiniCountdown deadline={event.registrationDeadline} /></div>}
+                  {!closed && event.registrationDeadline && (
+                    <div className="mb-4">
+                      <MiniCountdown deadline={event.registrationDeadline} />
+                    </div>
+                  )}
                   {closed ? (
                     <>
                       <button disabled className="w-full bg-gray-100 text-gray-400 py-3 rounded-full font-bold text-sm cursor-not-allowed border border-gray-200 mb-2">Registration Closed</button>
@@ -543,7 +557,12 @@ function ActiveChallengesSection({ events, router, deadline }) {
               </div>
             );
           })}
-          {events.length===0 && <div className="col-span-3 text-center py-20"><div className="text-5xl mb-4">🏃</div><p className="font-bold text-lg text-gray-400">Loading challenges...</p></div>}
+          {events.length===0 && (
+            <div className="col-span-3 text-center py-20">
+              <div className="text-5xl mb-4">🏃</div>
+              <p className="font-bold text-lg text-gray-400">Loading challenges...</p>
+            </div>
+          )}
         </div>
       </div>
     </section>
@@ -554,6 +573,7 @@ function ActiveChallengesSection({ events, router, deadline }) {
 function MedalShowcaseSection({ events }) {
   const [flipped,setFlipped] = useState({});
   const toggle = (id) => setFlipped(p=>({...p,[id]:!p[id]}));
+
   return (
     <section className="py-20 sm:py-28 bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -568,32 +588,61 @@ function MedalShowcaseSection({ events }) {
             {events.map((event) => (
               <div key={event._id} className="flex flex-col items-center gap-5">
                 <div className="relative w-52 sm:w-60 h-64 sm:h-72 cursor-pointer" style={{perspective:"1000px"}} onClick={()=>toggle(event._id)}>
-                  <div className="relative w-full h-full transition-all duration-700" style={{transformStyle:"preserve-3d",transform:flipped[event._id]?"rotateY(180deg)":"rotateY(0deg)"}}>
-                    <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-xl border-2 border-yellow-200" style={{backfaceVisibility:"hidden"}}>
-                      <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-amber-500"/>
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent"/>
-                      <div className="absolute top-3 right-3 bg-white/30 text-white text-xs font-bold px-2 py-0.5 rounded-full">FRONT</div>
-                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6">
-                        <div className="w-32 h-32 rounded-full bg-white/25 border-4 border-white/50 flex items-center justify-center overflow-hidden">
-                          {event.medalImage ? <img src={event.medalImage} alt="medal" className="w-full h-full object-cover"/> : <span className="text-5xl">🏅</span>}
-                        </div>
-                        <div className="text-center text-white"><p className="font-black text-sm sm:text-base">{event.title}</p><p className="text-white/70 text-xs mt-1">Finisher Medal</p></div>
+                  <div className="relative w-full h-full transition-all duration-700"
+                    style={{transformStyle:"preserve-3d", transform:flipped[event._id]?"rotateY(180deg)":"rotateY(0deg)"}}>
+
+                    {/* ── FRONT — full image cover ── */}
+                    <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-xl border-2 border-yellow-200"
+                      style={{backfaceVisibility:"hidden"}}>
+
+                      {/* Medal image — full card cover */}
+                      {event.medalImage ? (
+                        <img
+                          src={event.medalImage}
+                          alt="medal"
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-amber-500" />
+                      )}
+
+                      {/* Dark gradient overlay at bottom for text */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+
+                      {/* FRONT badge */}
+                      <div className="absolute top-3 right-3 bg-black/30 backdrop-blur-sm text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                        FRONT
+                      </div>
+
+                      {/* Title at bottom */}
+                      <div className="absolute bottom-0 left-0 right-0 p-5 text-center">
+                        <p className="font-black text-sm sm:text-base text-white leading-tight">{event.title}</p>
+                        <p className="text-white/70 text-xs mt-1">Finisher Medal</p>
                       </div>
                     </div>
-                    <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-xl border-2 border-gray-200" style={{backfaceVisibility:"hidden",transform:"rotateY(180deg)"}}>
+
+                    {/* ── BACK ── */}
+                    <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-xl border-2 border-gray-200"
+                      style={{backfaceVisibility:"hidden", transform:"rotateY(180deg)"}}>
                       <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200"/>
                       <div className="absolute top-3 right-3 bg-gray-400/30 text-gray-600 text-xs font-bold px-2 py-0.5 rounded-full">BACK</div>
                       <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6">
                         <div className="w-28 h-28 rounded-full bg-gray-300 border-4 border-gray-400 flex items-center justify-center text-5xl">🇮🇳</div>
-                        <div className="text-center"><p className="font-bold text-gray-800 text-sm">{event.title}</p><p className="text-gray-500 text-xs mt-1">{event.dates}</p></div>
+                        <div className="text-center">
+                          <p className="font-bold text-gray-800 text-sm">{event.title}</p>
+                          <p className="text-gray-500 text-xs mt-1">{event.dates}</p>
+                        </div>
                       </div>
                     </div>
+
                   </div>
                 </div>
                 <p className="text-xs text-gray-400">{flipped[event._id]?"← Flip back":"Click to flip →"}</p>
+
+                {/* ✅ Weight 100g updated */}
                 <div className="bg-white border-2 border-gray-100 rounded-2xl p-4 w-52 sm:w-60 shadow-sm">
                   <div className="grid grid-cols-2 gap-3 text-xs">
-                    {[["Weight","120g"],["Diameter","70mm"],["Material","Zinc Alloy"],["Delivery","Free"]].map(([k,v])=>(
+                    {[["Weight","100g"],["Diameter","70mm"],["Material","Zinc Alloy"],["Delivery","Free"]].map(([k,v])=>(
                       <div key={k}><p className="text-gray-400">{k}</p><p className="font-bold text-gray-800 mt-0.5">{v}</p></div>
                     ))}
                   </div>
@@ -606,7 +655,9 @@ function MedalShowcaseSection({ events }) {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[["📦","Free Shipping","Pan India"],["⚡","Fast Delivery","7–10 days"],["🔒","Guaranteed","Or full refund"],["⭐","Premium","Zinc alloy"]].map(([e,t,s])=>(
             <div key={t} className="bg-white border-2 border-gray-100 rounded-2xl p-4 text-center shadow-sm hover:border-red-200 transition-colors">
-              <div className="text-2xl mb-2">{e}</div><div className="font-bold text-sm text-gray-900">{t}</div><div className="text-gray-400 text-xs mt-1">{s}</div>
+              <div className="text-2xl mb-2">{e}</div>
+              <div className="font-bold text-sm text-gray-900">{t}</div>
+              <div className="text-gray-400 text-xs mt-1">{s}</div>
             </div>
           ))}
         </div>
@@ -693,10 +744,7 @@ function GallerySection({ events }) {
 
 /* ═══════════════ TESTIMONIALS ═══════════════ */
 // Commented out — real reviews aane ke baad uncomment karna
-// function TestimonialsSection() {
-//   const reviews = [ ... ];
-//   return ( ... );
-// }
+// function TestimonialsSection() { ... }
 
 /* ═══════════════ WHATSAPP ═══════════════ */
 function WhatsAppSection({ url }) {
