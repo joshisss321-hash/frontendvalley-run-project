@@ -234,7 +234,7 @@
 // }
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import { useRouter } from "next/navigation";
 
@@ -258,7 +258,7 @@ export default function HomePage() {
       <TrustBar />
       <WhyJoinSection />
       <HowItWorksSection />
-      <ActiveChallengesSection events={events} router={router} deadline={REGISTRATION_DEADLINE} />
+      <ActiveChallengesSection events={events} router={router} />
       <MedalShowcaseSection events={events} />
       <CertificateSection />
       <GallerySection events={events} />
@@ -270,53 +270,15 @@ export default function HomePage() {
   );
 }
 
-/* ═══════════════════════════════════════════════════
-   DATE HELPER — handles all MongoDB date formats:
-   1. Normal ISO string: "2026-03-22T12:30:00.000Z"
-   2. MongoDB $date object: { $date: "2026-03-22..." }
-   3. String with $date key: '{"$date":"2026-03-22..."}'
-   4. Date object
-═══════════════════════════════════════════════════ */
-function safeDate(val) {
-  if (!val) return null;
-
-  // Already a Date object
-  if (val instanceof Date) {
-    return isNaN(val.getTime()) ? null : val;
-  }
-
-  // Object with $date key — { $date: "..." }
-  if (typeof val === "object" && val.$date) {
-    const d = new Date(val.$date);
-    return isNaN(d.getTime()) ? null : d;
-  }
-
-  // String
-  if (typeof val === "string") {
-    // Try to parse as JSON first — handles '{"$date":"..."}'
-    try {
-      const parsed = JSON.parse(val);
-      if (parsed && parsed.$date) {
-        const d = new Date(parsed.$date);
-        return isNaN(d.getTime()) ? null : d;
-      }
-    } catch (_) {}
-
-    // Direct ISO string
-    const d = new Date(val);
-    return isNaN(d.getTime()) ? null : d;
-  }
-
-  return null;
-}
-
-/* isClosed — only runs on client, never on server */
-function isClosed(deadline) {
-  if (!deadline) return false;
-  if (typeof window === "undefined") return false; // SSR pe false
-  const d = safeDate(deadline);
-  if (!d) return false;
-  return d.getTime() < Date.now();
+/* ═══════════════════════════════════════════
+   REGISTRATION CLOSED CHECK
+   DB mein string hai: "$date": "2026-03-22..."
+   Isliye hum sirf global constant use karte hain
+   — DB ki field ignore karo
+═══════════════════════════════════════════ */
+function checkClosed() {
+  if (typeof window === "undefined") return false;
+  return new Date(REGISTRATION_DEADLINE).getTime() < Date.now();
 }
 
 /* ═══════════════ HERO ═══════════════ */
@@ -382,8 +344,8 @@ function TrustBar() {
     <div className="py-3 overflow-hidden" style={{ background: "linear-gradient(90deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%)" }}>
       <div className="flex gap-10 w-max" style={{ animation:"trustscroll 25s linear infinite" }}>
         {[...items,...items].map((item,i) => (
-          <span key={i} className="text-sm font-bold whitespace-nowrap flex items-center gap-3" style={{ color: "rgba(255,255,255,0.75)" }}>
-            {item}<span style={{ color: "rgba(255,255,255,0.2)" }}>·</span>
+          <span key={i} className="text-sm font-bold whitespace-nowrap flex items-center gap-3" style={{ color:"rgba(255,255,255,0.75)" }}>
+            {item}<span style={{ color:"rgba(255,255,255,0.2)" }}>·</span>
           </span>
         ))}
       </div>
@@ -474,31 +436,27 @@ function HowItWorksSection() {
 
 /* ═══════════════ COUNTDOWN ═══════════════ */
 function MiniCountdown({ deadline }) {
-  const calc = (val) => {
-    const d = safeDate(val);
-    if (!d) return null;
-    const diff = d.getTime() - Date.now();
-    if (diff <= 0) return null;
-    return {
-      d: Math.floor(diff / 86400000),
-      h: Math.floor((diff / 3600000) % 24),
-      m: Math.floor((diff / 60000) % 60),
-      s: Math.floor((diff / 1000) % 60),
-    };
-  };
-
   const [t, setT] = useState(null);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    setT(calc(deadline));
-    const i = setInterval(() => setT(calc(deadline)), 1000);
+    const calc = () => {
+      const diff = new Date(deadline).getTime() - Date.now();
+      if (diff <= 0) { setT(null); return; }
+      setT({
+        d: Math.floor(diff / 86400000),
+        h: Math.floor((diff / 3600000) % 24),
+        m: Math.floor((diff / 60000) % 60),
+        s: Math.floor((diff / 1000) % 60),
+      });
+    };
+    calc();
+    const i = setInterval(calc, 1000);
     return () => clearInterval(i);
   }, [deadline]);
 
-  if (!mounted) return null;
-  if (!t) return <span className="text-xs text-red-500 font-bold">Registration Closed</span>;
+  if (!mounted || !t) return null;
 
   return (
     <div className="flex items-center gap-1 flex-wrap">
@@ -513,9 +471,13 @@ function MiniCountdown({ deadline }) {
 }
 
 /* ═══════════════ ACTIVE CHALLENGES ═══════════════ */
-function ActiveChallengesSection({ events, router, deadline }) {
+function ActiveChallengesSection({ events, router }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  // ✅ FINAL FIX: DB ki string field ignore karo
+  // Sirf global REGISTRATION_DEADLINE use karo
+  const closed = mounted ? checkClosed() : false;
 
   return (
     <section className="py-20 sm:py-28 bg-white">
@@ -525,73 +487,76 @@ function ActiveChallengesSection({ events, router, deadline }) {
             <span className="inline-block bg-red-50 text-red-600 text-xs font-bold tracking-widest uppercase px-4 py-1.5 rounded-full mb-4 border border-red-100">Live Now</span>
             <h2 className="text-3xl sm:text-4xl font-black tracking-tight">Active Challenges</h2>
           </div>
-          <MiniCountdown deadline={deadline} />
+          {!closed && <MiniCountdown deadline={REGISTRATION_DEADLINE} />}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {events.map((event) => {
-            // Only check closed on client side after mount
-            const closed = mounted ? isClosed(event.registrationDeadline || deadline) : false;
-            return (
-              <div key={event._id} className={`relative rounded-3xl overflow-hidden border-2 transition-all duration-300 bg-white ${closed ? "border-gray-200 opacity-80" : "border-gray-200 hover:border-red-300 hover:shadow-xl hover:-translate-y-1"}`}>
-                {closed && <div className="absolute inset-0 z-10 bg-white/40 backdrop-grayscale pointer-events-none rounded-3xl" />}
+          {events.map((event) => (
+            <div key={event._id} className={`relative rounded-3xl overflow-hidden border-2 transition-all duration-300 bg-white ${closed ? "border-gray-200 opacity-80" : "border-gray-200 hover:border-red-300 hover:shadow-xl hover:-translate-y-1"}`}>
 
-                <div className="relative h-48 sm:h-56 overflow-hidden bg-gray-100">
-                  <img src={event.coverImage||event.image} alt={event.title}
-                    className={`h-full w-full object-cover transition-transform duration-500 ${closed?"grayscale":""}`} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                  <div className="absolute top-3 left-3 z-20">
-                    {closed ? (
-                      <span className="flex items-center gap-1.5 bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow">
-                        <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"/>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-white"/>
-                        </span>
-                        Event Running
-                      </span>
-                    ) : (
-                      <span className="bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow">🔴 LIVE</span>
-                    )}
-                  </div>
-                  {closed && (
-                    <div className="absolute top-3 right-3 z-20">
-                      <span className="bg-black/60 text-gray-200 text-xs font-bold px-2.5 py-1 rounded-full">🔒 Reg. Closed</span>
-                    </div>
-                  )}
-                </div>
+              {/* Grayscale overlay when closed */}
+              {closed && <div className="absolute inset-0 z-10 bg-white/40 backdrop-grayscale pointer-events-none rounded-3xl" />}
 
-                <div className="relative z-20 p-5 sm:p-6">
-                  <h3 className={`text-lg font-bold mb-1 ${closed?"text-gray-400":"text-gray-900"}`}>{event.title}</h3>
-                  <p className="text-gray-500 text-sm mb-3">{event.dates}</p>
-                  {!closed && event.registrationDeadline && (
-                    <div className="mb-4"><MiniCountdown deadline={event.registrationDeadline} /></div>
-                  )}
+              {/* Image */}
+              <div className="relative h-48 sm:h-56 overflow-hidden bg-gray-100">
+                <img src={event.coverImage||event.image} alt={event.title}
+                  className={`h-full w-full object-cover transition-transform duration-500 ${closed ? "grayscale" : ""}`} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+
+                {/* Badge */}
+                <div className="absolute top-3 left-3 z-20">
                   {closed ? (
-                    <>
-                      <button disabled className="w-full bg-gray-100 text-gray-400 py-3 rounded-full font-bold text-sm cursor-not-allowed border border-gray-200 mb-2">
-                        Registration Closed
-                      </button>
-                      <button onClick={() => router.push(`/challenges/${event.slug}`)}
-                        className="w-full border-2 border-gray-200 hover:border-gray-400 text-gray-500 hover:text-gray-700 py-3 rounded-full font-semibold text-sm transition-colors">
-                        View Details →
-                      </button>
-                    </>
+                    <span className="flex items-center gap-1.5 bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"/>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-white"/>
+                      </span>
+                      Event Running
+                    </span>
                   ) : (
-                    <div className="flex gap-3">
-                      <button onClick={() => router.push(`/challenges/${event.slug}`)}
-                        className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-full font-bold text-sm transition-all hover:shadow-lg hover:shadow-red-200">
-                        Register Now
-                      </button>
-                      <button onClick={() => router.push(`/challenges/${event.slug}`)}
-                        className="border-2 border-gray-200 hover:border-gray-400 px-4 py-3 rounded-full text-sm font-semibold text-gray-600 transition-colors">
-                        Details
-                      </button>
-                    </div>
+                    <span className="bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow">🔴 LIVE</span>
                   )}
                 </div>
+                {closed && (
+                  <div className="absolute top-3 right-3 z-20">
+                    <span className="bg-black/60 text-gray-200 text-xs font-bold px-2.5 py-1 rounded-full">🔒 Reg. Closed</span>
+                  </div>
+                )}
               </div>
-            );
-          })}
+
+              {/* Content */}
+              <div className="relative z-20 p-5 sm:p-6">
+                <h3 className={`text-lg font-bold mb-1 ${closed ? "text-gray-400" : "text-gray-900"}`}>{event.title}</h3>
+                <p className="text-gray-500 text-sm mb-3">{event.dates}</p>
+
+                {!closed && <div className="mb-4"><MiniCountdown deadline={REGISTRATION_DEADLINE} /></div>}
+
+                {closed ? (
+                  <>
+                    <button disabled className="w-full bg-gray-100 text-gray-400 py-3 rounded-full font-bold text-sm cursor-not-allowed border border-gray-200 mb-2">
+                      Registration Closed
+                    </button>
+                    <button onClick={() => router.push(`/challenges/${event.slug}`)}
+                      className="w-full border-2 border-gray-200 hover:border-gray-400 text-gray-500 hover:text-gray-700 py-3 rounded-full font-semibold text-sm transition-colors">
+                      View Details →
+                    </button>
+                  </>
+                ) : (
+                  <div className="flex gap-3">
+                    <button onClick={() => router.push(`/challenges/${event.slug}`)}
+                      className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-full font-bold text-sm transition-all hover:shadow-lg hover:shadow-red-200">
+                      Register Now
+                    </button>
+                    <button onClick={() => router.push(`/challenges/${event.slug}`)}
+                      className="border-2 border-gray-200 hover:border-gray-400 px-4 py-3 rounded-full text-sm font-semibold text-gray-600 transition-colors">
+                      Details
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+
           {events.length===0 && (
             <div className="col-span-3 text-center py-20">
               <div className="text-5xl mb-4">🏃</div>
@@ -606,8 +571,8 @@ function ActiveChallengesSection({ events, router, deadline }) {
 
 /* ═══════════════ MEDAL SHOWCASE ═══════════════ */
 function MedalShowcaseSection({ events }) {
-  const [flipped,setFlipped] = useState({});
-  const toggle = (id) => setFlipped(p=>({...p,[id]:!p[id]}));
+  const [flipped, setFlipped] = useState({});
+  const toggle = (id) => setFlipped(p => ({ ...p, [id]: !p[id] }));
 
   return (
     <section className="py-20 sm:py-28 bg-gray-50">
@@ -618,22 +583,23 @@ function MedalShowcaseSection({ events }) {
           <p className="mt-4 text-gray-500 text-base sm:text-lg max-w-xl mx-auto">Proof beats motivation. Every finisher earns a real, heavy metal medal shipped to your door.</p>
         </div>
 
-        {events.length>0 && (
+        {events.length > 0 && (
           <div className="flex flex-wrap justify-center gap-10 sm:gap-16 mb-14">
             {events.map((event) => (
               <div key={event._id} className="flex flex-col items-center gap-5">
 
-                {/* ✅ BIGGER card: w-72 h-96 (was w-52/w-60 h-64/h-72) */}
                 <div className="relative w-72 sm:w-80 h-96 sm:h-[420px] cursor-pointer"
-                  style={{perspective:"1200px"}} onClick={()=>toggle(event._id)}>
-                  <div className="relative w-full h-full transition-all duration-700"
-                    style={{transformStyle:"preserve-3d", transform:flipped[event._id]?"rotateY(180deg)":"rotateY(0deg)"}}>
+                  style={{ perspective: "1200px" }}
+                  onClick={() => toggle(event._id)}>
 
-                    {/* FRONT — full image */}
+                  <div className="relative w-full h-full transition-all duration-700"
+                    style={{ transformStyle: "preserve-3d", transform: flipped[event._id] ? "rotateY(180deg)" : "rotateY(0deg)" }}>
+
+                    {/* ── FRONT ── */}
                     <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-2xl border-2 border-yellow-200"
-                      style={{backfaceVisibility:"hidden"}}>
+                      style={{ backfaceVisibility: "hidden" }}>
                       {event.medalImage ? (
-                        <img src={event.medalImage} alt="medal"
+                        <img src={event.medalImage} alt="medal front"
                           className="absolute inset-0 w-full h-full object-cover" />
                       ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-amber-500" />
@@ -648,29 +614,49 @@ function MedalShowcaseSection({ events }) {
                       </div>
                     </div>
 
-                    {/* BACK */}
+                    {/* ── BACK — medalImageBack DB se ── */}
                     <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-2xl border-2 border-gray-200"
-                      style={{backfaceVisibility:"hidden", transform:"rotateY(180deg)"}}>
-                      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200"/>
-                      <div className="absolute top-4 right-4 bg-gray-400/30 text-gray-600 text-xs font-bold px-2.5 py-1 rounded-full">BACK</div>
-                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 p-8">
-                        <div className="w-36 h-36 rounded-full bg-gray-300 border-4 border-gray-400 flex items-center justify-center text-6xl">🇮🇳</div>
-                        <div className="text-center">
-                          <p className="font-bold text-gray-800 text-base">{event.title}</p>
-                          <p className="text-gray-500 text-sm mt-1">{event.dates}</p>
-                        </div>
-                      </div>
+                      style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
+
+                      {event.medalImageBack ? (
+                        /* Real back image from DB */
+                        <>
+                          <img src={event.medalImageBack} alt="medal back"
+                            className="absolute inset-0 w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                          <div className="absolute top-4 right-4 bg-black/30 backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1 rounded-full">
+                            BACK
+                          </div>
+                          <div className="absolute bottom-0 left-0 right-0 p-6 text-center">
+                            <p className="font-bold text-white text-sm">{event.title}</p>
+                            <p className="text-white/60 text-xs mt-1">{event.dates}</p>
+                          </div>
+                        </>
+                      ) : (
+                        /* Fallback if no back image */
+                        <>
+                          <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200" />
+                          <div className="absolute top-4 right-4 bg-gray-400/30 text-gray-600 text-xs font-bold px-2.5 py-1 rounded-full">BACK</div>
+                          <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 p-8">
+                            <div className="w-36 h-36 rounded-full bg-gray-300 border-4 border-gray-400 flex items-center justify-center text-6xl">🇮🇳</div>
+                            <div className="text-center">
+                              <p className="font-bold text-gray-800 text-base">{event.title}</p>
+                              <p className="text-gray-500 text-sm mt-1">{event.dates}</p>
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
 
                   </div>
                 </div>
 
-                <p className="text-xs text-gray-400">{flipped[event._id]?"← Flip back":"Click to flip →"}</p>
+                <p className="text-xs text-gray-400">{flipped[event._id] ? "← Flip back" : "Click to flip →"}</p>
 
-                {/* Specs card — also wider */}
+                {/* Specs */}
                 <div className="bg-white border-2 border-gray-100 rounded-2xl p-5 w-72 sm:w-80 shadow-sm">
                   <div className="grid grid-cols-2 gap-4 text-sm">
-                    {[["Weight","100g"],["Diameter","70mm"],["Material","Zinc Alloy"],["Delivery","Free"]].map(([k,v])=>(
+                    {[["Weight","100g"],["Diameter","70mm"],["Material","Zinc Alloy"],["Delivery","Free"]].map(([k,v]) => (
                       <div key={k}>
                         <p className="text-gray-400 text-xs">{k}</p>
                         <p className="font-bold text-gray-800 mt-0.5">{v}</p>
@@ -685,7 +671,7 @@ function MedalShowcaseSection({ events }) {
         )}
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {[["📦","Free Shipping","Pan India"],["⚡","Fast Delivery","7–10 days"],["🔒","Guaranteed","Or full refund"],["⭐","Premium","Zinc alloy"]].map(([e,t,s])=>(
+          {[["📦","Free Shipping","Pan India"],["⚡","Fast Delivery","7–10 days"],["🔒","Guaranteed","Or full refund"],["⭐","Premium","Zinc alloy"]].map(([e,t,s]) => (
             <div key={t} className="bg-white border-2 border-gray-100 rounded-2xl p-4 text-center shadow-sm hover:border-red-200 transition-colors">
               <div className="text-2xl mb-2">{e}</div>
               <div className="font-bold text-sm text-gray-900">{t}</div>
@@ -709,7 +695,7 @@ function CertificateSection() {
             <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-gray-900 mb-5 leading-tight">Proof of your finish, forever.</h2>
             <p className="text-gray-500 leading-relaxed mb-6">Every finisher receives a personalised digital certificate — shareable on LinkedIn, Instagram, or wherever you want to show the world you finished.</p>
             <ul className="space-y-3">
-              {["Your name + distance on the certificate","Event date and official Valley Run branding","Downloadable high-res PDF","Share on LinkedIn in one click"].map(f=>(
+              {["Your name + distance on the certificate","Event date and official Valley Run branding","Downloadable high-res PDF","Share on LinkedIn in one click"].map(f => (
                 <li key={f} className="flex items-center gap-3 text-sm text-gray-700">
                   <span className="w-5 h-5 rounded-full bg-green-100 border border-green-300 flex items-center justify-center text-green-600 text-xs flex-shrink-0">✓</span>{f}
                 </li>
@@ -728,7 +714,7 @@ function CertificateSection() {
                 <p className="text-xl font-bold text-amber-700 mb-1">Shaheed Diwas Tribute Run 2026</p>
                 <p className="text-amber-600 font-bold text-lg mb-5">10 Kilometres</p>
                 <div className="flex justify-center gap-4 sm:gap-6 text-xs text-gray-400 border-t border-yellow-200 pt-5">
-                  {[["23 Mar 2026","Event Date"],["Verified","Status"],["VR-2026-XXX","Cert. ID"]].map(([v,l])=>(
+                  {[["23 Mar 2026","Event Date"],["Verified","Status"],["VR-2026-XXX","Cert. ID"]].map(([v,l]) => (
                     <div key={l}><p className="text-gray-800 font-bold text-sm">{v}</p><p>{l}</p></div>
                   ))}
                 </div>
@@ -743,7 +729,7 @@ function CertificateSection() {
 
 /* ═══════════════ GALLERY ═══════════════ */
 function GallerySection({ events }) {
-  const images = events.flatMap(e=>e.gallery||[]).slice(0,8);
+  const images = events.flatMap(e => e.gallery || []).slice(0, 8);
   return (
     <section className="py-20 sm:py-28 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -752,11 +738,12 @@ function GallerySection({ events }) {
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight">Community Gallery</h2>
           <p className="text-gray-500 mt-3 text-sm">Real runners. Real finishes. Real medals.</p>
         </div>
-        {images.length>0 ? (
+        {images.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {images.map((img,i)=>(
-              <div key={i} className={`relative overflow-hidden rounded-2xl group ${i===0?"sm:col-span-2 sm:row-span-2":""}`}>
-                <img src={img} alt="Runner" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" style={{minHeight:i===0?"280px":"140px",aspectRatio:"1"}}/>
+            {images.map((img,i) => (
+              <div key={i} className={`relative overflow-hidden rounded-2xl group ${i===0 ? "sm:col-span-2 sm:row-span-2" : ""}`}>
+                <img src={img} alt="Runner" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  style={{minHeight: i===0 ? "280px" : "140px", aspectRatio:"1"}}/>
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded-2xl"/>
               </div>
             ))}
@@ -773,9 +760,6 @@ function GallerySection({ events }) {
     </section>
   );
 }
-
-/* ═══════════════ TESTIMONIALS ═══════════════ */
-// function TestimonialsSection() { ... }
 
 /* ═══════════════ WHATSAPP ═══════════════ */
 function WhatsAppSection({ url }) {
@@ -795,7 +779,7 @@ function WhatsAppSection({ url }) {
                 <p className="text-green-200 text-sm leading-relaxed max-w-sm">Get live event updates, result announcements, and medal dispatch alerts — first.</p>
               </div>
             </div>
-            <a href={"https://whatsapp.com/channel/0029VbCM5KOBVJl3FdMMHI3M"} target="_blank" rel="noopener noreferrer"
+            <a href={url} target="_blank" rel="noopener noreferrer"
               className="flex-shrink-0 flex items-center gap-2 bg-[#25D366] hover:bg-green-400 text-white font-black px-7 py-3.5 rounded-full transition-all hover:scale-105 shadow-lg whitespace-nowrap text-sm sm:text-base">
               Join Channel →
             </a>
@@ -808,7 +792,7 @@ function WhatsAppSection({ url }) {
 
 /* ═══════════════ FAQ ═══════════════ */
 function FAQSection() {
-  const [open,setOpen] = useState(null);
+  const [open, setOpen] = useState(null);
   const faqs = [
     {q:"What apps can I use to track my run?",a:"Any GPS app works — Strava, Nike Run Club, Google Fit, Garmin, Samsung Health, Apple Fitness, or a treadmill screenshot. It should clearly show date, distance, and your profile."},
     {q:"How do I submit proof?",a:"After completing your run, screenshot your activity and submit via the WhatsApp number or upload link in your confirmation email. We verify within 24 hours."},
@@ -827,13 +811,13 @@ function FAQSection() {
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight">Common Questions</h2>
         </div>
         <div className="space-y-2">
-          {faqs.map((faq,i)=>(
-            <div key={i} className={`border-2 rounded-2xl overflow-hidden transition-all duration-200 ${open===i?"border-red-200 bg-red-50/30":"border-gray-200 bg-white hover:border-gray-300"}`}>
-              <button className="w-full flex items-center justify-between px-5 sm:px-6 py-4 sm:py-5 text-left gap-4" onClick={()=>setOpen(open===i?null:i)}>
+          {faqs.map((faq,i) => (
+            <div key={i} className={`border-2 rounded-2xl overflow-hidden transition-all duration-200 ${open===i ? "border-red-200 bg-red-50/30" : "border-gray-200 bg-white hover:border-gray-300"}`}>
+              <button className="w-full flex items-center justify-between px-5 sm:px-6 py-4 sm:py-5 text-left gap-4" onClick={() => setOpen(open===i ? null : i)}>
                 <span className="font-bold text-sm sm:text-base text-gray-900 pr-4">{faq.q}</span>
-                <span className={`text-gray-400 text-2xl font-light flex-shrink-0 transition-transform duration-300 ${open===i?"rotate-45 text-red-500":""}`}>+</span>
+                <span className={`text-gray-400 text-2xl font-light flex-shrink-0 transition-transform duration-300 ${open===i ? "rotate-45 text-red-500" : ""}`}>+</span>
               </button>
-              <div className={`overflow-hidden transition-all duration-300 ${open===i?"max-h-60 opacity-100":"max-h-0 opacity-0"}`}>
+              <div className={`overflow-hidden transition-all duration-300 ${open===i ? "max-h-60 opacity-100" : "max-h-0 opacity-0"}`}>
                 <p className="px-5 sm:px-6 pb-5 text-gray-600 text-sm leading-relaxed">{faq.a}</p>
               </div>
             </div>
@@ -843,8 +827,10 @@ function FAQSection() {
           <p className="font-bold text-gray-900 mb-1">Still have questions?</p>
           <p className="text-gray-500 text-sm mb-5">We reply within a few hours.</p>
           <div className="flex flex-wrap gap-3 justify-center">
-            <a href="https://whatsapp.com/channel/0029VbCM5KOBVJl3FdMMHI3M" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-[#25D366] text-white font-bold px-6 py-3 rounded-full text-sm hover:bg-green-500 transition-colors">💬 WhatsApp</a>
-            <a href="mailto:valleyrun.official@gmail.com" className="flex items-center gap-2 border-2 border-gray-200 text-gray-700 font-bold px-6 py-3 rounded-full text-sm hover:border-gray-400 transition-colors">✉️ Email Us</a>
+            <a href="https://whatsapp.com/channel/0029VbCM5KOBVJl3FdMMHI3M" target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-2 bg-[#25D366] text-white font-bold px-6 py-3 rounded-full text-sm hover:bg-green-500 transition-colors">💬 WhatsApp</a>
+            <a href="mailto:valleyrun.official@gmail.com"
+              className="flex items-center gap-2 border-2 border-gray-200 text-gray-700 font-bold px-6 py-3 rounded-full text-sm hover:border-gray-400 transition-colors">✉️ Email Us</a>
           </div>
         </div>
       </div>
