@@ -239,7 +239,7 @@ import Navbar from "./components/Navbar";
 import { useRouter } from "next/navigation";
 
 const WHATSAPP_URL = "https://whatsapp.com/channel/0029VbCM5KOBVJl3FdMMHI3M";
-const REGISTRATION_DEADLINE = "2026-03-22T12:30:00.000Z";
+const REGISTRATION_DEADLINE = "2026-03-22T18:30:00.000Z";
 
 export default function HomePage() {
   const router = useRouter();
