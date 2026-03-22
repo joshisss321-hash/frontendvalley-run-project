@@ -53,34 +53,25 @@
 import { useEffect, useState } from "react";
 
 export default function CountdownTimer() {
-  const [timeLeft, setTimeLeft] = useState({});
-  const [targetTime, setTargetTime] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(null);
+  const [expired, setExpired] = useState(false);
 
   useEffect(() => {
-    const now = new Date();
-
-    // Set target to next day 12:00 AM
+    // Target: March 23, 2025 at 12:00 AM (midnight)
     const target = new Date();
-    target.setDate(now.getDate() + 1); // next day
-    target.setHours(0, 0, 0, 0); // 12:00 AM
-
-    setTargetTime(target.getTime());
-  }, []);
-
-  useEffect(() => {
-    if (!targetTime) return;
+    target.setDate(target.getDate() + 1); // 23 March
+    target.setHours(0, 0, 0, 0);         // 12:00 AM
 
     const interval = setInterval(() => {
-      const diff = targetTime - Date.now();
+      const diff = target.getTime() - Date.now();
 
       if (diff <= 0) {
         clearInterval(interval);
-        setTimeLeft({});
+        setExpired(true);
         return;
       }
 
       setTimeLeft({
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
         hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
         minutes: Math.floor((diff / 1000 / 60) % 60),
         seconds: Math.floor((diff / 1000) % 60),
@@ -88,10 +79,10 @@ export default function CountdownTimer() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [targetTime]);
+  }, []);
 
-  if (!timeLeft.hours && !timeLeft.minutes && !timeLeft.seconds)
-    return <p>Registrations Closed!</p>;
+  if (expired) return <p>Registrations Closed!</p>;
+  if (!timeLeft) return null; // loading
 
   return (
     <div className="flex space-x-4 text-white text-center mt-4">
