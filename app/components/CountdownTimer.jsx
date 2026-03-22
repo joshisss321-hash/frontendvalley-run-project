@@ -57,10 +57,9 @@ export default function CountdownTimer() {
   const [expired, setExpired] = useState(false);
 
   useEffect(() => {
-    // Target: March 23, 2025 at 12:00 AM (midnight)
+    // Target: TODAY March 22 at 11:59:59 PM (registration closes tonight)
     const target = new Date();
-    target.setDate(target.getDate() + 1); // 23 March
-    target.setHours(0, 0, 0, 0);         // 12:00 AM
+    target.setHours(23, 59, 59, 0);
 
     const interval = setInterval(() => {
       const diff = target.getTime() - Date.now();
@@ -72,6 +71,7 @@ export default function CountdownTimer() {
       }
 
       setTimeLeft({
+        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
         hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
         minutes: Math.floor((diff / 1000 / 60) % 60),
         seconds: Math.floor((diff / 1000) % 60),
@@ -81,23 +81,27 @@ export default function CountdownTimer() {
     return () => clearInterval(interval);
   }, []);
 
-  if (expired) return <p>Registrations Closed!</p>;
-  if (!timeLeft) return null; // loading
+  if (expired) return <p className="text-red-500 font-semibold">Registrations Closed!</p>;
+  if (!timeLeft) return null;
+
+  const pad = (n) => String(n).padStart(2, "0");
 
   return (
-    <div className="flex space-x-4 text-white text-center mt-4">
-      <div>
-        <span className="font-bold text-2xl">{timeLeft.hours}</span>
-        <div className="text-sm">Hours</div>
-      </div>
-      <div>
-        <span className="font-bold text-2xl">{timeLeft.minutes}</span>
-        <div className="text-sm">Minutes</div>
-      </div>
-      <div>
-        <span className="font-bold text-2xl">{timeLeft.seconds}</span>
-        <div className="text-sm">Seconds</div>
-      </div>
+    <div className="flex items-center space-x-2 mt-2">
+      <span className="text-sm text-gray-600">Closes in:</span>
+      {[
+        { value: timeLeft.days, label: "d" },
+        { value: timeLeft.hours, label: "h" },
+        { value: timeLeft.minutes, label: "m" },
+        { value: timeLeft.seconds, label: "s" },
+      ].map(({ value, label }) => (
+        <span
+          key={label}
+          className="border border-red-500 text-red-500 text-sm font-semibold px-2 py-0.5 rounded-full"
+        >
+          {pad(value)}{label}
+        </span>
+      ))}
     </div>
   );
 }
