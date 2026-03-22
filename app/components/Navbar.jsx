@@ -126,7 +126,7 @@ export default function Navbar() {
 
   const links = [
     { name: "Home", href: "/" },
-    { name: "Challenges", href: "/challenges" },
+    // { name: "Challenges", href: "/challenges" },
     { name: "Gallery", href: "/gallery" },
     { name: "Leaderboard", href:"/leaderboard/republic-day-2026" },
     { name: "About", href: "/about" },
