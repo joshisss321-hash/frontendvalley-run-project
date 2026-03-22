@@ -57,9 +57,9 @@ export default function CountdownTimer() {
   const [expired, setExpired] = useState(false);
 
   useEffect(() => {
-    // Target: TODAY March 22 at 11:59:59 PM (registration closes tonight)
-    const target = new Date();
-    target.setHours(23, 59, 59, 0);
+    // Hardcode: March 23, 2026 at 00:00:00 (12:00 AM)
+    const target = new Date(2026, 2, 23, 0, 0, 0, 0); 
+    // Month is 0-indexed: 2 = March
 
     const interval = setInterval(() => {
       const diff = target.getTime() - Date.now();
