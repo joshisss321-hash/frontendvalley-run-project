@@ -589,7 +589,7 @@ export default function ChallengeCard({ event }) {
           )}
 
           <span className="inline-block text-red-600 font-semibold text-sm">
-            View Challenge →
+            {/* View Challenge → */}
           </span>
         </div>
       </div>
