@@ -847,10 +847,10 @@ function FinalCTA({ router }) {
       <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6">
         <h2 className="text-4xl sm:text-5xl font-black tracking-tight mb-5 leading-tight">Your Discipline<br />Has a Deadline.</h2>
         <p className="text-gray-400 text-base sm:text-lg mb-10 leading-relaxed">Join now. Finish strong.<br/>Earn something that reminds you who you are.</p>
-        <button onClick={() => router.push("/challenges")}
+        {/* <button onClick={() => router.push("/challenges")}
           className="bg-red-600 hover:bg-red-500 px-10 sm:px-14 py-4 sm:py-5 rounded-full font-black text-base sm:text-lg transition-all duration-200 shadow-2xl shadow-red-900/50 hover:scale-105">
           Join a Challenge →
-        </button>
+        </button> */}
         <p className="text-gray-600 text-xs mt-5">Free shipping · Real medal · Pan-India delivery</p>
       </div>
     </section>
