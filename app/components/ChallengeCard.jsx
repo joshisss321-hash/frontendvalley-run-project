@@ -553,7 +553,7 @@ export default function ChallengeCard({ event }) {
 
           <Link href={`/challenges/${event.slug}`}>
             <span className="block text-center text-gray-400 hover:text-gray-600 font-semibold text-sm transition-colors">
-              View Details →
+              {/* View Details → */}
             </span>
           </Link>
         </div>
