@@ -536,10 +536,10 @@ function ActiveChallengesSection({ events, router }) {
                     <button disabled className="w-full bg-gray-100 text-gray-400 py-3 rounded-full font-bold text-sm cursor-not-allowed border border-gray-200 mb-2">
                       Registration Closed
                     </button>
-                    <button onClick={() => router.push(`/challenges/${event.slug}`)}
+                    {/* <button onClick={() => router.push(`/challenges/${event.slug}`)}
                       className="w-full border-2 border-gray-200 hover:border-gray-400 text-gray-500 hover:text-gray-700 py-3 rounded-full font-semibold text-sm transition-colors">
-                      {/* View Details → */}
-                    </button>
+                      View Details →
+                    </button> */}
                   </>
                 ) : (
                   <div className="flex gap-3">
