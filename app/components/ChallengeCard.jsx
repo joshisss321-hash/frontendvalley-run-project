@@ -312,7 +312,7 @@ export default function ChallengeCard({ event }) {
 
           {/* ✅ FIX: View Details poori tarah hataya — koi Link/button nahi */}
           <div className="w-full py-2.5 rounded-lg text-center font-semibold text-sm text-gray-300 bg-gray-100 cursor-not-allowed select-none">
-            View Details —
+            {/* View Details — */}
           </div>
         </div>
 
