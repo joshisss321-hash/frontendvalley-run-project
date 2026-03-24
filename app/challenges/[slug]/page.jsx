@@ -248,7 +248,7 @@ export default function ChallengeDetailPage() {
                 onClick={() => router.push(`/challenges/${slug}/pricing`)}
                 className="bg-red-600 hover:bg-red-700 text-white px-10 py-4 rounded-full font-semibold text-lg transition-colors"
               >
-                View Pricing & Join Challenge
+                {/* View Pricing & Join Challenge */}
               </button>
             )}
           </div>
