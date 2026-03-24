@@ -315,10 +315,10 @@ function HeroSection({ router }) {
           Anyone can start. Very few finish. Valley Run exists for those who choose consistency over comfort.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-          <button onClick={() => router.push("/challenges")}
+          {/* <button onClick={() => router.push("/challenges")}
             className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-bold text-base transition-all duration-200 shadow-lg hover:scale-105 text-center">
             Explore Challenges →
-          </button>
+          </button> */}
           <button onClick={scrollToHowItWorks}
             className="border-2 border-white/50 hover:border-white text-white px-8 py-4 rounded-full font-bold text-base transition-all duration-200 hover:bg-white/10 text-center">
             How It Works ↓
