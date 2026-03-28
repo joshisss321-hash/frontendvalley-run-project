@@ -17,7 +17,7 @@ export default function LeaderboardPage() {
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          setEventId(data.event._id);
+          setEventId(data.event.slug);
         } else {
           setRows([]);
         }
@@ -29,7 +29,7 @@ export default function LeaderboardPage() {
     if (!eventId) return;
 
     fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/leaderboard/event/${eventId}`
+      `${process.env.NEXT_PUBLIC_API_URL}/api/leaderboard/${eventId}`
     )
       .then(res => res.json())
       .then(data => {
