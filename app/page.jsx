@@ -1430,14 +1430,15 @@ export default function HomePage() {
       .then((d) => { if (d.success) setEvents(d.events); });
   }, []);
 
-  // MongoDB se active true/false aata hai — string bhi handle karo
-  const liveEvents     = events.filter((e) => e.active === true  || e.active === "true");
-  const previousEvents = events.filter((e) => e.active === false || e.active === "false");
+  // isPrevious:true  → Previous Events section
+  // isPrevious:false/undefined → Live section
+  const liveEvents     = events.filter((e) => !e.isPrevious);
+  const previousEvents = events.filter((e) => e.isPrevious === true);
 
   return (
     <div className="bg-white text-gray-900 min-h-screen">
       <Navbar />
-      <HeroSection router={router} />
+      <HeroSection />
       <TrustBar />
       <WhyJoinSection />
       <HowItWorksSection />
@@ -1457,7 +1458,7 @@ export default function HomePage() {
 }
 
 /* ═══════════════ HERO ═══════════════ */
-function HeroSection({ router }) {
+function HeroSection() {
   const [count, setCount] = useState(0);
   useEffect(() => {
     let c = 0;
@@ -1654,33 +1655,76 @@ function ActiveChallengesSection({ events, router }) {
   );
 }
 
-/* ═══════════════ PREVIOUS EVENTS ═══════════════ */
+/* ═══════════════════════════════════════════════════════
+   PREVIOUS EVENTS
+   - Grayscale image
+   - "Completed" badge
+   - Faded / disabled look
+   - Sirf "View Results" button — no register button
+═══════════════════════════════════════════════════════ */
 function PreviousEventsSection({ events, router }) {
   return (
-    <section className="py-16 sm:py-20 bg-gray-50">
+    <section className="py-16 sm:py-20 bg-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* Header */}
         <div className="mb-10">
-          <span className="inline-block bg-gray-200 text-gray-600 text-xs font-bold tracking-widest uppercase px-4 py-1.5 rounded-full mb-4">Past Events</span>
-          <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-700">Previous Challenges</h2>
-          <p className="text-gray-400 text-sm mt-2">These events have ended. Stay tuned for the next one! 💪</p>
+          <span className="inline-block bg-gray-300 text-gray-600 text-xs font-bold tracking-widest uppercase px-4 py-1.5 rounded-full mb-4">
+            Past Events
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-500">
+            Previous Challenges
+          </h2>
+          <p className="text-gray-400 text-sm mt-2">
+            These challenges have ended. Stay tuned for the next one! 💪
+          </p>
         </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {events.map((event) => (
-            <div key={event._id}
-              className="rounded-3xl overflow-hidden border-2 border-gray-200 bg-white opacity-80 hover:opacity-100 hover:shadow-md transition-all duration-300">
-              <div className="relative h-44 overflow-hidden bg-gray-100">
-                <img src={event.coverImage || event.image} alt={event.title}
-                  className="h-full w-full object-cover grayscale" />
-                <div className="absolute inset-0 bg-black/25" />
+            <div
+              key={event._id}
+              className="rounded-3xl overflow-hidden border-2 border-gray-200 bg-white"
+              style={{ opacity: 0.75 }}
+            >
+              {/* Grayscale image with overlay */}
+              <div className="relative h-44 overflow-hidden bg-gray-200">
+                <img
+                  src={event.coverImage || event.image}
+                  alt={event.title}
+                  className="h-full w-full object-cover"
+                  style={{ filter: "grayscale(100%)" }}
+                />
+                {/* Dark overlay */}
+                <div className="absolute inset-0 bg-black/40" />
+
+                {/* Completed badge */}
                 <div className="absolute top-3 left-3">
-                  <span className="bg-gray-700 text-gray-200 text-xs font-bold px-3 py-1.5 rounded-full">✅ Ended</span>
+                  <span className="flex items-center gap-1.5 bg-gray-800 text-gray-300 text-xs font-bold px-3 py-1.5 rounded-full">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                      <circle cx="6" cy="6" r="6" fill="#4B5563"/>
+                      <path d="M3.5 6l2 2 3-3" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Completed
+                  </span>
+                </div>
+
+                {/* Event title overlay on image */}
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <p className="text-white/80 font-black text-sm leading-tight">{event.title}</p>
                 </div>
               </div>
-              <div className="p-5">
-                <h3 className="text-base font-bold text-gray-500 mb-1">{event.title}</h3>
-                <p className="text-gray-400 text-xs mb-4">{event.dates}</p>
-                <button onClick={() => router.push(`/leaderboard/${event.slug}`)}
-                  className="w-full border-2 border-gray-200 hover:border-gray-400 text-gray-500 hover:text-gray-700 py-2.5 rounded-full font-semibold text-sm transition-colors">
+
+              {/* Card body */}
+              <div className="p-5 bg-gray-50">
+                <p className="text-gray-400 text-xs mb-1 font-medium uppercase tracking-wide">Event Period</p>
+                <p className="text-gray-500 text-sm font-semibold mb-4">{event.dates}</p>
+
+                {/* View Results — only button, no register */}
+                <button
+                  onClick={() => router.push(`/leaderboard/${event.slug}`)}
+                  className="w-full border-2 border-gray-300 text-gray-400 py-2.5 rounded-full font-semibold text-sm cursor-pointer hover:border-gray-400 hover:text-gray-600 transition-colors"
+                >
                   View Results →
                 </button>
               </div>
@@ -1692,11 +1736,10 @@ function PreviousEventsSection({ events, router }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   3D MEDAL — drag/touch rotate, real front+back images
-   FIX: WebkitBackfaceVisibility, no overflow:hidden on
-   rotating faces (breaks backface in Chrome/Safari)
-══════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════
+   3D MEDAL — drag/touch rotate
+   Fix: WebkitBackfaceVisibility, no overflow:hidden on faces
+══════════════════════════════════════════ */
 function Medal3D({ event }) {
   const rotY = useRef(0);
   const rotX = useRef(-10);
@@ -1707,17 +1750,12 @@ function Medal3D({ event }) {
   const innerRef = useRef(null);
 
   const apply = () => {
-    if (innerRef.current) {
-      innerRef.current.style.transform =
-        `rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)`;
-    }
+    if (innerRef.current)
+      innerRef.current.style.transform = `rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)`;
   };
 
   useEffect(() => {
-    const tick = () => {
-      if (autoOn.current) { rotY.current += 0.45; apply(); }
-      rafId.current = requestAnimationFrame(tick);
-    };
+    const tick = () => { if (autoOn.current) { rotY.current += 0.45; apply(); } rafId.current = requestAnimationFrame(tick); };
     rafId.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId.current);
   }, []);
@@ -1728,24 +1766,18 @@ function Medal3D({ event }) {
     autoTimer.current = setTimeout(() => { autoOn.current = true; }, 2800);
   };
 
-  const onDown = (x, y) => {
-    drag.current = { active: true, lastX: x, lastY: y };
-    pauseAuto();
-  };
+  const onDown = (x, y) => { drag.current = { active: true, lastX: x, lastY: y }; pauseAuto(); };
   const onMove = (x, y) => {
     if (!drag.current.active) return;
     rotY.current += (x - drag.current.lastX) * 0.65;
     rotX.current = Math.max(-40, Math.min(40, rotX.current - (y - drag.current.lastY) * 0.4));
-    drag.current.lastX = x;
-    drag.current.lastY = y;
+    drag.current.lastX = x; drag.current.lastY = y;
     apply();
   };
   const onUp = () => { drag.current.active = false; };
 
-  // Shared face style — NO overflow:hidden (kills backfaceVisibility in Chrome)
   const faceStyle = (extra = {}) => ({
-    position: "absolute",
-    top: 0, left: 0, right: 0, bottom: 0,
+    position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
     borderRadius: "50%",
     WebkitBackfaceVisibility: "hidden",
     backfaceVisibility: "hidden",
@@ -1755,106 +1787,54 @@ function Medal3D({ event }) {
 
   return (
     <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:20 }}>
-
-      {/* Viewport */}
       <div
         style={{ width:260, height:260, perspective:"800px", cursor:"grab", userSelect:"none", position:"relative" }}
         onMouseDown={(e) => { e.preventDefault(); onDown(e.clientX, e.clientY); }}
         onMouseMove={(e) => onMove(e.clientX, e.clientY)}
-        onMouseUp={onUp}
-        onMouseLeave={onUp}
+        onMouseUp={onUp} onMouseLeave={onUp}
         onTouchStart={(e) => { e.preventDefault(); onDown(e.touches[0].clientX, e.touches[0].clientY); }}
         onTouchMove={(e) => { e.preventDefault(); onMove(e.touches[0].clientX, e.touches[0].clientY); }}
         onTouchEnd={onUp}
       >
-        {/* Spinner */}
-        <div
-          ref={innerRef}
-          style={{
-            width:"100%", height:"100%",
-            position:"relative",
-            transformStyle:"preserve-3d",
-            transform:`rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)`,
-          }}
-        >
-          {/* ── FRONT ── */}
-          <div style={faceStyle({
-            background: event.medalImage
-              ? "#111"
-              : "linear-gradient(135deg,#fde68a 0%,#f59e0b 40%,#d97706 70%,#92400e 100%)",
-            boxShadow:"0 20px 60px rgba(0,0,0,0.6), inset 0 2px 0 rgba(255,255,255,0.3)",
-          })}>
-            {event.medalImage ? (
-              <img src={event.medalImage} alt="Front" draggable={false}
-                style={{ width:"100%", height:"100%", objectFit:"cover", borderRadius:"50%", display:"block", pointerEvents:"none" }} />
-            ) : (
-              <div style={{ width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8 }}>
-                <span style={{ fontSize:52 }}>🏅</span>
-                <span style={{ color:"#78350f",fontWeight:900,fontSize:11,textAlign:"center",padding:"0 20px" }}>{event.title}</span>
-              </div>
-            )}
-            {/* shine */}
-            <div style={{ position:"absolute",inset:0,borderRadius:"50%",pointerEvents:"none",
-              background:"linear-gradient(135deg,rgba(255,255,255,0.25) 0%,transparent 45%,rgba(0,0,0,0.1) 100%)" }} />
-            {/* label */}
-            <div style={{ position:"absolute",top:8,right:10,background:"rgba(0,0,0,0.28)",backdropFilter:"blur(4px)",
-              color:"#fff",fontSize:10,fontWeight:800,padding:"2px 10px",borderRadius:999 }}>FRONT</div>
+        <div ref={innerRef} style={{ width:"100%", height:"100%", position:"relative", transformStyle:"preserve-3d", transform:`rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)` }}>
+
+          {/* FRONT */}
+          <div style={faceStyle({ background: event.medalImage ? "#111" : "linear-gradient(135deg,#fde68a,#f59e0b,#d97706,#92400e)", boxShadow:"0 20px 60px rgba(0,0,0,0.6),inset 0 2px 0 rgba(255,255,255,0.3)" })}>
+            {event.medalImage
+              ? <img src={event.medalImage} alt="Front" draggable={false} style={{ width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",display:"block",pointerEvents:"none" }} />
+              : <div style={{ width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8 }}><span style={{ fontSize:52 }}>🏅</span><span style={{ color:"#78350f",fontWeight:900,fontSize:11,textAlign:"center",padding:"0 20px" }}>{event.title}</span></div>
+            }
+            <div style={{ position:"absolute",inset:0,borderRadius:"50%",pointerEvents:"none",background:"linear-gradient(135deg,rgba(255,255,255,0.25) 0%,transparent 45%,rgba(0,0,0,0.1) 100%)" }} />
+            <div style={{ position:"absolute",top:8,right:10,background:"rgba(0,0,0,0.28)",backdropFilter:"blur(4px)",color:"#fff",fontSize:10,fontWeight:800,padding:"2px 10px",borderRadius:999 }}>FRONT</div>
           </div>
 
-          {/* ── BACK ── */}
-          <div style={faceStyle({
-            transform:"rotateY(180deg)",
-            background: event.medalImageBack
-              ? "#111"
-              : "linear-gradient(135deg,#e5e7eb 0%,#9ca3af 50%,#6b7280 100%)",
-            boxShadow:"0 20px 60px rgba(0,0,0,0.5), inset 0 2px 0 rgba(255,255,255,0.15)",
-          })}>
-            {event.medalImageBack ? (
-              <img src={event.medalImageBack} alt="Back" draggable={false}
-                style={{ width:"100%", height:"100%", objectFit:"cover", borderRadius:"50%", display:"block", pointerEvents:"none" }} />
-            ) : (
-              <div style={{ width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,padding:"0 24px" }}>
-                <div style={{ width:60,height:60,borderRadius:"50%",background:"rgba(156,163,175,0.4)",border:"3px solid #d1d5db",display:"flex",alignItems:"center",justifyContent:"center",fontSize:26 }}>🇮🇳</div>
-                <span style={{ color:"#374151",fontWeight:900,fontSize:11,textAlign:"center" }}>{event.title}</span>
-                <span style={{ color:"#6b7280",fontSize:10,textAlign:"center" }}>{event.dates}</span>
-              </div>
-            )}
-            <div style={{ position:"absolute",inset:0,borderRadius:"50%",pointerEvents:"none",
-              background:"linear-gradient(135deg,rgba(255,255,255,0.2) 0%,transparent 50%,rgba(0,0,0,0.15) 100%)" }} />
-            <div style={{ position:"absolute",top:8,right:10,background:"rgba(0,0,0,0.28)",backdropFilter:"blur(4px)",
-              color:"#fff",fontSize:10,fontWeight:800,padding:"2px 10px",borderRadius:999 }}>BACK</div>
+          {/* BACK */}
+          <div style={faceStyle({ transform:"rotateY(180deg)", background: event.medalImageBack ? "#111" : "linear-gradient(135deg,#e5e7eb,#9ca3af,#6b7280)", boxShadow:"0 20px 60px rgba(0,0,0,0.5),inset 0 2px 0 rgba(255,255,255,0.15)" })}>
+            {event.medalImageBack
+              ? <img src={event.medalImageBack} alt="Back" draggable={false} style={{ width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",display:"block",pointerEvents:"none" }} />
+              : <div style={{ width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,padding:"0 24px" }}><div style={{ width:60,height:60,borderRadius:"50%",background:"rgba(156,163,175,0.4)",border:"3px solid #d1d5db",display:"flex",alignItems:"center",justifyContent:"center",fontSize:26 }}>🇮🇳</div><span style={{ color:"#374151",fontWeight:900,fontSize:11,textAlign:"center" }}>{event.title}</span><span style={{ color:"#6b7280",fontSize:10,textAlign:"center" }}>{event.dates}</span></div>
+            }
+            <div style={{ position:"absolute",inset:0,borderRadius:"50%",pointerEvents:"none",background:"linear-gradient(135deg,rgba(255,255,255,0.2) 0%,transparent 50%,rgba(0,0,0,0.15) 100%)" }} />
+            <div style={{ position:"absolute",top:8,right:10,background:"rgba(0,0,0,0.28)",backdropFilter:"blur(4px)",color:"#fff",fontSize:10,fontWeight:800,padding:"2px 10px",borderRadius:999 }}>BACK</div>
           </div>
 
-          {/* Edge ring */}
-          <div style={{ position:"absolute",inset:0,borderRadius:"50%",
-            transform:"translateZ(-8px)",
-            background:"radial-gradient(ellipse,#b45309,#78350f)",
-            WebkitBackfaceVisibility:"hidden", backfaceVisibility:"hidden" }} />
+          {/* Edge */}
+          <div style={{ position:"absolute",inset:0,borderRadius:"50%",transform:"translateZ(-8px)",background:"radial-gradient(ellipse,#b45309,#78350f)",WebkitBackfaceVisibility:"hidden",backfaceVisibility:"hidden" }} />
         </div>
 
-        {/* Floor shadow */}
-        <div style={{ position:"absolute",bottom:-12,left:"50%",transform:"translateX(-50%)",
-          width:170,height:14,
-          background:"radial-gradient(ellipse,rgba(0,0,0,0.25) 0%,transparent 70%)",
-          filter:"blur(4px)",pointerEvents:"none" }} />
+        {/* Shadow */}
+        <div style={{ position:"absolute",bottom:-12,left:"50%",transform:"translateX(-50%)",width:170,height:14,background:"radial-gradient(ellipse,rgba(0,0,0,0.25) 0%,transparent 70%)",filter:"blur(4px)",pointerEvents:"none" }} />
       </div>
 
-      <p style={{ fontSize:12,color:"#9ca3af",display:"flex",alignItems:"center",gap:6 }}>
-        <span>👆</span> Drag or touch to rotate
-      </p>
-
+      <p style={{ fontSize:12,color:"#9ca3af",display:"flex",alignItems:"center",gap:6 }}>👆 Drag or touch to rotate</p>
       <div style={{ textAlign:"center" }}>
         <p style={{ fontWeight:900,color:"#111827",fontSize:15 }}>{event.title}</p>
         <p style={{ color:"#6b7280",fontSize:13,marginTop:2 }}>Finisher Medal</p>
       </div>
-
       <div style={{ background:"#fff",border:"2px solid #f3f4f6",borderRadius:16,padding:"16px 20px",width:240,boxShadow:"0 1px 4px rgba(0,0,0,0.06)" }}>
         <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:16 }}>
           {[["Weight","100g"],["Diameter","70mm"],["Material","Zinc Alloy"],["Delivery","Free"]].map(([k,v]) => (
-            <div key={k}>
-              <p style={{ color:"#9ca3af",fontSize:11 }}>{k}</p>
-              <p style={{ fontWeight:700,color:"#1f2937",fontSize:14,marginTop:2 }}>{v}</p>
-            </div>
+            <div key={k}><p style={{ color:"#9ca3af",fontSize:11 }}>{k}</p><p style={{ fontWeight:700,color:"#1f2937",fontSize:14,marginTop:2 }}>{v}</p></div>
           ))}
         </div>
       </div>
@@ -1870,23 +1850,16 @@ function MedalShowcaseSection({ events }) {
         <div className="text-center mb-14">
           <span className="inline-block bg-yellow-50 text-yellow-700 text-xs font-bold tracking-widest uppercase px-4 py-1.5 rounded-full mb-4 border border-yellow-200">Your Reward</span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight">What You Earn</h2>
-          <p className="mt-4 text-gray-500 text-base sm:text-lg max-w-xl mx-auto">
-            Proof beats motivation. Every finisher earns a real, heavy metal medal shipped to your door.
-          </p>
+          <p className="mt-4 text-gray-500 text-base sm:text-lg max-w-xl mx-auto">Proof beats motivation. Every finisher earns a real, heavy metal medal shipped to your door.</p>
           <p className="text-gray-400 text-sm mt-2">🖱️ Drag to rotate · 📱 Touch and drag on mobile</p>
         </div>
-
         {medalEvents.length > 0 ? (
           <div className="flex flex-wrap justify-center gap-14 sm:gap-20 mb-14">
             {medalEvents.map((event) => <Medal3D key={event._id} event={event} />)}
           </div>
         ) : (
-          <div className="text-center py-16">
-            <div className="text-5xl mb-4">🏅</div>
-            <p className="text-gray-400 font-bold">Medal images loading...</p>
-          </div>
+          <div className="text-center py-16"><div className="text-5xl mb-4">🏅</div><p className="text-gray-400 font-bold">Medal images loading...</p></div>
         )}
-
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
           {[["📦","Free Shipping","Pan India"],["⚡","Fast Delivery","7–10 days"],["🔒","Guaranteed","Or full refund"],["⭐","Premium","Zinc alloy"]].map(([e,t,s]) => (
             <div key={t} className="bg-white border-2 border-gray-100 rounded-2xl p-4 text-center shadow-sm hover:border-red-200 transition-colors">
