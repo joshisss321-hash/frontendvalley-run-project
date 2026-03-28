@@ -1440,7 +1440,7 @@ function MedalShowcaseSection({ events }) {
           </p>
           <div className="mt-3 inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2">
             <span className="text-yellow-400 text-sm">🖱️</span>
-            <span className="text-gray-400 text-sm">Drag ya touch karke medal ko 360° rotate karo</span>
+            {/* <span className="text-gray-400 text-sm">Drag ya touch karke medal ko 360° rotate karo</span> */}
           </div>
         </div>
 
