@@ -1,48 +1,84 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { API } from "@/lib/api";
+import { useEffect, useState } from 'react';
+import StatCard from '@/components/admin/StatCard';
+import { adminAPI } from '@/lib/api';
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("API:", API);
-
-    fetch(`${API}/admin/stats`)
-      .then(res => res.json())
-      .then(data => {
-        console.log("STATS DATA:", data);
-        setStats(data);
-      })
-      .catch(err => console.log(err));
+    loadStats();
   }, []);
 
-  if (!stats) return <p className="ml-64 p-6">Loading...</p>;
+  const loadStats = async () => {
+    try {
+      const result = await adminAPI.getStats();
+      if (result.success) {
+        setStats(result.stats);
+      }
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="loading-screen">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="ml-64 p-6">
-      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+    <div>
+      <div className="page-header">
+        <h1 className="page-title">Dashboard</h1>
+        <p className="page-subtitle">Welcome back! Here's your overview</p>
+      </div>
 
-      <div className="grid grid-cols-4 gap-6">
-        <div className="bg-white shadow p-4 rounded">
-          <h2 className="text-gray-500">Users</h2>
-          <p className="text-2xl font-bold">{stats.users}</p>
+      <div className="stats-grid">
+        <StatCard
+          title="Total Users"
+          value={stats?.totalUsers || 0}
+          icon="👥"
+          color="#00ff88"
+        />
+        <StatCard
+          title="Registrations"
+          value={stats?.totalRegistrations || 0}
+          icon="📝"
+          color="#ffc107"
+        />
+        <StatCard
+          title="Submissions"
+          value={stats?.totalSubmissions || 0}
+          icon="🏃"
+          color="#ff4444"
+        />
+        <StatCard
+          title="Certificates"
+          value={stats?.certificates || 0}
+          icon="🏆"
+          color="#00d4ff"
+        />
+      </div>
+
+      <div className="stats-grid">
+        <div className="card">
+          <h3 style={{ marginTop: 0, color: '#888' }}>Pending Submissions</h3>
+          <p style={{ fontSize: '32px', fontWeight: 700, margin: 0 }}>
+            {stats?.pendingSubmissions || 0}
+          </p>
         </div>
-
-        <div className="bg-white shadow p-4 rounded">
-          <h2 className="text-gray-500">Registrations</h2>
-          <p className="text-2xl font-bold">{stats.registrations}</p>
-        </div>
-
-        <div className="bg-white shadow p-4 rounded">
-          <h2 className="text-gray-500">Submissions</h2>
-          <p className="text-2xl font-bold">{stats.submissions}</p>
-        </div>
-
-        <div className="bg-white shadow p-4 rounded">
-          <h2 className="text-gray-500">Certificates</h2>
-          <p className="text-2xl font-bold">{stats.certificates}</p>
+        <div className="card">
+          <h3 style={{ marginTop: 0, color: '#888' }}>Approved Submissions</h3>
+          <p style={{ fontSize: '32px', fontWeight: 700, margin: 0 }}>
+            {stats?.approvedSubmissions || 0}
+          </p>
         </div>
       </div>
     </div>

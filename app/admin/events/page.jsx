@@ -1,72 +1,153 @@
-// "use client";
-// import Link from "next/link";
-// import { useEffect, useState } from "react";
-// import { API } from "@/lib/api";
+'use client';
 
-// export default function Events() {
-//   const [events, setEvents] = useState([]);
-
-//   useEffect(() => {
-//     fetch(`${API}/events`)
-//       .then(res => res.json())
-//       .then(d => setEvents(d.events));
-//   }, []);
-
-//   return (
-//     <div>
-//       <h1 className="text-2xl mb-4 font-bold">Events</h1>
-
-//       <Link href="/admin/events/create">
-//         <button className="bg-black text-white px-4 py-2 mb-4 rounded">
-//           + Create Event
-//         </button>
-//       </Link>
-
-//       {events.map(e => (
-//         <div key={e._id} className="bg-white p-4 mb-3 rounded shadow">
-//           <h2 className="font-bold">{e.title}</h2>
-
-//           <img src={e.coverImage} className="w-40 mt-2" />
-
-//           <Link href={`/admin/events/edit/${e._id}`}>
-//             <button className="text-blue-500 mt-2">Edit</button>
-//           </Link>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// }
-"use client";
-
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { adminAPI } from '@/lib/api';
 
 export default function EventsPage() {
+  const router = useRouter();
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`)
-      .then(res => res.json())
-      .then(data => {
-        console.log("API DATA:", data);
-        setEvents(data.events || []);
-      })
-      .catch(err => console.log(err));
+    loadEvents();
   }, []);
 
-  return (
-    <div className="ml-64 p-6">
-      <h1 className="text-2xl font-bold mb-4">Events</h1>
+  const loadEvents = async () => {
+    try {
+      const result = await adminAPI.getEvents();
+      if (result.success) {
+        setEvents(result.events);
+      }
+    } catch (error) {
+      console.error('Error loading events:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      {events.length === 0 ? (
-        <p>No events found</p>
-      ) : (
-        events.map((e) => (
-          <div key={e._id} className="p-4 bg-white shadow mb-3">
-            <h2 className="font-bold">{e.title}</h2>
-            <p>{e.dates}</p>
-          </div>
-        ))
-      )}
+  const handleDelete = async (id) => {
+    if (!confirm('Are you sure you want to delete this event?')) return;
+
+    try {
+      const result = await adminAPI.deleteEvent(id);
+      if (result.success) {
+        loadEvents();
+      } else {
+        alert('Failed to delete event');
+      }
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      alert('Failed to delete event');
+    }
+  };
+
+  const toggleStatus = async (event) => {
+    try {
+      const result = await adminAPI.updateEvent(event._id, {
+        isActive: !event.isActive
+      });
+      if (result.success) {
+        loadEvents();
+      }
+    } catch (error) {
+      console.error('Error updating event:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="loading-screen">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h1 className="page-title">Events</h1>
+          <p className="page-subtitle">Manage all your events</p>
+        </div>
+        <button 
+          className="btn btn-primary"
+          onClick={() => router.push('/admin/events/create')}
+        >
+          + Create Event
+        </button>
+      </div>
+
+      <div className="table-container">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Slug</th>
+              <th>Price</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {events.length === 0 ? (
+              <tr>
+                <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
+                  No events found
+                </td>
+              </tr>
+            ) : (
+              events.map((event) => (
+                <tr key={event._id}>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      {event.heroImage && (
+                        <img 
+                          src={event.heroImage} 
+                          alt={event.title}
+                          style={{ width: '50px', height: '50px', borderRadius: '8px', objectFit: 'cover' }}
+                        />
+                      )}
+                      <span>{event.title}</span>
+                    </div>
+                  </td>
+                  <td>{event.slug}</td>
+                  <td>₹{event.price}</td>
+                  <td>
+                    <span 
+                      className={`badge ${event.isActive ? 'badge-success' : 'badge-warning'}`}
+                      onClick={() => toggleStatus(event)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {event.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                  </td>
+                  <td>{new Date(event.createdAt).toLocaleDateString()}</td>
+                  <td>
+                    <div className="actions">
+                      <button
+                        className="action-btn"
+                        style={{ background: '#00ff88', color: '#0a0a0a' }}
+                        onClick={() => router.push(`/admin/events/edit/${event._id}`)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="action-btn"
+                        style={{ background: '#ff4444', color: 'white' }}
+                        onClick={() => handleDelete(event._id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
