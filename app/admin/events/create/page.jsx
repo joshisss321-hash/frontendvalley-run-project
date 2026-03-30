@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminAPI } from '@/lib/api';
-import ImageUpload from '@/components/admin/ImageUpload';
-
+import ImageUpload from "../../../components/admin/ImageUpload";
 export default function CreateEventPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);

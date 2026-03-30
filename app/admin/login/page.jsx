@@ -6,10 +6,12 @@ import { adminAPI } from '@/lib/api';
 
 export default function AdminLogin() {
   const router = useRouter();
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -19,16 +21,27 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const result = await adminAPI.login(formData.email, formData.password);
-      
+      // ✅ FIXED LOGIN CALL
+      const result = await adminAPI.login({
+        email: formData.email,
+        password: formData.password
+      });
+
+      console.log("LOGIN RESPONSE:", result);
+
       if (result.success) {
-        localStorage.setItem('admin_token', result.token);
+        // ✅ SAVE TOKEN (BOTH)
+        localStorage.setItem('adminToken', result.token);
+        document.cookie = `adminToken=${result.token}; path=/; max-age=86400`;
+
+        // ✅ REDIRECT
         router.push('/admin/dashboard');
       } else {
-        setError(result.message || 'Login failed');
+        setError(result.message || 'Invalid credentials');
       }
-    } catch (error) {
-      setError('An error occurred. Please try again.');
+    } catch (err) {
+      console.error(err);
+      setError('Server error. Check backend/API URL');
     } finally {
       setLoading(false);
     }
@@ -37,99 +50,116 @@ export default function AdminLogin() {
   return (
     <div className="login-container">
       <div className="login-card">
+
         <div className="login-header">
           <h1 className="login-title">🔥 Admin Panel</h1>
           <p className="login-subtitle">Sign in to continue</p>
         </div>
 
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
+        {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit}>
+          
           <div className="form-group">
-            <label className="form-label">Email</label>
+            <label>Email</label>
             <input
               type="email"
-              className="form-input"
               placeholder="admin@example.com"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
               required
             />
           </div>
 
           <div className="form-group">
-            <label className="form-label">Password</label>
+            <label>Password</label>
             <input
               type="password"
-              className="form-input"
               placeholder="••••••••"
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
               required
             />
           </div>
 
-          <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
+          <button type="submit" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
+
         </form>
       </div>
 
+      {/* 🔥 PREMIUM CSS */}
       <style jsx>{`
         .login-container {
           min-height: 100vh;
           display: flex;
-          align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-          padding: 20px;
+          align-items: center;
+          background: linear-gradient(135deg, #000, #111);
         }
 
         .login-card {
           width: 100%;
-          max-width: 450px;
-          background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-          border: 1px solid #333;
+          max-width: 420px;
+          padding: 40px;
           border-radius: 20px;
-          padding: 50px;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-        }
-
-        .login-header {
-          text-align: center;
-          margin-bottom: 40px;
+          background: #111;
+          box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
         }
 
         .login-title {
-          font-size: 32px;
-          font-weight: 700;
+          font-size: 28px;
           color: #00ff88;
-          margin: 0 0 10px 0;
-        }
-
-        .login-subtitle {
-          color: #888;
-          font-size: 16px;
-          margin: 0;
-        }
-
-        .error-message {
-          background: rgba(255, 68, 68, 0.1);
-          border: 1px solid #ff4444;
-          border-radius: 8px;
-          padding: 12px;
-          color: #ff4444;
-          margin-bottom: 24px;
           text-align: center;
         }
 
-        .btn-full {
+        .login-subtitle {
+          text-align: center;
+          color: #aaa;
+          margin-bottom: 30px;
+        }
+
+        .form-group {
+          margin-bottom: 20px;
+        }
+
+        input {
           width: 100%;
-          margin-top: 10px;
+          padding: 12px;
+          border-radius: 10px;
+          border: 1px solid #333;
+          background: #000;
+          color: white;
+        }
+
+        button {
+          width: 100%;
+          padding: 14px;
+          border: none;
+          border-radius: 10px;
+          background: #00ff88;
+          color: black;
+          font-weight: bold;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+
+        button:hover {
+          background: #00cc6a;
+        }
+
+        .error-message {
+          background: rgba(255,0,0,0.1);
+          color: red;
+          padding: 10px;
+          margin-bottom: 15px;
+          border-radius: 8px;
+          text-align: center;
         }
       `}</style>
     </div>
