@@ -1,121 +1,39 @@
 "use client";
-export const dynamic = "force-dynamic";
-
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import EventForm from "../../components/EventForm";
+import { API } from "@/lib/api";
 
-export default function EditEventPage() {
+export default function EditEvent() {
+
   const { id } = useParams();
-  const router = useRouter();
-
-  const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState({
-    title: "",
-    slug: "",
-    description: "",
-    dates: "",
-    price: "",
-    image: "",
-    medalImage: "",
-    coverImage: "",
-    gallery: [],
-  });
+  const [form, setForm] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("adminToken");
-    if (!token) {
-      router.push("/admin/login");
-      return;
-    }
-
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/events/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    fetch(`${API}/events`)
       .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          setForm({
-            title: data.event.title || "",
-            slug: data.event.slug || "",
-            description: data.event.description || "",
-            dates: data.event.dates || "",
-            price: data.event.price || "",
-            image: data.event.image || "",
-            medalImage: data.event.medalImage || "",
-            coverImage: data.event.coverImage || "",
-            gallery: data.event.gallery || [],
-          });
-        } else {
-          alert("Failed to load event");
-        }
-        setLoading(false);
+      .then(d => {
+        const event = d.events.find(e => e._id === id);
+        setForm(event);
       });
-  }, [id, router]);
+  }, [id]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+  const updateEvent = async (data) => {
+    await fetch(`${API}/admin/events/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    alert("Updated");
   };
 
-  const saveChanges = async () => {
-    const token = localStorage.getItem("adminToken");
-
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/admin/events/${id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(form),
-      }
-    );
-
-    const data = await res.json();
-    if (data.success) {
-      alert("Event updated successfully");
-      router.push("/admin/dashboard");
-    } else {
-      alert("Update failed");
-    }
-  };
-
-  if (loading) {
-    return <div className="p-10">Loading event data...</div>;
-  }
+  if (!form) return <p>Loading...</p>;
 
   return (
-    <div className="p-10 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Edit Event</h1>
-
-      <input className="input" name="title" value={form.title} onChange={handleChange} placeholder="Title" />
-      <input className="input" name="slug" value={form.slug} onChange={handleChange} placeholder="Slug" />
-      <textarea className="input" name="description" value={form.description} onChange={handleChange} placeholder="Description" />
-      <input className="input" name="dates" value={form.dates} onChange={handleChange} placeholder="Dates" />
-      <input className="input" name="price" value={form.price} onChange={handleChange} placeholder="Price" />
-
-      <input className="input" name="image" value={form.image} onChange={handleChange} placeholder="Event Cover Image URL" />
-      <input className="input" name="medalImage" value={form.medalImage} onChange={handleChange} placeholder="Medal Image URL" />
-      <input className="input" name="coverImage" value={form.coverImage} onChange={handleChange} placeholder="Hero Image URL" />
-
-      <input
-        className="input"
-        placeholder="Gallery images (comma separated)"
-        value={form.gallery.join(",")}
-        onChange={(e) =>
-          setForm({ ...form, gallery: e.target.value.split(",") })
-        }
-      />
-
-      <button
-        onClick={saveChanges}
-        className="mt-6 bg-black text-white px-6 py-3 rounded"
-      >
-        Save Changes
-      </button>
+    <div>
+      <h1>Edit Event</h1>
+      <EventForm initialData={form} onSubmit={updateEvent} />
     </div>
   );
 }
