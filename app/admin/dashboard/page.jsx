@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import StatCard from '@/components/admin/StatCard';
+import StatCard from "../../components/admin/StatCard";
 import { adminAPI } from '@/lib/api';
 
 export default function Dashboard() {
