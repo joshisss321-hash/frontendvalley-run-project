@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { adminAPI } from '@/lib/api';
-import ImageUpload from '@/components/admin/ImageUpload';
+import ImageUpload from '@/app/components/admin/ImageUpload'
 
 export default function EditEventPage() {
   const router = useRouter();
