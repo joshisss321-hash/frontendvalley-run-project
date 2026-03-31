@@ -315,7 +315,7 @@ export default function RegisterPage() {
     form.phone === form.phone2 &&
     form.address1 &&
     form.address2 &&
-    form.landmark&&
+    form.landmark &&
     form.pincode &&
     form.city &&
     form.state &&
