@@ -403,7 +403,7 @@ export default function RegisterPage() {
   name="category" 
   value={form.category}   // ✅ yeh sahi hai
   onChange={handleChange}
-  className="w-full p-2 rounded bg-white"
+  className="w-full p-2 rounded bg-slate-300"
 >
   <option value="">Select Category *</option>
 
