@@ -392,29 +392,36 @@ export default function RegisterPage() {
 
             <Input name="address1" placeholder="House / Flat *" onChange={handleChange} />
             <Input name="address2" placeholder="Street / Area *" onChange={handleChange} />
-            <Input name="landmark" placeholder="Landmark" onChange={handleChange} />
+            <Input name="landmark" placeholder="Landmark *" onChange={handleChange} />
             <Input name="pincode" placeholder="Pincode *" onChange={handleChange} />
             <Input name="city" placeholder="City *" onChange={handleChange} />
             <Input name="state" placeholder="State *" onChange={handleChange} />
 
             <div>
             <label>Select Challenge Category *</label>
-            <select name="category" value={formData.category} onChange={handleChange}
-              className="w-full p-2 rounded bg-gray-700">
-              <optgroup label="Running/Cycling">
-                <option>Running 1600mtr</option>
-                <option>Running 3.2Km</option>
-                <option>Running 5Km</option>
-                <option>Running 10Km</option>
-                <option>Running 21Km</option>
-              </optgroup>
-              <optgroup label="Cycling">
-                <option>Cycling 10Km</option>
-                <option>Cycling 25Km</option>
-                <option>Cycling 50Km</option>
-                <option>Cycling 100Km</option>
-              </optgroup>
-            </select>
+           <select 
+  name="category" 
+  value={form.category}   // ✅ yeh sahi hai
+  onChange={handleChange}
+  className="w-full p-2 rounded bg-gray-700"
+>
+  <option value="">Select Category *</option>
+
+  <optgroup label="Running">
+    <option>Running 1600mtr</option>
+    <option>Running 3.2Km</option>
+    <option>Running 5Km</option>
+    <option>Running 10Km</option>
+    <option>Running 21Km</option>
+  </optgroup>
+
+  <optgroup label="Cycling">
+    <option>Cycling 10Km</option>
+    <option>Cycling 25Km</option>
+    <option>Cycling 50Km</option>
+    <option>Cycling 100Km</option>
+  </optgroup>
+</select>
           </div>
 
 
