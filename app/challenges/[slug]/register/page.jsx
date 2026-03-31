@@ -368,6 +368,7 @@ export default function RegisterPage() {
           <p className="text-gray-600">
             Step 1: Fill the registration form <br />
             Step 2: Complete payment to confirm your entry
+            Registration will be considered successful only after payment completion and redirection to the success page. Without confirmation, your entry will not be saved.
           </p>
         </div>
 
@@ -400,7 +401,7 @@ export default function RegisterPage() {
             <label>Select Challenge Category *</label>
             <select name="category" value={formData.category} onChange={handleChange}
               className="w-full p-2 rounded bg-gray-700">
-              <optgroup label="Running/Walking">
+              <optgroup label="Running/Cycling">
                 <option>Running 1600mtr</option>
                 <option>Running 3.2Km</option>
                 <option>Running 5Km</option>
