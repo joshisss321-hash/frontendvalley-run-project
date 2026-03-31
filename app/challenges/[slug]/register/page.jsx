@@ -315,6 +315,7 @@ export default function RegisterPage() {
     form.phone === form.phone2 &&
     form.address1 &&
     form.address2 &&
+    form.landmark&&
     form.pincode &&
     form.city &&
     form.state &&
@@ -395,18 +396,26 @@ export default function RegisterPage() {
             <Input name="city" placeholder="City *" onChange={handleChange} />
             <Input name="state" placeholder="State *" onChange={handleChange} />
 
-            <h2 className="text-2xl font-bold pt-6">
-              Challenge Details
-            </h2>
-
-            <select name="category" onChange={handleChange} className="input">
-              <option value="">Select Category *</option>
-              <option>1600 mtr</option>
-              <option>3.2 Km</option>
-              <option>5 Km</option>
-              <option>10 Km</option>
-              <option>21 Km</option>
+            <div>
+            <label>Select Challenge Category *</label>
+            <select name="category" value={formData.category} onChange={handleChange}
+              className="w-full p-2 rounded bg-gray-700">
+              <optgroup label="Running/Walking">
+                <option>Running 1600mtr</option>
+                <option>Running 3.2Km</option>
+                <option>Running 5Km</option>
+                <option>Running 10Km</option>
+                <option>Running 21Km</option>
+              </optgroup>
+              <optgroup label="Cycling">
+                <option>Cycling 10Km</option>
+                <option>Cycling 25Km</option>
+                <option>Cycling 50Km</option>
+                <option>Cycling 100Km</option>
+              </optgroup>
             </select>
+          </div>
+
 
             <select name="source" onChange={handleChange} className="input">
               <option value="">How did you find us? *</option>
