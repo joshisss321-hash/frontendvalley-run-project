@@ -1189,6 +1189,107 @@ function PreviousEventsSection({ events, router }) {
    3D MEDAL — drag/touch rotate
    Fix: WebkitBackfaceVisibility, no overflow:hidden on faces
 ══════════════════════════════════════════ */
+// function Medal3D({ event }) {
+//   const rotY = useRef(0);
+//   const rotX = useRef(-10);
+//   const drag = useRef({ active: false, lastX: 0, lastY: 0 });
+//   const autoOn = useRef(true);
+//   const rafId = useRef(null);
+//   const autoTimer = useRef(null);
+//   const innerRef = useRef(null);
+
+//   const apply = () => {
+//     if (innerRef.current)
+//       innerRef.current.style.transform = `rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)`;
+//   };
+
+//   useEffect(() => {
+//     const tick = () => { if (autoOn.current) { rotY.current += 0.45; apply(); } rafId.current = requestAnimationFrame(tick); };
+//     rafId.current = requestAnimationFrame(tick);
+//     return () => cancelAnimationFrame(rafId.current);
+//   }, []);
+
+//   const pauseAuto = () => {
+//     autoOn.current = false;
+//     clearTimeout(autoTimer.current);
+//     autoTimer.current = setTimeout(() => { autoOn.current = true; }, 2800);
+//   };
+
+//   const onDown = (x, y) => { drag.current = { active: true, lastX: x, lastY: y }; pauseAuto(); };
+//   const onMove = (x, y) => {
+//     if (!drag.current.active) return;
+//     rotY.current += (x - drag.current.lastX) * 0.65;
+//     rotX.current = Math.max(-40, Math.min(40, rotX.current - (y - drag.current.lastY) * 0.4));
+//     drag.current.lastX = x; drag.current.lastY = y;
+//     apply();
+//   };
+//   const onUp = () => { drag.current.active = false; };
+
+//   const faceStyle = (extra = {}) => ({
+//     position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+//     borderRadius: "50%",
+//     WebkitBackfaceVisibility: "hidden",
+//     backfaceVisibility: "hidden",
+//     willChange: "transform",
+//     ...extra,
+//   });
+
+//   return (
+//     <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:20 }}>
+//       <div
+//         style={{ width:260, height:260, perspective:"800px", cursor:"grab", userSelect:"none", position:"relative" }}
+//         onMouseDown={(e) => { e.preventDefault(); onDown(e.clientX, e.clientY); }}
+//         onMouseMove={(e) => onMove(e.clientX, e.clientY)}
+//         onMouseUp={onUp} onMouseLeave={onUp}
+//         onTouchStart={(e) => { e.preventDefault(); onDown(e.touches[0].clientX, e.touches[0].clientY); }}
+//         onTouchMove={(e) => { e.preventDefault(); onMove(e.touches[0].clientX, e.touches[0].clientY); }}
+//         onTouchEnd={onUp}
+//       >
+//         <div ref={innerRef} style={{ width:"100%", height:"100%", position:"relative", transformStyle:"preserve-3d", transform:`rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)` }}>
+
+//           {/* FRONT */}
+//           <div style={faceStyle({ background: event.medalImage ? "#111" : "linear-gradient(135deg,#fde68a,#f59e0b,#d97706,#92400e)", boxShadow:"0 20px 60px rgba(0,0,0,0.6),inset 0 2px 0 rgba(255,255,255,0.3)" })}>
+//             {event.medalImage
+//               ? <img src={event.medalImage} alt="Front" draggable={false} style={{ width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",display:"block",pointerEvents:"none" }} />
+//               : <div style={{ width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8 }}><span style={{ fontSize:52 }}>🏅</span><span style={{ color:"#78350f",fontWeight:900,fontSize:11,textAlign:"center",padding:"0 20px" }}>{event.title}</span></div>
+//             }
+//             <div style={{ position:"absolute",inset:0,borderRadius:"50%",pointerEvents:"none",background:"linear-gradient(135deg,rgba(255,255,255,0.25) 0%,transparent 45%,rgba(0,0,0,0.1) 100%)" }} />
+//             <div style={{ position:"absolute",top:8,right:10,background:"rgba(0,0,0,0.28)",backdropFilter:"blur(4px)",color:"#fff",fontSize:10,fontWeight:800,padding:"2px 10px",borderRadius:999 }}>FRONT</div>
+//           </div>
+
+//           {/* BACK */}
+//           <div style={faceStyle({ transform:"rotateY(180deg)", background: event.medalImageBack ? "#111" : "linear-gradient(135deg,#e5e7eb,#9ca3af,#6b7280)", boxShadow:"0 20px 60px rgba(0,0,0,0.5),inset 0 2px 0 rgba(255,255,255,0.15)" })}>
+//             {event.medalImageBack
+//               ? <img src={event.medalImageBack} alt="Back" draggable={false} style={{ width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",display:"block",pointerEvents:"none" }} />
+//               : <div style={{ width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,padding:"0 24px" }}><div style={{ width:60,height:60,borderRadius:"50%",background:"rgba(156,163,175,0.4)",border:"3px solid #d1d5db",display:"flex",alignItems:"center",justifyContent:"center",fontSize:26 }}>🇮🇳</div><span style={{ color:"#374151",fontWeight:900,fontSize:11,textAlign:"center" }}>{event.title}</span><span style={{ color:"#6b7280",fontSize:10,textAlign:"center" }}>{event.dates}</span></div>
+//             }
+//             <div style={{ position:"absolute",inset:0,borderRadius:"50%",pointerEvents:"none",background:"linear-gradient(135deg,rgba(255,255,255,0.2) 0%,transparent 50%,rgba(0,0,0,0.15) 100%)" }} />
+//             <div style={{ position:"absolute",top:8,right:10,background:"rgba(0,0,0,0.28)",backdropFilter:"blur(4px)",color:"#fff",fontSize:10,fontWeight:800,padding:"2px 10px",borderRadius:999 }}>BACK</div>
+//           </div>
+
+//           {/* Edge */}
+//           <div style={{ position:"absolute",inset:0,borderRadius:"50%",transform:"translateZ(-8px)",background:"radial-gradient(ellipse,#b45309,#78350f)",WebkitBackfaceVisibility:"hidden",backfaceVisibility:"hidden" }} />
+//         </div>
+
+//         {/* Shadow */}
+//         <div style={{ position:"absolute",bottom:-12,left:"50%",transform:"translateX(-50%)",width:170,height:14,background:"radial-gradient(ellipse,rgba(0,0,0,0.25) 0%,transparent 70%)",filter:"blur(4px)",pointerEvents:"none" }} />
+//       </div>
+
+//       <p style={{ fontSize:12,color:"#9ca3af",display:"flex",alignItems:"center",gap:6 }}>👆 Drag or touch to rotate</p>
+//       <div style={{ textAlign:"center" }}>
+//         <p style={{ fontWeight:900,color:"#111827",fontSize:15 }}>{event.title}</p>
+//         <p style={{ color:"#6b7280",fontSize:13,marginTop:2 }}>Finisher Medal</p>
+//       </div>
+//       <div style={{ background:"#fff",border:"2px solid #f3f4f6",borderRadius:16,padding:"16px 20px",width:240,boxShadow:"0 1px 4px rgba(0,0,0,0.06)" }}>
+//         <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:16 }}>
+//           {[["Weight","100g"],["Diameter","70mm"],["Material","Zinc Alloy"],["Delivery","Free"]].map(([k,v]) => (
+//             <div key={k}><p style={{ color:"#9ca3af",fontSize:11 }}>{k}</p><p style={{ fontWeight:700,color:"#1f2937",fontSize:14,marginTop:2 }}>{v}</p></div>
+//           ))}
+//         </div>
+//       </div>
+//     </div>
+//   );
+//}
 function Medal3D({ event }) {
   const rotY = useRef(0);
   const rotX = useRef(-10);
@@ -1204,7 +1305,10 @@ function Medal3D({ event }) {
   };
 
   useEffect(() => {
-    const tick = () => { if (autoOn.current) { rotY.current += 0.45; apply(); } rafId.current = requestAnimationFrame(tick); };
+    const tick = () => {
+      if (autoOn.current) { rotY.current += 0.45; apply(); }
+      rafId.current = requestAnimationFrame(tick);
+    };
     rafId.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId.current);
   }, []);
@@ -1227,7 +1331,7 @@ function Medal3D({ event }) {
 
   const faceStyle = (extra = {}) => ({
     position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
-    borderRadius: "50%",
+    background: "transparent",
     WebkitBackfaceVisibility: "hidden",
     backfaceVisibility: "hidden",
     willChange: "transform",
@@ -1237,7 +1341,7 @@ function Medal3D({ event }) {
   return (
     <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:20 }}>
       <div
-        style={{ width:260, height:260, perspective:"800px", cursor:"grab", userSelect:"none", position:"relative" }}
+        style={{ width:340, height:420, perspective:"900px", cursor:"grab", userSelect:"none", position:"relative" }}
         onMouseDown={(e) => { e.preventDefault(); onDown(e.clientX, e.clientY); }}
         onMouseMove={(e) => onMove(e.clientX, e.clientY)}
         onMouseUp={onUp} onMouseLeave={onUp}
@@ -1245,45 +1349,98 @@ function Medal3D({ event }) {
         onTouchMove={(e) => { e.preventDefault(); onMove(e.touches[0].clientX, e.touches[0].clientY); }}
         onTouchEnd={onUp}
       >
-        <div ref={innerRef} style={{ width:"100%", height:"100%", position:"relative", transformStyle:"preserve-3d", transform:`rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)` }}>
-
+        <div
+          ref={innerRef}
+          style={{
+            width:"100%", height:"100%",
+            position:"relative",
+            transformStyle:"preserve-3d",
+            transform:`rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)`
+          }}
+        >
           {/* FRONT */}
-          <div style={faceStyle({ background: event.medalImage ? "#111" : "linear-gradient(135deg,#fde68a,#f59e0b,#d97706,#92400e)", boxShadow:"0 20px 60px rgba(0,0,0,0.6),inset 0 2px 0 rgba(255,255,255,0.3)" })}>
+          <div style={faceStyle({ background:"#fff" })}>
             {event.medalImage
-              ? <img src={event.medalImage} alt="Front" draggable={false} style={{ width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",display:"block",pointerEvents:"none" }} />
-              : <div style={{ width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8 }}><span style={{ fontSize:52 }}>🏅</span><span style={{ color:"#78350f",fontWeight:900,fontSize:11,textAlign:"center",padding:"0 20px" }}>{event.title}</span></div>
+              ? <img
+                  src={event.medalImage}
+                  alt="Front"
+                  draggable={false}
+                  style={{
+                    width:"100%", height:"100%",
+                    objectFit:"contain",
+                    mixBlendMode:"multiply",
+                    display:"block",
+                    pointerEvents:"none"
+                  }}
+                />
+              : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  <span style={{ fontSize:52 }}>🏅</span>
+                </div>
             }
-            <div style={{ position:"absolute",inset:0,borderRadius:"50%",pointerEvents:"none",background:"linear-gradient(135deg,rgba(255,255,255,0.25) 0%,transparent 45%,rgba(0,0,0,0.1) 100%)" }} />
-            <div style={{ position:"absolute",top:8,right:10,background:"rgba(0,0,0,0.28)",backdropFilter:"blur(4px)",color:"#fff",fontSize:10,fontWeight:800,padding:"2px 10px",borderRadius:999 }}>FRONT</div>
+            <div style={{
+              position:"absolute", top:8, right:10,
+              background:"rgba(0,0,0,0.28)", backdropFilter:"blur(4px)",
+              color:"#fff", fontSize:10, fontWeight:800,
+              padding:"2px 10px", borderRadius:999
+            }}>FRONT</div>
           </div>
 
           {/* BACK */}
-          <div style={faceStyle({ transform:"rotateY(180deg)", background: event.medalImageBack ? "#111" : "linear-gradient(135deg,#e5e7eb,#9ca3af,#6b7280)", boxShadow:"0 20px 60px rgba(0,0,0,0.5),inset 0 2px 0 rgba(255,255,255,0.15)" })}>
+          <div style={faceStyle({ transform:"rotateY(180deg)", background:"#fff" })}>
             {event.medalImageBack
-              ? <img src={event.medalImageBack} alt="Back" draggable={false} style={{ width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",display:"block",pointerEvents:"none" }} />
-              : <div style={{ width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,padding:"0 24px" }}><div style={{ width:60,height:60,borderRadius:"50%",background:"rgba(156,163,175,0.4)",border:"3px solid #d1d5db",display:"flex",alignItems:"center",justifyContent:"center",fontSize:26 }}>🇮🇳</div><span style={{ color:"#374151",fontWeight:900,fontSize:11,textAlign:"center" }}>{event.title}</span><span style={{ color:"#6b7280",fontSize:10,textAlign:"center" }}>{event.dates}</span></div>
+              ? <img
+                  src={event.medalImageBack}
+                  alt="Back"
+                  draggable={false}
+                  style={{
+                    width:"100%", height:"100%",
+                    objectFit:"contain",
+                    mixBlendMode:"multiply",
+                    display:"block",
+                    pointerEvents:"none"
+                  }}
+                />
+              : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  <span style={{ fontSize:52 }}>🏅</span>
+                </div>
             }
-            <div style={{ position:"absolute",inset:0,borderRadius:"50%",pointerEvents:"none",background:"linear-gradient(135deg,rgba(255,255,255,0.2) 0%,transparent 50%,rgba(0,0,0,0.15) 100%)" }} />
-            <div style={{ position:"absolute",top:8,right:10,background:"rgba(0,0,0,0.28)",backdropFilter:"blur(4px)",color:"#fff",fontSize:10,fontWeight:800,padding:"2px 10px",borderRadius:999 }}>BACK</div>
+            <div style={{
+              position:"absolute", top:8, right:10,
+              background:"rgba(0,0,0,0.28)", backdropFilter:"blur(4px)",
+              color:"#fff", fontSize:10, fontWeight:800,
+              padding:"2px 10px", borderRadius:999
+            }}>BACK</div>
           </div>
-
-          {/* Edge */}
-          <div style={{ position:"absolute",inset:0,borderRadius:"50%",transform:"translateZ(-8px)",background:"radial-gradient(ellipse,#b45309,#78350f)",WebkitBackfaceVisibility:"hidden",backfaceVisibility:"hidden" }} />
         </div>
 
         {/* Shadow */}
-        <div style={{ position:"absolute",bottom:-12,left:"50%",transform:"translateX(-50%)",width:170,height:14,background:"radial-gradient(ellipse,rgba(0,0,0,0.25) 0%,transparent 70%)",filter:"blur(4px)",pointerEvents:"none" }} />
+        <div style={{
+          position:"absolute", bottom:-12, left:"50%",
+          transform:"translateX(-50%)",
+          width:200, height:14,
+          background:"radial-gradient(ellipse,rgba(0,0,0,0.2) 0%,transparent 70%)",
+          filter:"blur(4px)", pointerEvents:"none"
+        }} />
       </div>
 
-      <p style={{ fontSize:12,color:"#9ca3af",display:"flex",alignItems:"center",gap:6 }}>👆 Drag or touch to rotate</p>
+      <p style={{ fontSize:12, color:"#9ca3af", display:"flex", alignItems:"center", gap:6 }}>
+        👆 Drag or touch to rotate
+      </p>
       <div style={{ textAlign:"center" }}>
-        <p style={{ fontWeight:900,color:"#111827",fontSize:15 }}>{event.title}</p>
-        <p style={{ color:"#6b7280",fontSize:13,marginTop:2 }}>Finisher Medal</p>
+        <p style={{ fontWeight:900, color:"#111827", fontSize:15 }}>{event.title}</p>
+        <p style={{ color:"#6b7280", fontSize:13, marginTop:2 }}>Finisher Medal</p>
       </div>
-      <div style={{ background:"#fff",border:"2px solid #f3f4f6",borderRadius:16,padding:"16px 20px",width:240,boxShadow:"0 1px 4px rgba(0,0,0,0.06)" }}>
-        <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:16 }}>
+      <div style={{
+        background:"#fff", border:"2px solid #f3f4f6",
+        borderRadius:16, padding:"16px 20px", width:240,
+        boxShadow:"0 1px 4px rgba(0,0,0,0.06)"
+      }}>
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16 }}>
           {[["Weight","100g"],["Diameter","70mm"],["Material","Zinc Alloy"],["Delivery","Free"]].map(([k,v]) => (
-            <div key={k}><p style={{ color:"#9ca3af",fontSize:11 }}>{k}</p><p style={{ fontWeight:700,color:"#1f2937",fontSize:14,marginTop:2 }}>{v}</p></div>
+            <div key={k}>
+              <p style={{ color:"#9ca3af", fontSize:11 }}>{k}</p>
+              <p style={{ fontWeight:700, color:"#1f2937", fontSize:14, marginTop:2 }}>{v}</p>
+            </div>
           ))}
         </div>
       </div>

@@ -20,7 +20,7 @@ export default function EventCard({ event }) {
           href={`/challenges/${event.slug}`}
           className="inline-block mt-4 text-accent font-semibold"
         >
-          {/* View Details → */}
+          View Details →
         </Link>
       </div>
     </div>
