@@ -115,7 +115,7 @@ export default function MedalReviewSubmission() {
           <p style={{ fontFamily: "'Mulish',sans-serif", color: "rgba(255,255,255,0.65)", fontSize: "15px", lineHeight: "1.75" }}>
             Your review has been successfully submitted.<br />
             <span style={{ color: "#f6d365", fontWeight: "600" }}>
-              You may be featured on our official Instagram page.
+              You will be featured on our official Instagram page.
             </span>
           </p>
 
@@ -386,7 +386,7 @@ export default function MedalReviewSubmission() {
           color: "rgba(255,255,255,0.18)", fontSize: "10px",
           letterSpacing: "1.5px", textTransform: "uppercase"
         }}>
-          Shaheed Diwas Tribute Run · Valley Run Project
+          Shaheed Diwas Tribute Run · Valley Run 
         </p>
 
       </div>
