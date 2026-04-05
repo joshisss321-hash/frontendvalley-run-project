@@ -911,7 +911,7 @@ function HeroSection() {
   const [count, setCount] = useState(0);
   useEffect(() => {
     let c = 0;
-    const t = setInterval(() => { c += 2; if (c >= 100) { setCount(100); clearInterval(t); } else setCount(c); }, 30);
+    const t = setInterval(() => { c += 2; if (c >= 100) { setCount(500); clearInterval(t); } else setCount(c); }, 30);
     return () => clearInterval(t);
   }, []);
 
@@ -941,7 +941,7 @@ function HeroSection() {
           How It Works ↓
         </button>
         <div className="flex flex-wrap gap-6 sm:gap-10 mt-12 pt-8 border-t border-white/20">
-          {[["100+", "Runners"], ["Pan India", "Delivery"], ["100%", "Real Medals"]].map(([n, l]) => (
+          {[["500+", "Runners"], ["Pan India", "Delivery"], ["100%", "Real Medals"]].map(([n, l]) => (
             <div key={l}>
               <div className="text-xl sm:text-2xl font-black text-white">{n}</div>
               <div className="text-xs text-white/50 uppercase tracking-widest mt-0.5">{l}</div>
