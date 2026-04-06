@@ -1418,7 +1418,7 @@ const REVIEWS = [
     name: "Jayanth Reddy",
     instaId: "jayanth_kumar_reddy",
     review:
-      "Thank you us for give this opportunity to participate in this Tribute Run nd good support in Instagram nd WhatsApp if any confusion again tq sir for this grate event",
+      "Thank you us for give this opportunity to participate in this Tribute Run nd good support in Instagram nd WhatsApp if any confusion again tq sir for this great event",
     imageUrl:
       "https://res.cloudinary.com/dafwe6lci/image/upload/v1775464732/medal-reviews/jy95fbfa05ki803crcjh.jpg",
     rating: 5,
@@ -1466,7 +1466,7 @@ function ReviewCard({ review }) {
 
         {/* Quote */}
         <p className="text-gray-500 text-5xl font-serif leading-none mb-1 select-none">"</p>
-        <p className="text-gray-700 text-sm leading-relaxed line-clamp-3 italic mb-4">
+        <p className="text-gray-700 text-sm leading-relaxed line-clamp-5 italic mb-4">
           {review.review}
         </p>
 
