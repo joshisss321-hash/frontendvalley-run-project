@@ -1489,7 +1489,7 @@ function ReviewCard({ review }) {
   );
 }
 
-export function TestimonialsSection() {
+ function TestimonialsSection() {
   return (
     <section className="py-20 sm:py-28 bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1674,4 +1674,4 @@ function FinalCTA({ router }) {
   );
 }
 
-function TestimonialsSection() { return null; }
+
