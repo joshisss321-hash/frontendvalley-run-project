@@ -892,12 +892,13 @@ export default function HomePage() {
       <WhyJoinSection />
       <HowItWorksSection />
       <ActiveChallengesSection events={liveEvents} router={router} />
+        <TestimonialsSection />
       {previousEvents.length > 0 && (
         <PreviousEventsSection events={previousEvents} router={router} />
       )}
       <MedalShowcaseSection events={events} />
       <CertificateSection />
-      <TestimonialsSection />
+    
       <GallerySection events={events} />
       
       <WhatsAppSection url={WHATSAPP_URL} />
