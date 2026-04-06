@@ -1366,6 +1366,189 @@ function CertificateSection() {
   );
 }
 
+
+// ═══════════════ TESTIMONIALS ═══════════════
+// Apne page.js mein `function TestimonialsSection() { return null; }` ko
+// is poore component se replace kar do.
+
+function StarIcon() {
+  return (
+    <svg className="w-3.5 h-3.5 fill-amber-400" viewBox="0 0 20 20">
+      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+    </svg>
+  );
+}
+
+function InstagramIcon() {
+  return (
+    <svg className="w-3 h-3 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+    </svg>
+  );
+}
+
+// ─── Yahan apne saare reviews add karo ───
+const REVIEWS = [
+  {
+    id: "69d0f99f7ba5eb0710484fc1",
+    name: "Subhojyoti Raha",
+    instaId: "SubhojyotiRaha",
+    review:
+      "It's was such an amazing experience running for the special occasion, absolute goosebumps!!! Looking forward for more marathons and accomplishing them.",
+    imageUrl:
+      "https://res.cloudinary.com/dafwe6lci/image/upload/v1775303070/medal-reviews/p26h3zrhugrlqc5ivxk4.jpg",
+    rating: 5,
+  },
+  {
+    id: "69d368c77ba5eb0710486801",
+    name: "Susmit Pal",
+    instaId: "human._.11_",
+    review:
+      "Had a great experience with you guys every step was guided properly and all the issues were resolved. Will sury participate in more events and loved the medal",
+    imageUrl:
+      "https://res.cloudinary.com/dafwe6lci/image/upload/f_jpg/v1775462598/medal-reviews/jmxp7uj63iluoj2qjkoj.jpg",
+    rating: 5,
+  },
+  {
+    id: "69d3711d7ba5eb07104868f8",
+    name: "Jayanth Reddy",
+    instaId: "jayanth_kumar_reddy",
+    review:
+      "Thank you us for give this opportunity to participate in this Tribute Run nd good support in Instagram nd WhatsApp if any confusion again tq sir for this grate event",
+    imageUrl:
+      "https://res.cloudinary.com/dafwe6lci/image/upload/v1775464732/medal-reviews/jy95fbfa05ki803crcjh.jpg",
+    rating: 5,
+  },
+  // ────────────────────────────────────────────
+  // Nayi reviews add karni ho toh neeche copy-paste karo:
+  // {
+  //   id: "unique_id",
+  //   name: "Runner Name",
+  //   instaId: "instagram_handle",        // @ ke bina
+  //   review: "Their review text here...",
+  //   imageUrl: "https://cloudinary_url",
+  //   rating: 5,                          // 1-5
+  // },
+];
+
+function ReviewCard({ review }) {
+  return (
+    <div className="group bg-white border-2 border-gray-100 rounded-2xl overflow-hidden hover:border-red-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+      {/* Runner Photo */}
+      <div className="relative h-52 overflow-hidden bg-gray-100">
+        <img
+          src={review.imageUrl}
+          alt={review.name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+
+        {/* Verified badge */}
+        <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/55 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1.5 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
+          Verified Runner
+        </div>
+      </div>
+
+      {/* Card Body */}
+      <div className="p-5">
+        {/* Stars */}
+        <div className="flex gap-0.5 mb-2">
+          {Array.from({ length: review.rating }).map((_, i) => (
+            <StarIcon key={i} />
+          ))}
+        </div>
+
+        {/* Quote */}
+        <p className="text-gray-500 text-5xl font-serif leading-none mb-1 select-none">"</p>
+        <p className="text-gray-700 text-sm leading-relaxed line-clamp-3 italic mb-4">
+          {review.review}
+        </p>
+
+        {/* Runner info + Insta */}
+        <div className="flex items-center justify-between gap-3">
+          <p className="font-black text-gray-900 text-sm">{review.name}</p>
+          <a
+            href={`https://www.instagram.com/${review.instaId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-white text-[11px] font-bold px-3 py-2 rounded-full hover:opacity-85 hover:scale-105 transition-all duration-200 flex-shrink-0"
+            style={{
+              background: "linear-gradient(135deg, #f9a8d4, #fb923c, #a855f7)",
+            }}
+          >
+            <InstagramIcon />
+            @{review.instaId}
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function TestimonialsSection() {
+  return (
+    <section className="py-20 sm:py-28 bg-white">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center mb-14">
+          <span className="inline-block bg-red-50 text-red-600 text-xs font-bold tracking-widest uppercase px-4 py-1.5 rounded-full mb-4 border border-red-100">
+            Real Reviews
+          </span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight">
+            What Our Runners Say
+          </h2>
+          <p className="mt-4 text-gray-500 text-base sm:text-lg max-w-xl mx-auto">
+            500+ runners completed their challenge. Here&apos;s what they earned — and what they felt.
+          </p>
+        </div>
+
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {REVIEWS.map((review) => (
+            <ReviewCard key={review.id} review={review} />
+          ))}
+        </div>
+
+        {/* Bottom CTA Strip */}
+        <div className="mt-14 bg-gray-900 rounded-3xl p-8 sm:p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div>
+            <p className="text-white font-black text-xl sm:text-2xl">
+              Ready to earn your medal?
+            </p>
+            <p className="text-gray-400 text-sm mt-1">
+              500+ runners already finished. Your turn.
+            </p>
+          </div>
+          <button
+            onClick={() =>
+              document
+                .getElementById("challenges")
+                ?.scrollIntoView({ behavior: "smooth" })
+            }
+            className="flex-shrink-0 bg-red-600 hover:bg-red-700 text-white font-black px-8 py-4 rounded-full text-sm transition-all hover:scale-105 hover:shadow-lg whitespace-nowrap"
+          >
+            Register Now →
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Default export bhi rakha hai agar directly import karo
+
+
+
+
+
+
+
+
+
 /* ═══════════════ GALLERY ═══════════════ */
 function GallerySection({ events }) {
   const images = events.flatMap(e => e.gallery || []).slice(0, 8);
