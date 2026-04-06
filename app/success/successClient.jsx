@@ -207,9 +207,9 @@ export default function SuccessClient() {
             <li>✔ Take a screenshot from your fitness app.</li>
             <li>✔ Submit your screenshot on our whatsappchannel.</li>
             <li>✔ Join our WhatsApp channel to stay updated.</li>
-  <li>✔ Registration closes on 22 March.</li>
+  <li>✔ Registration closes on 21 April.</li>
   <li>✔ The challenge will run from 23 March to 28 March.</li>
-  <li>✔ Finisher medals will be delivered to your home between 1 April and 7 April.</li>
+  <li>✔ Finisher medals will be delivered to your home between 1 may to 7 may.</li>
             <li>✔ After verification, your medal will be shipped.</li>
           </ul>
 
