@@ -897,8 +897,9 @@ export default function HomePage() {
       )}
       <MedalShowcaseSection events={events} />
       <CertificateSection />
-      <GallerySection events={events} />
       <TestimonialsSection />
+      <GallerySection events={events} />
+      
       <WhatsAppSection url={WHATSAPP_URL} />
       <FAQSection />
       <FinalCTA router={router} />
