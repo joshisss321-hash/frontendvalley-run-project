@@ -208,7 +208,7 @@ export default function SuccessClient() {
             <li>✔ Submit your screenshot on our whatsappchannel.</li>
             <li>✔ Join our WhatsApp channel to stay updated.</li>
   <li>✔ Registration closes on 21 April.</li>
-  <li>✔ The challenge will run from 23 March to 28 March.</li>
+  <li>✔ The challenge will run from 22 April to 28 April.</li>
   <li>✔ Finisher medals will be delivered to your home between 1 may to 7 may.</li>
             <li>✔ After verification, your medal will be shipped.</li>
           </ul>
