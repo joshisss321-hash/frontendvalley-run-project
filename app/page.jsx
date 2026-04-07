@@ -1340,6 +1340,67 @@ const REVIEWS = [
     imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775478278/medal-reviews/slk1mb8u4hejdtgfai68.jpg",
     rating: 5,
   },
+
+  {
+    id: "69d3c2cf7ba5eb0710487142",
+    name: "MADHUR TALELE",
+    instaId: "madt4u",
+    review: "Nice experience, its a good for us or our society",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775485647/medal-reviews/elfz3gi9nm3ovnqthkxm.jpg",
+    rating: 5,
+  },
+{
+    id: "69d3ce0c7ba5eb07104872a3",
+    name: "Abhishek Girish Nadkarni",
+    instaId: "abhsnad",
+    review: "First of I am very moved by the gesture of dedicating a run for our Shaheed Jawans…Cant do much for them but this is the least that i can do for them. Thanks Valley run for giving me this opportunity! 🙏 Also, appreciate the prompt responses and medal delivery!",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775488524/medal-reviews/a5qjslvtkgc4dznnquno.jpg",
+    rating: 5,
+  },
+  {
+    id: "69d3d5047ba5eb071048734c",
+    name: "A V NARAYANA",
+    instaId: "nany555999",
+    review: "It's was awesome experience and thanks for the beautiful medal. Looking for more events",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775490308/medal-reviews/rkby4ybldneslgses43t.jpg",
+    rating: 5,
+  },
+  {
+     id: "69d3d6577ba5eb071048738b",
+    name: "Sudipta Chanda",
+    instaId: "sudipta_chanda.26",
+    review: "The experience was great. Medel quality is good. Very fast delivary. The run respect our Shaheeds.",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775490646/medal-reviews/tgm3fawv3qaqigztsfen.jpg",
+    rating: 5,
+
+  },
+   {
+     id: "69d3ec457ba5eb0710487639",
+    name: "Subarna Pal",
+    instaId: "subarna_008",
+    review: "It was a great experience doing a virtual 10 k for the very first time,looking forward to more runs in the future😁",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775496261/medal-reviews/xni6bezlo29o1nbk6mai.jpg",
+    rating: 5,
+
+  },
+  {
+     id: "69d417257ba5eb0710487867",
+    name: "JAVED SHAIKH",
+    instaId: "sk_javed_yt",
+    review: "This very nice medal",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775507236/medal-reviews/j0qj8zktwu7e9eahgbx6.jpg",
+    rating: 5,
+
+  },
+  {
+     id: "69d460867ba5eb0710487982",
+    name: "Takur arun singh",
+    instaId: "Running_cop_07",
+    review: "It's happy to run with valleyrun official",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775507236/medal-reviews/j0qj8zktwu7e9eahgbx6.jpg",
+    rating: 5,
+
+  }
   // ── Nayi review add karni ho toh yahan add karo ──
   // {
   //   id: "unique_id",
