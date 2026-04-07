@@ -1343,6 +1343,16 @@ const REVIEWS = [
     rating: 5,
   },
 
+  {
+    id: "69d498d8c10f2ea6f2fc6b85",
+    name: "Navpreet digra",
+    instaId: "____navpreetdigra____",
+    review: "This medal is very beautiful and elegant and if we talk about its weight then it is very heavy. This medal is making my collection very beautiful. Thank you.",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775540440/medal-reviews/gx21a5giny1qelwvo2pg.jpg",
+    rating: 5,
+  },
+
+
 
 
   {
