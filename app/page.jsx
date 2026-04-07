@@ -1389,6 +1389,15 @@ const REVIEWS = [
     rating: 5,
   },
   {
+    id: "69d4bfc55543dea93c4e47f6",
+    name: "Animesh Phukan",
+    instaId: "animesh.phukan_",
+    review: "Medal quality is so nice. Loved it. Thank you. 💥",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775550404/medal-reviews/f4znfaszlzwe0dfbtjje.jpg",
+    rating: 5,
+  },
+
+  {
      id: "69d3d6577ba5eb071048738b",
     name: "Sudipta Chanda",
     instaId: "sudipta_chanda.26",
