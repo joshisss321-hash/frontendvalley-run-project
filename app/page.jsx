@@ -1332,7 +1332,24 @@ const REVIEWS = [
     imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775477404/medal-reviews/sdieaolsjpflweu5zrj2.jpg",
     rating: 5,
   },
+  {
+     id: "69d3d6577ba5eb071048738b",
+    name: "Sudipta Chanda",
+    instaId: "sudipta_chanda.26",
+    review: "The experience was great. Medel quality is good. Very fast delivary. The run respect our Shaheeds.",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775490646/medal-reviews/tgm3fawv3qaqigztsfen.jpg",
+    rating: 5,
 
+  },
+   {
+     id: "69d3ec457ba5eb0710487639",
+    name: "Subarna Pal",
+    instaId: "subarna_008",
+    review: "It was a great experience doing a virtual 10 k for the very first time,looking forward to more runs in the future😁",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775496261/medal-reviews/xni6bezlo29o1nbk6mai.jpg",
+    rating: 5,
+
+  },
 
 {
     id: "69d47fe27ba5eb0710487bd9",
@@ -1397,24 +1414,7 @@ const REVIEWS = [
     rating: 5,
   },
 
-  {
-     id: "69d3d6577ba5eb071048738b",
-    name: "Sudipta Chanda",
-    instaId: "sudipta_chanda.26",
-    review: "The experience was great. Medel quality is good. Very fast delivary. The run respect our Shaheeds.",
-    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775490646/medal-reviews/tgm3fawv3qaqigztsfen.jpg",
-    rating: 5,
 
-  },
-   {
-     id: "69d3ec457ba5eb0710487639",
-    name: "Subarna Pal",
-    instaId: "subarna_008",
-    review: "It was a great experience doing a virtual 10 k for the very first time,looking forward to more runs in the future😁",
-    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775496261/medal-reviews/xni6bezlo29o1nbk6mai.jpg",
-    rating: 5,
-
-  },
   {
      id: "69d417257ba5eb0710487867",
     name: "JAVED SHAIKH",
