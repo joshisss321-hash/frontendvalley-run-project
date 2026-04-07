@@ -1332,6 +1332,19 @@ const REVIEWS = [
     imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775477404/medal-reviews/sdieaolsjpflweu5zrj2.jpg",
     rating: 5,
   },
+
+
+{
+    id: "69d47fe27ba5eb0710487bd9",
+    name: "Vipin sharma",
+    instaId: "Some_1_here4u",
+    review: "Its a great experience run on shaheed divas and earned a beautiful medal from valleyrun. Running or exercise daily must be a habit of each and everyone for keep yourself healthy and make happy to your near once means ur family. Coz bad healthy condition makes all of in a dipressed life as well as lots of loss in sense of money. I started running and found myself in a good healthy condition means reduce weight from 87 to 72.. so start guys who not and continue who are doing.",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775534049/medal-reviews/nszq5ygmyx65o9ao9zxw.jpg",
+    rating: 5,
+  },
+
+
+
   {
     id: "69d3a6067ba5eb0710486e6c",
     name: "Likhith Lokanath Bangera",
