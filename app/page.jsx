@@ -1308,6 +1308,18 @@ const REVIEWS = [
     imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775303070/medal-reviews/p26h3zrhugrlqc5ivxk4.jpg",
     rating: 5,
   },
+
+
+
+   {
+    id: "69d5efb98eee92ef0352bad8",
+    name: "AZAD KUMAR NAYAK",
+    instaId: "azad_kumar_nayak",
+    review: "Thank you for this event. An amazing virtual marathon, with affordable price registration. The medal 's design is really beautiful. I'm eager to participate and run for vally run.",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775628216/medal-reviews/rgid9ey9qjtdlqlqt2ip.jpg",
+    rating: 5,
+  },
+
   {
     id: "69d368c77ba5eb0710486801",
     name: "Susmit Pal",
@@ -1366,6 +1378,51 @@ const REVIEWS = [
     instaId: "____navpreetdigra____",
     review: "This medal is very beautiful and elegant and if we talk about its weight then it is very heavy. This medal is making my collection very beautiful. Thank you.",
     imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775540440/medal-reviews/gx21a5giny1qelwvo2pg.jpg",
+    rating: 5,
+  },
+
+  {
+    id: "69d4dcb55543dea93c4e49ff",
+    name: "Tushar Rawat",
+    instaId: "__rrrawwatt__",
+    review: "Very nice experience Thank u so much valley run 😁🇮🇳",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775557812/medal-reviews/lxqeeospunjlehz15hwx.jpg",
+    rating: 5,
+  },
+
+ {
+    id: "69d50ee55543dea93c4e4da7",
+    name: "Vishwas",
+    instaId: "vishwas_agrawal",
+    review: "Enjoyed Every step of my run  .. Can't wait to run all over again !!!",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775570660/medal-reviews/arxktdl40q4qjgx9s628.jpg",
+    rating: 5,
+  },
+
+{
+    id: "69d5e1a28eee92ef0352b9c1",
+    name: "VINOD C",
+    instaId: "v_i_n_o_d_v_i_n_u_s",
+    review: "Very good experience, keep motivating, medal is very nice, 🔥🔥I am very much interested in next Run.",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775624609/medal-reviews/zvrw3xjt6iqgxll1ratx.jpg",
+    rating: 5,
+  },
+{
+    id: "69d5ebb98eee92ef0352ba99",
+    name: "Rahul kumar",
+    instaId: "Rahul_raj_0048",
+    review: "The running was quite easy and felt very good enjoyed the running competition.",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775627192/medal-reviews/kajdlj2wchfxrexl2htx.jpg",
+    rating: 5,
+  },
+
+
+  {
+    id: "69d5ef688eee92ef0352bad6",
+    name: "Yaman Kulhari",
+    instaId: "yaman_kulhari",
+    review: "It was the first time I did something like this and must say it was a great experience...all thanks to valleyrun for this prestigious opportunity.",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775628135/medal-reviews/myonwv1m0o40ma8j8yrd.jpg",
     rating: 5,
   },
 
