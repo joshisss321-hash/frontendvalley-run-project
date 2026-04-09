@@ -1310,6 +1310,15 @@ const REVIEWS = [
   },
 
 
+  {
+    id: "69d73366f2994ba7616287e5",
+    name: "Swati Saxena",
+    instaId: "soulfitfeminine",
+    review: "Medal is amazing... And the best part you share the photo of the medal... And bestest is this what you share we, received the same with amazing quality....Other virtual race events won't share the  medal photo",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775711077/medal-reviews/jz4bvnys3taed2j5ytfq.jpg",
+    rating: 5,
+  },
+
 
    {
     id: "69d5efb98eee92ef0352bad8",
@@ -1372,6 +1381,15 @@ const REVIEWS = [
     rating: 5,
   },
 
+    {
+    id: "69d70bbaf2994ba7616284fa",
+    name: "Surender Singh",
+    instaId: "surender_singh_ror_bastara",
+    review: "Nice to participate in this event",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775700921/medal-reviews/ckmx1hsfdvonktuoklvr.jpg",
+    rating: 5,
+  },
+
   {
     id: "69d498d8c10f2ea6f2fc6b85",
     name: "Navpreet digra",
@@ -1396,6 +1414,16 @@ const REVIEWS = [
     instaId: "vishwas_agrawal",
     review: "Enjoyed Every step of my run  .. Can't wait to run all over again !!!",
     imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775570660/medal-reviews/arxktdl40q4qjgx9s628.jpg",
+    rating: 5,
+  },
+
+
+  {
+    id: "69d6b95ef2994ba76162837f",
+    name: "Deepak sonu K",
+    instaId: "deepu-divakaran",
+    review: "I had a really good experience with valley run, my medal received within 12th day  I am very happy to be part of this running event,  i definitely join next ur events so  thankyou valleyrunofficials......",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775679837/medal-reviews/kol20cp7e3kwjedl4ylr.jpg",
     rating: 5,
   },
 
@@ -1545,11 +1573,11 @@ function TestimonialsSection() {
 
   const resetTimer = () => {
     clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => setCurrent((p) => (p + 1) % total), 4000);
+    timerRef.current = setInterval(() => setCurrent((p) => (p + 1) % total), 7000);
   };
 
   useEffect(() => {
-    timerRef.current = setInterval(() => setCurrent((p) => (p + 1) % total), 4000);
+    timerRef.current = setInterval(() => setCurrent((p) => (p + 1) % total), 7000);
     return () => clearInterval(timerRef.current);
   }, [total]);
 
