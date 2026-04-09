@@ -863,7 +863,7 @@ function HeroSection() {
   const [count, setCount] = useState(0);
   useEffect(() => {
     let c = 0;
-    const t = setInterval(() => { c += 2; if (c >= 100) { setCount(500); clearInterval(t); } else setCount(c); }, 30);
+    const t = setInterval(() => { c += 2; if (c >= 100) { setCount(600); clearInterval(t); } else setCount(c); }, 30);
     return () => clearInterval(t);
   }, []);
 
