@@ -1345,6 +1345,19 @@ const REVIEWS = [
     imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775464732/medal-reviews/jy95fbfa05ki803crcjh.jpg",
     rating: 5,
   },
+
+ {
+    id: "69d76390f2994ba761628b78",
+    name: "Anshika Singh",
+    instaId: "cappybara_00700",
+    review: "Thankyou valley run It was really awesome challenge it's my first medal for run and after recieving it I can't explain my happiness I was so happy after so much hardwork I put into make myself run and getting this felt so heartwarming and u guys made this dream come true  by giving a reward for our hardwork 💗💗",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775723408/medal-reviews/sfqvd7rapwysebdvvkrp.jpg",
+    rating: 5,
+  },
+
+
+
+
   {
     id: "69d3a29d7ba5eb0710486e39",
     name: "Sathish S",
@@ -1482,6 +1495,17 @@ const REVIEWS = [
     imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775488524/medal-reviews/a5qjslvtkgc4dznnquno.jpg",
     rating: 5,
   },
+{
+    id: "69d7902df2994ba761628e56",
+    name: "Sushanta  Bhoi",
+    instaId: "Sushantabhoi94",
+    review: "Thank you so much Valley Run for organizing the Virtual Sahid Diwas Run. Today I received my medal and I feel very proud and motivated. It was a wonderful experience and a great initiative to honor our brave heroes. Thank you for the beautiful medal and support. Looking forward to joining more events in future! 🙏🇮🇳🏅”",
+    imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775734828/medal-reviews/h8xb60afyimewngbepnn.jpg",
+    rating: 5,
+  },
+
+
+
   {
     id: "69d3d5047ba5eb071048734c",
     name: "A V NARAYANA",
