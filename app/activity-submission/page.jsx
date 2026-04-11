@@ -21,7 +21,7 @@ const [loading, setLoading] = useState(false);
 async function searchRunner(){
 try{
 
-const res = await fetch("https://valleyrunproject.onrender.com/api/search-runner",{
+const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/search-runner`,{
 method:"POST",
 headers:{ "Content-Type":"application/json"},
 body:JSON.stringify({query})
@@ -66,7 +66,7 @@ formData.append("phone", runner.phone);
 formData.append("distance", distance);
 formData.append("image", file);
 
-const res = await fetch("https://valleyrunproject.onrender.com/api/submit-run", {
+const res = await fetch("https://valleyrunproject-production.up.railway.app/api/submit-run", {
 method: "POST",
 body: formData
 });

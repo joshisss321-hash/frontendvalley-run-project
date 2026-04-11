@@ -48,7 +48,7 @@ export default function MedalReviewSubmission() {
       formData.append("review", review.trim());
       formData.append("image", file);
 
-      const res = await fetch("https://valleyrunproject.onrender.com/api/submit-medal-review", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/submit-medal-review`, {
         method: "POST",
         body: formData,
       });
