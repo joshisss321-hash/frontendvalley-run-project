@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { API } from "@/lib/api";
+const API = process.env.NEXT_PUBLIC_API_URL;
 
 export default function EventLeaderboard() {
   const { eventId } = useParams();
