@@ -3783,7 +3783,7 @@ const REVIEWS = [
     id: "69d7902df2994ba761628e56",
     name: "Sushanta  Bhoi",
     instaId: "Sushantabhoi94",
-    review: "Thank you so much Valley Run for organizing the Virtual Sahid Diwas Run. Today I received my medal and I feel very proud and motivated. It was a wonderful experience and a great initiative to honor our brave heroes. Thank you for the beautiful medal and support. Looking forward to joining more events in future! 🙏🇮🇳🏅"",
+    review: "Thank you so much Valley Run for organizing the Virtual Sahid Diwas Run. Today I received my medal and I feel very proud and motivated. It was a wonderful experience and a great initiative to honor our brave heroes. Thank you for the beautiful medal and support. Looking forward to joining more events in future! 🙏🇮🇳🏅",
     imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775734828/medal-reviews/h8xb60afyimewngbepnn.jpg",
     rating: 5,
   },
