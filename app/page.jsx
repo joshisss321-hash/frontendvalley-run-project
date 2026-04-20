@@ -3330,12 +3330,17 @@ function ChallengeCard({ event, router }) {
           >
             {isRunning ? "Registration Closed" : "Register Now"}
           </button>
-          <button
-            onClick={() => router.push(`/challenges/${event.slug}`)}
-            className="border-2 border-gray-200 hover:border-gray-400 px-4 py-3 rounded-full text-sm font-semibold text-gray-600 transition-colors"
-          >
-            Details
-          </button>
+         <button
+  onClick={() => !isRunning && router.push(`/challenges/${event.slug}`)}
+  disabled={isRunning}
+  className={`px-4 py-3 rounded-full text-sm font-semibold transition-colors border-2 ${
+    isRunning
+      ? "border-gray-200 text-gray-300 cursor-not-allowed"
+      : "border-gray-200 hover:border-gray-400 text-gray-600"
+  }`}
+>
+  Details
+</button>
         </div>
       </div>
     </div>
