@@ -3616,6 +3616,26 @@ function InstagramIcon() {
 }
 
 const REVIEWS = [
+
+ {
+    id: "69d0f99f7ba5eb0710484fc2",
+    name: "Gourisha Garg",
+    instaId: "",
+    review: "ItI just wanted to share how truly happy and surprised I was to receive the medal. Honestly, it had completely slipped my mind I hadn’t even mentioned it once, and yet you still made sure it reached me. That really meant a lot.The medal is even more beautiful and heavier than it looked in the photos it exceeded my expectations! I genuinely loved being a part of your race, and this thoughtful gesture made the experience even more special Thank you so much, Team. I truly appreciate it!❤️Warm regards Gourisha Garg ",
+    imageUrl: "https://ik.imagekit.io/nnx2tg1jf/WhatsApp%20Image%202026-04-29%20at%2012.41.55%20PM.jpeg",
+    rating: 5,
+  },
+
+
+{
+   name: "Tisha",
+ review: "The quality of the medal is top notch. No doubt Thank you so much!!!Will be participating farther as well",
+ imageUrl: "https://ik.imagekit.io/nnx2tg1jf/Screenshot%202026-05-05%20134321.png",
+    rating: 5,
+
+},
+
+
   {
     id: "69d0f99f7ba5eb0710484fc1",
     name: "Subhojyoti Raha",
