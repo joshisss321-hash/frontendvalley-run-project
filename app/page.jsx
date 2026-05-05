@@ -3636,6 +3636,14 @@ const REVIEWS = [
 },
 
 
+
+{
+   name: "Puja giri",
+ review: "Thank you so much valley run organization. Yesterday received my medal . I am really happy to get such a nice novelty Indian map medal.",
+ imageUrl: "https://ik.imagekit.io/nnx2tg1jf/IMG_20260505_061928.jpg",
+    rating: 5,
+
+},
   {
     id: "69d0f99f7ba5eb0710484fc1",
     name: "Subhojyoti Raha",
