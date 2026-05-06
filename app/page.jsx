@@ -3417,7 +3417,7 @@ function ChallengeCard({ event, router }) {
           </div>
         )}
 
-        <div className="flex gap-3">
+        {/* <div className="flex gap-3">
           <button
             disabled={isRunning}
             className={`flex-1 py-3 rounded-full font-bold text-sm transition-all ${
@@ -3438,7 +3438,31 @@ function ChallengeCard({ event, router }) {
           >
             Details
           </button>
-        </div>
+        </div> */}
+        <div className="flex gap-3">
+  <button
+    onClick={() => router.push(`/challenges/${event.slug}`)}
+    disabled={isRunning}
+    className={`flex-1 py-3 rounded-full font-bold text-sm transition-all ${
+      isRunning
+        ? "bg-gray-200 text-gray-400 cursor-not-allowed pointer-events-none"
+        : "bg-red-600 hover:bg-red-700 text-white hover:shadow-lg"
+    }`}
+  >
+    {isRunning ? "Registration Closed" : "Register Now"}
+  </button>
+  <button
+    onClick={() => router.push(`/challenges/${event.slug}`)}
+    disabled={isRunning}
+    className={`px-4 py-3 rounded-full text-sm font-semibold transition-colors border-2 ${
+      isRunning
+        ? "border-gray-200 text-gray-300 cursor-not-allowed pointer-events-none"
+        : "border-gray-200 hover:border-gray-400 text-gray-600"
+    }`}
+  >
+    Details
+  </button>
+</div>
       </div>
     </div>
   );
