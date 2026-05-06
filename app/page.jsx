@@ -3246,6 +3246,106 @@ function useCountdown(deadline) {
 }
 
 /* ═══════════════ CHALLENGE CARD ═══════════════ */
+// function ChallengeCard({ event, router }) {
+//   const deadline = event.registrationDeadline || DEADLINES[event.slug];
+//   const timeLeft = useCountdown(deadline);
+//   const isExpired = deadline && new Date(deadline) <= new Date();
+//   const isRunning = isExpired;
+
+//   return (
+//     <div
+//       className={`rounded-3xl overflow-hidden border-2 transition-all duration-300 bg-white ${
+//         isRunning
+//           ? "border-gray-300 opacity-75"
+//           : "border-gray-200 hover:border-red-300 hover:shadow-xl hover:-translate-y-1"
+//       }`}
+//     >
+//       <div className="relative h-48 sm:h-56 overflow-hidden bg-gray-100">
+//         <img
+//           src={event.coverImage || event.image}
+//           alt={event.title}
+//           className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+//           style={isRunning ? { filter: "grayscale(100%)" } : {}}
+//         />
+//         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+//         <div className="absolute top-3 left-3">
+//           {isRunning ? (
+//             <span className="bg-gray-700 text-gray-300 text-xs font-bold px-3 py-1.5 rounded-full shadow flex items-center gap-1.5">
+//               🏃 Event Running
+//             </span>
+//           ) : (
+//             <span className="bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow flex items-center gap-1.5">
+//               <span className="relative flex h-2 w-2">
+//                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+//                 <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
+//               </span>
+//               LIVE
+//             </span>
+//           )}
+//         </div>
+//       </div>
+//       <div className="p-5 sm:p-6">
+//         <h3 className="text-lg font-bold text-gray-900 mb-1">{event.title}</h3>
+//         <p className="text-gray-500 text-sm mb-3">{event.dates}</p>
+
+//         {!isRunning && timeLeft && (
+//           <div className="mb-4 bg-red-50 border border-red-100 rounded-2xl px-4 py-3">
+//             <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest mb-2 text-center">
+//               ⏳ Registration closes in
+//             </p>
+//             <div className="flex justify-center gap-3">
+//               {[
+//                 [timeLeft.d, "Days"],
+//                 [timeLeft.h, "Hrs"],
+//                 [timeLeft.m, "Min"],
+//                 [timeLeft.s, "Sec"],
+//               ].map(([val, label]) => (
+//                 <div key={label} className="text-center">
+//                   <div className="bg-red-600 text-white font-black text-lg rounded-lg w-11 h-11 flex items-center justify-center tabular-nums">
+//                     {String(val).padStart(2, "0")}
+//                   </div>
+//                   <div className="text-[9px] text-gray-400 mt-1 font-semibold uppercase">{label}</div>
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+//         )}
+
+//         {isRunning && (
+//           <div className="mb-4 bg-gray-100 border border-gray-200 rounded-2xl px-4 py-3 text-center">
+//             <p className="text-gray-400 text-xs font-bold">🔒 Registration Closed</p>
+//             <p className="text-gray-400 text-[10px] mt-0.5">Event is currently underway</p>
+//           </div>
+//         )}
+
+//         <div className="flex gap-3">
+//           <button
+//             onClick={() => !isRunning && router.push(`/challenges/${event.slug}`)}
+//             disabled={isRunning}
+//             className={`flex-1 py-3 rounded-full font-bold text-sm transition-all ${
+//               isRunning
+//                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+//                 : "bg-red-600 hover:bg-red-700 text-white hover:shadow-lg"
+//             }`}
+//           >
+//             {isRunning ? "Registration Closed" : "Register Now"}
+//           </button>
+//          <button
+//   onClick={() => !isRunning && router.push(`/challenges/${event.slug}`)}
+//   disabled={isRunning}
+//   className={`px-4 py-3 rounded-full text-sm font-semibold transition-colors border-2 ${
+//     isRunning
+//       ? "border-gray-200 text-gray-300 cursor-not-allowed"
+//       : "border-gray-200 hover:border-gray-400 text-gray-600"
+//   }`}
+// >
+//   Details
+// </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
 function ChallengeCard({ event, router }) {
   const deadline = event.registrationDeadline || DEADLINES[event.slug];
   const timeLeft = useCountdown(deadline);
@@ -3256,7 +3356,7 @@ function ChallengeCard({ event, router }) {
     <div
       className={`rounded-3xl overflow-hidden border-2 transition-all duration-300 bg-white ${
         isRunning
-          ? "border-gray-300 opacity-75"
+          ? "border-gray-200 opacity-60 grayscale"
           : "border-gray-200 hover:border-red-300 hover:shadow-xl hover:-translate-y-1"
       }`}
     >
@@ -3265,7 +3365,6 @@ function ChallengeCard({ event, router }) {
           src={event.coverImage || event.image}
           alt={event.title}
           className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
-          style={isRunning ? { filter: "grayscale(100%)" } : {}}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
         <div className="absolute top-3 left-3">
@@ -3320,33 +3419,30 @@ function ChallengeCard({ event, router }) {
 
         <div className="flex gap-3">
           <button
-            onClick={() => !isRunning && router.push(`/challenges/${event.slug}`)}
             disabled={isRunning}
             className={`flex-1 py-3 rounded-full font-bold text-sm transition-all ${
               isRunning
-                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed pointer-events-none"
                 : "bg-red-600 hover:bg-red-700 text-white hover:shadow-lg"
             }`}
           >
             {isRunning ? "Registration Closed" : "Register Now"}
           </button>
-         <button
-  onClick={() => !isRunning && router.push(`/challenges/${event.slug}`)}
-  disabled={isRunning}
-  className={`px-4 py-3 rounded-full text-sm font-semibold transition-colors border-2 ${
-    isRunning
-      ? "border-gray-200 text-gray-300 cursor-not-allowed"
-      : "border-gray-200 hover:border-gray-400 text-gray-600"
-  }`}
->
-  Details
-</button>
+          <button
+            disabled={isRunning}
+            className={`px-4 py-3 rounded-full text-sm font-semibold transition-colors border-2 ${
+              isRunning
+                ? "border-gray-200 text-gray-300 cursor-not-allowed pointer-events-none"
+                : "border-gray-200 hover:border-gray-400 text-gray-600"
+            }`}
+          >
+            Details
+          </button>
         </div>
       </div>
     </div>
   );
 }
-
 /* ═══════════════ ACTIVE CHALLENGES ═══════════════ */
 function ActiveChallengesSection({ events, router }) {
   return (
