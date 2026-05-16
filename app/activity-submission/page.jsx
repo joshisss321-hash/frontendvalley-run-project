@@ -1,298 +1,260 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
-
-
+import Navbar from "../components/Navbar";
 
 export default function ActivitySubmission() {
-
-const [query,setQuery] = useState("");
-const [runner,setRunner] = useState(null);
-const [step,setStep] = useState("search");
-
-const [distance,setDistance] = useState("");
-const [file,setFile] = useState(null);
-
-const [loading, setLoading] = useState(false);
-
-// 🔍 SEARCH
-async function searchRunner(){
-try{
-
-const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/search-runner`,{
-method:"POST",
-headers:{ "Content-Type":"application/json"},
-body:JSON.stringify({query})
-});
-
-const data = await res.json();
-
-if(data.runner){
-setRunner(data.runner);
-setStep("submit");
-toast.success("Registration found ✅");
-}else{
-toast.error("Registration not found ❌");
-}
-
-}catch(err){
-console.log(err);
-toast.error("Server error");
-}
-}
-
-
-// 📤 SUBMIT (CLOUDINARY SUPPORT)
-const submit = async () => {
-
-if(loading) return; // 🚫 double click block
-
-try{
-
-if(!file){
-toast.error("Please upload screenshot 📸");
-return;
-}
-
-setLoading(true); // start loading
-
-const formData = new FormData();
-
-formData.append("name", runner.name);
-formData.append("email", runner.email);
-formData.append("phone", runner.phone);
-formData.append("distance", distance);
-formData.append("image", file);
-
-const res = await fetch("https://valleyrunproject-production.up.railway.app/api/submit-run", {
-method: "POST",
-body: formData
-});
-
-const data = await res.json();
-
-if (data.error) {
-toast.error(data.error);
-} else {
-toast.success("Activity submitted successfully 🎉");
-
-// reset
-setStep("search");
-setQuery("");
-setDistance("");
-setFile(null);
-}
-
-}catch(err){
-console.log(err);
-toast.error("Something went wrong");
-}
-
-finally{
-setLoading(false); // stop loading
-}
-
-};
-return (
-
-<div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-10">
-
-<div className="max-w-5xl mx-auto px-6">
-
-{/* Hero */}
-
-<div className="text-center mb-10">
-
-<h1 className="text-4xl font-bold">
-Shaheed Diwas Tribute Run
-</h1>
-
-<p className="text-gray-600 mt-2">
-Activity Submission Portal
-</p>
-
-<p className="text-sm text-gray-500 mt-3">
-Submit your activity screenshot here. Once verified, you will receive your medal.
-</p>
-
-</div>
-
-
-{/* Info Cards */}
-
-<div className="grid md:grid-cols-2 gap-6 mb-10">
-
-<div className="bg-white p-6 rounded-xl shadow">
-<h3 className="font-semibold">Challenge Period</h3>
-<p className="text-gray-500">23 March – 28 March</p>
-</div>
-
-<div className="bg-white p-6 rounded-xl shadow">
-<h3 className="font-semibold">Valid Apps</h3>
-<p className="text-gray-500">Strava / Garmin / Nike Run Club</p>
-</div>
-
-<div className="bg-white p-6 rounded-xl shadow">
-<h3 className="font-semibold">Upload Screenshot</h3>
-<p className="text-gray-500">Distance, Time & Pace must be visible</p>
-</div>
-
-<div className="bg-white p-6 rounded-xl shadow">
-<h3 className="font-semibold">Medal Delivery</h3>
-<p className="text-gray-500">1–7 days after verification</p>
-</div>
-
-</div>
-
-
-{/* Rules */}
-
-<div className="bg-yellow-50 border-l-4 border-yellow-400 p-6 mb-10 rounded">
-
-<h3 className="font-semibold mb-2">Important Rules</h3>
-
-<ul className="text-sm text-gray-700 space-y-1">
-<li>Distance must be completed in ONE session</li>
-<li>Breaks allowed but split runs not allowed</li>
-<li>Screenshot must show distance, time and pace</li>
-</ul>
-
-</div>
-
-
-{/* Search */}
-
-{step==="search" && (
-
-<div className="bg-white p-6 rounded-xl shadow">
-
-<h3 className="font-semibold mb-3">
-Find Your Registration
-</h3>
-
-<p className="text-sm text-gray-500 mb-4">
-Enter your registered email or phone number
-</p>
-
-<div className="flex gap-3">
-
-<input
-className="border p-3 rounded w-full"
-placeholder="Email or Phone"
-value={query}
-onChange={(e)=>setQuery(e.target.value)}
-/>
-
-<button
-onClick={searchRunner}
-className="bg-orange-500 text-white px-6 rounded hover:bg-orange-600"
->
-Search
-</button>
-
-</div>
-
-</div>
-
-)}
-
-
-{/* Submission */}
-
-{step==="submit" && (
-
-<div className="bg-white p-6 rounded-xl shadow">
-
-<h3 className="font-semibold mb-4">
-Submit Your Activity
-</h3>
-
-<p className="text-gray-500 mb-4">
-Runner: {runner.name}
-</p>
-
-<input
-type="file"
-onChange={(e)=>setFile(e.target.files[0])}
-className="border p-3 w-full mb-3"
-/>
-
-<input
-placeholder="Distance Completed"
-value={distance}
-onChange={(e)=>setDistance(e.target.value)}
-className="border p-3 w-full mb-3"
-/>
-<button
-onClick={submit}
-disabled={loading}
-className={`px-6 py-3 rounded text-white ${
-loading ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
-}`}
->
-{loading ? "Submitting..." : "Submit Activity"}
-</button>
-
-</div>
-
-)}
-
-
-{/* Medal Review */}
-
-<div className="mt-16 bg-gray-50 p-8 rounded-xl text-center">
-
-<h3 className="text-xl font-semibold mb-3">
-After Receiving Your Medal 🎉
-</h3>
-
-<p className="text-gray-600 mb-4">
-Once your medal reaches you, come back here and upload your photo with the medal along with your feedback.
-</p>
-
-<p className="text-sm text-gray-500">
-Selected photos will be featured on our official page.
-</p>
-
-</div>
-
-
-{/* FAQ */}
-
-<div className="mt-16">
-
-<h2 className="text-2xl font-bold text-center mb-8">
-Frequently Asked Questions
-</h2>
-
-<div className="space-y-4">
-
-{[
-{q:"When should I complete the challenge?",a:"You can complete your run anytime between 23 March and 28 March."},
-{q:"How do I submit my activity?",a:"After completing your run, come back here and upload your running app screenshot."},
-{q:"Which apps are valid?",a:"Strava, Garmin, Nike Run Club or any app showing distance and time."},
-{q:"Is there a time limit?",a:"No strict time limit, but distance must be completed in one session."},
-{q:"Can I take breaks?",a:"Yes, short breaks are allowed."},
-{q:"Can I split distance?",a:"No, it must be completed in one session."},
-{q:"When will I receive my medal?",a:"Within 1–7 days after verification."}
-].map((item,index)=>(
-
-<details key={index} className="bg-white p-5 rounded-lg shadow cursor-pointer hover:shadow-md">
-<summary className="font-semibold">{item.q}</summary>
-<p className="text-gray-600 mt-2">{item.a}</p>
-</details>
-
-))}
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-);
+  const [eventSlug, setEventSlug]   = useState("");
+  const [eventLabel, setEventLabel] = useState("");
+  const [query, setQuery]           = useState("");
+  const [runner, setRunner]         = useState(null);
+  const [step, setStep]             = useState("search"); // search | submit | done
+  const [distance, setDistance]     = useState("");
+  const [timing, setTiming]         = useState("");
+  const [file, setFile]             = useState(null);
+  const [preview, setPreview]       = useState(null);
+  const [loading, setLoading]       = useState(false);
+
+  const API = process.env.NEXT_PUBLIC_API_URL;
+
+  // ✅ Read eventSlug from URL ?event=republic-day-2026
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ev = params.get("event") || "";
+    setEventSlug(ev);
+    if (ev) {
+      setEventLabel(
+        ev.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+      );
+    }
+  }, []);
+
+  const handleFile = (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    setFile(f);
+    setPreview(URL.createObjectURL(f));
+  };
+
+  // ── SEARCH ────────────────────────────────────────────────
+  async function searchRunner() {
+    if (!query.trim()) { toast.error("Enter your phone or email"); return; }
+    try {
+      const res  = await fetch(`${API}/api/search-runner`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ query: query.trim(), eventSlug }),
+      });
+      const data = await res.json();
+
+      if (!data.runner) {
+        toast.error("Registration not found. Check your phone or email.");
+        return;
+      }
+
+      if (data.alreadySubmitted) {
+        const status = data.submissionStatus;
+        toast.info(
+          status === "approved"
+            ? "Your activity is already verified! ✅"
+            : "Already submitted — pending verification."
+        );
+        return;
+      }
+
+      setRunner(data.runner);
+      setStep("submit");
+      toast.success("Registration found! ✅");
+    } catch {
+      toast.error("Server error. Try again.");
+    }
+  }
+
+  // ── SUBMIT ────────────────────────────────────────────────
+  async function submitRun() {
+    if (loading) return;
+    if (!distance) { toast.error("Select your distance"); return; }
+    if (!file)     { toast.error("Upload your run screenshot"); return; }
+    if (!eventSlug) { toast.error("Event not selected"); return; }
+
+    setLoading(true);
+    try {
+      const fd = new FormData();
+      fd.append("name",      runner.name);
+      fd.append("email",     runner.email);
+      fd.append("phone",     runner.phone);
+      fd.append("distance",  distance);
+      fd.append("timing",    timing);     // ✅ timing field
+      fd.append("eventSlug", eventSlug);  // ✅ event-wise
+      fd.append("image",     file);
+
+      const res  = await fetch(`${API}/api/submit-run`, { method: "POST", body: fd });
+      const data = await res.json();
+
+      if (data.error) {
+        toast.error(data.error);
+      } else {
+        toast.success("Submitted! We'll verify within 24 hours 🎉");
+        setStep("done");
+      }
+    } catch {
+      toast.error("Server error. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+
+      <div className="max-w-lg mx-auto px-4 py-12">
+        {/* Event Badge */}
+        {eventLabel && (
+          <div className="text-center mb-6">
+            <span className="bg-red-100 text-red-700 text-sm font-bold px-4 py-2 rounded-full border border-red-200">
+              📅 {eventLabel}
+            </span>
+          </div>
+        )}
+
+        <h1 className="text-3xl font-extrabold text-center mb-2">Submit Your Activity</h1>
+        <p className="text-gray-500 text-center text-sm mb-8">
+          Enter your registered phone or email to get started
+        </p>
+
+        {/* ── STEP 1: SEARCH ── */}
+        {step === "search" && (
+          <div className="bg-white rounded-3xl shadow-xl p-8">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Phone number or Email
+            </label>
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && searchRunner()}
+              placeholder="9876543210 or you@email.com"
+              className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 mb-4"
+            />
+            <button
+              onClick={searchRunner}
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 rounded-2xl transition-all hover:scale-[1.02]"
+            >
+              Find My Registration →
+            </button>
+          </div>
+        )}
+
+        {/* ── STEP 2: SUBMIT ── */}
+        {step === "submit" && runner && (
+          <div className="bg-white rounded-3xl shadow-xl p-8 space-y-5">
+            {/* Runner info card */}
+            <div className="bg-red-50 border border-red-100 rounded-2xl p-4 flex items-center gap-3">
+              <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white font-black text-lg flex-shrink-0">
+                {runner.name?.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <div className="font-bold text-gray-800">{runner.name}</div>
+                <div className="text-gray-500 text-xs">{runner.email} · {runner.phone}</div>
+              </div>
+            </div>
+
+            {/* Distance selection */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Select Distance *
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {["5km", "10km", "21km"].map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => setDistance(d)}
+                    className={`py-3 rounded-xl border-2 text-sm font-bold transition-all ${
+                      distance === d
+                        ? "bg-red-600 border-red-600 text-white"
+                        : "border-gray-200 text-gray-600 hover:border-red-300"
+                    }`}
+                  >
+                    {d.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Timing field */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Completion Time (optional — for leaderboard)
+              </label>
+              <input
+                value={timing}
+                onChange={(e) => setTiming(e.target.value)}
+                placeholder="HH:MM:SS  e.g. 1:23:45"
+                className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+              <p className="text-gray-400 text-xs mt-1">
+                Fastest time = top of leaderboard 🏆
+              </p>
+            </div>
+
+            {/* Screenshot upload */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Run Screenshot *
+              </label>
+              <label className="block border-2 border-dashed border-gray-200 rounded-2xl p-6 cursor-pointer hover:border-red-300 transition-colors text-center">
+                {preview ? (
+                  <img src={preview} alt="preview" className="max-h-36 mx-auto rounded-xl object-contain" />
+                ) : (
+                  <>
+                    <div className="text-4xl mb-2">📸</div>
+                    <div className="text-gray-500 text-sm font-medium">Click to upload screenshot</div>
+                    <div className="text-gray-400 text-xs mt-1">
+                      Strava, Nike Run Club, Garmin, Google Fit...
+                    </div>
+                  </>
+                )}
+                <input type="file" accept="image/*" onChange={handleFile} className="hidden" />
+              </label>
+            </div>
+
+            <button
+              onClick={submitRun}
+              disabled={loading}
+              className={`w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-2xl transition-all text-base ${
+                loading ? "opacity-60 cursor-not-allowed" : "hover:scale-[1.02]"
+              }`}
+            >
+              {loading ? "Submitting..." : "Submit Activity →"}
+            </button>
+
+            <button
+              onClick={() => { setStep("search"); setRunner(null); setQuery(""); setDistance(""); setTiming(""); setFile(null); setPreview(null); }}
+              className="w-full text-gray-400 text-sm py-2 hover:text-gray-600"
+            >
+              ← Search again
+            </button>
+          </div>
+        )}
+
+        {/* ── STEP 3: DONE ── */}
+        {step === "done" && (
+          <div className="bg-white rounded-3xl shadow-xl p-10 text-center">
+            <div className="text-6xl mb-4">🎉</div>
+            <h2 className="text-2xl font-black mb-2">Submitted!</h2>
+            <p className="text-gray-500 mb-6 text-sm">
+              We will verify your activity within 24 hours. Your medal will be dispatched after verification.
+            </p>
+            <button
+              onClick={() => { setStep("search"); setRunner(null); setQuery(""); setDistance(""); setTiming(""); setFile(null); setPreview(null); }}
+              className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-3 rounded-full transition-all"
+            >
+              Submit Another
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }

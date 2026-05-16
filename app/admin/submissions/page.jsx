@@ -1,111 +1,238 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { adminAPI } from '@/lib/api';
+import { useEffect, useState } from "react";
+import { adminAPI } from "@/lib/api";
 
-export default function SubmissionsPage() {
-  const [submissions, setSubmissions] = useState([]);
+export default function AdminSubmissions() {
+  const [events, setEvents]   = useState([]);
+  const [subs, setSubs]       = useState([]);
+  const [counts, setCounts]   = useState({ pending: 0, approved: 0, rejected: 0 });
+  const [total, setTotal]     = useState(0);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('');
+  const [eventSlug, setEventSlug] = useState("");
+  const [status, setStatus]   = useState("pending");
+  const [distance, setDistance] = useState("");
+  const [search, setSearch]   = useState("");
+  const [selected, setSelected] = useState([]);
+  const [modal, setModal]     = useState(null); // image preview
 
-  useEffect(() => { loadSubmissions(''); }, []);
+  useEffect(() => {
+    adminAPI.getEvents().then((r) => setEvents(r.events || []));
+    // read URL params
+    const p = new URLSearchParams(window.location.search);
+    const ev = p.get("event") || "";
+    setEventSlug(ev);
+    load({ eventSlug: ev, status: "pending" });
+  }, []);
 
-  const loadSubmissions = async (status) => {
+  const load = async (params) => {
     setLoading(true);
-    setActiveTab(status);
+    setSelected([]);
     try {
-      const res = await adminAPI.getSubmissions(status);
-      setSubmissions(res.submissions || res || []);
-    } catch (e) { console.error(e); }
-    finally { setLoading(false); }
+      const res = await adminAPI.getSubmissions(params);
+      setSubs(res.submissions || []);
+      setTotal(res.total || 0);
+      setCounts(res.counts || { pending: 0, approved: 0, rejected: 0 });
+    } catch {}
+    setLoading(false);
   };
 
-  const handleAction = async (id, action) => {
-    try {
-      if (action === 'approve') await adminAPI.approveSubmission(id);
-      else await adminAPI.rejectSubmission(id);
-      loadSubmissions(activeTab);
-    } catch (e) { console.error(e); }
+  const applyFilter = (overrides = {}) => {
+    const params = { eventSlug, status, distance, search, ...overrides };
+    // clean empty
+    Object.keys(params).forEach((k) => !params[k] && delete params[k]);
+    load(params);
   };
 
-  const tabs = [
-    { label: 'All', value: '' },
-    { label: 'Pending', value: 'pending' },
-    { label: 'Approved', value: 'approved' },
-    { label: 'Rejected', value: 'rejected' },
-  ];
+  const approve = async (id) => {
+    await adminAPI.approveSubmission(id);
+    applyFilter();
+  };
+  const reject = async (id) => {
+    await adminAPI.rejectSubmission(id);
+    applyFilter();
+  };
+  const del = async (id) => {
+    if (!confirm("Delete this submission?")) return;
+    await adminAPI.deleteSubmission(id);
+    applyFilter();
+  };
+  const bulkApprove = async () => {
+    if (!selected.length || !confirm(`Approve ${selected.length} submissions?`)) return;
+    await adminAPI.bulkApprove(selected);
+    applyFilter();
+  };
+
+  const toggle = (id) =>
+    setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
+  const toggleAll = () =>
+    setSelected(selected.length === subs.length ? [] : subs.map((s) => s._id));
+
+  const exportCSV = () => {
+    const headers = ["Name","Email","Phone","Distance","Timing","Event","Status","Date","Image URL"];
+    const rows = subs.map((s) => [
+      s.name, s.email, s.phone, s.distance, s.timing || "",
+      s.eventSlug, s.status, s.createdAt?.slice(0, 10), s.imageUrl,
+    ]);
+    const csv = [headers, ...rows].map((r) => r.map((c) => `"${c || ""}"`).join(",")).join("\n");
+    const a = document.createElement("a");
+    a.href = "data:text/csv;charset=utf-8,\uFEFF" + encodeURIComponent(csv);
+    a.download = `submissions-${eventSlug || "all"}-${status || "all"}.csv`;
+    a.click();
+  };
+
+  const statusBadge = (s) => ({
+    pending:  "bg-yellow-100 text-yellow-700 border border-yellow-200",
+    approved: "bg-green-100 text-green-700 border border-green-200",
+    rejected: "bg-red-100 text-red-700 border border-red-200",
+  }[s] || "bg-gray-100 text-gray-600");
 
   return (
     <div>
-      <div style={{ marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '22px', fontWeight: 700, margin: 0 }}>Run Submissions</h1>
-        <p style={{ color: '#868e96', margin: '4px 0 0', fontSize: '14px' }}>{submissions.length} submissions</p>
+      {/* Header */}
+      <div className="flex items-start justify-between mb-6 flex-wrap gap-3">
+        <div>
+          <h1 className="text-2xl font-black text-gray-800">Activity Submissions</h1>
+          <p className="text-gray-500 text-sm mt-1">{total} total · {counts.pending} pending</p>
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          {selected.length > 0 && (
+            <button onClick={bulkApprove}
+              className="bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-green-700">
+              ✓ Approve ({selected.length})
+            </button>
+          )}
+          <button onClick={exportCSV}
+            className="bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-blue-700">
+            ⬇ CSV
+          </button>
+        </div>
       </div>
 
-      <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #e9ecef' }}>
-        <div style={{ padding: '12px 20px', borderBottom: '1px solid #e9ecef', display: 'flex', gap: '6px' }}>
-          {tabs.map(t => (
-            <button key={t.value} onClick={() => loadSubmissions(t.value)} style={{
-              padding: '6px 16px', borderRadius: '8px', border: 'none', fontSize: '12px',
-              fontWeight: activeTab === t.value ? 600 : 400, cursor: 'pointer',
-              background: activeTab === t.value ? '#e7f5ff' : 'transparent',
-              color: activeTab === t.value ? '#1971c2' : '#495057',
-            }}>{t.label}</button>
+      {/* Filters */}
+      <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-4 flex flex-wrap gap-3">
+        <select value={eventSlug} onChange={(e) => { setEventSlug(e.target.value); applyFilter({ eventSlug: e.target.value }); }}
+          className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 min-w-44">
+          <option value="">All Events</option>
+          {events.map((ev) => (
+            <option key={ev._id} value={ev.slug}>{ev.title}</option>
           ))}
-        </div>
+        </select>
 
+        <select value={distance} onChange={(e) => { setDistance(e.target.value); applyFilter({ distance: e.target.value }); }}
+          className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+          <option value="">All Distances</option>
+          {["5km","10km","21km"].map((d) => <option key={d} value={d}>{d.toUpperCase()}</option>)}
+        </select>
+
+        <input value={search} onChange={(e) => { setSearch(e.target.value); applyFilter({ search: e.target.value }); }}
+          placeholder="Search name, email, phone..."
+          className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 flex-1 min-w-40"/>
+      </div>
+
+      {/* Status tabs */}
+      <div className="flex gap-1 mb-4">
+        {[
+          { v: "pending",  l: `Pending (${counts.pending})` },
+          { v: "approved", l: `Approved (${counts.approved})` },
+          { v: "rejected", l: `Rejected (${counts.rejected})` },
+          { v: "",         l: "All" },
+        ].map((t) => (
+          <button key={t.v} onClick={() => { setStatus(t.v); applyFilter({ status: t.v }); }}
+            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+              status === t.v
+                ? "bg-red-600 text-white"
+                : "bg-white border border-gray-200 text-gray-600 hover:border-red-300"
+            }`}>
+            {t.l}
+          </button>
+        ))}
+      </div>
+
+      {/* Table */}
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#868e96' }}>Loading...</div>
+          <div className="text-center py-16 text-gray-400">Loading...</div>
+        ) : subs.length === 0 ? (
+          <div className="text-center py-16 text-gray-400">No submissions found</div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
               <thead>
-                <tr style={{ background: '#f8f9fa' }}>
-                  {['Runner', 'Email', 'Phone', 'Distance', 'Proof', 'Status', 'Date', 'Actions'].map(h => (
-                    <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: '#495057', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #e9ecef' }}>{h}</th>
+                <tr className="bg-gray-50 border-b border-gray-100">
+                  <th className="p-3 text-left w-8">
+                    <input type="checkbox" checked={selected.length === subs.length} onChange={toggleAll}/>
+                  </th>
+                  {["Runner","Distance","Timing","Event","Proof","Status","Date","Actions"].map((h) => (
+                    <th key={h} className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody>
-                {submissions.length === 0 ? (
-                  <tr><td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: '#868e96' }}>No submissions found</td></tr>
-                ) : (
-                  submissions.map(s => (
-                    <tr key={s._id} style={{ borderBottom: '1px solid #f1f3f5' }}>
-                      <td style={{ padding: '12px 16px', fontWeight: 600 }}>{s.name || '—'}</td>
-                      <td style={{ padding: '12px 16px', fontSize: '12px', color: '#495057' }}>{s.email || '—'}</td>
-                      <td style={{ padding: '12px 16px' }}>{s.phone || '—'}</td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '20px', background: '#e7f5ff', color: '#1971c2', fontWeight: 600 }}>{s.distance || '—'}</span>
-                      </td>
-                      <td style={{ padding: '12px 16px' }}>
-                        {s.imageUrl ? <a href={s.imageUrl} target="_blank" rel="noreferrer" style={{ color: '#1971c2', fontSize: '12px', fontWeight: 600 }}>View Proof</a> : '—'}
-                      </td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '20px', fontWeight: 600,
-                          background: s.status === 'approved' ? '#d3f9d8' : s.status === 'rejected' ? '#ffe3e3' : '#fff9db',
-                          color: s.status === 'approved' ? '#2b8a3e' : s.status === 'rejected' ? '#c92a2a' : '#e67700'
-                        }}>{s.status || 'pending'}</span>
-                      </td>
-                      <td style={{ padding: '12px 16px', fontSize: '11px', color: '#868e96' }}>{s.createdAt ? new Date(s.createdAt).toLocaleDateString('en-IN') : '—'}</td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <div style={{ display: 'flex', gap: '6px' }}>
-                          {s.status !== 'approved' && (
-                            <button onClick={() => handleAction(s._id, 'approve')} style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid #d3f9d8', background: '#d3f9d8', color: '#2b8a3e', fontSize: '11px', cursor: 'pointer', fontWeight: 600 }}>Approve</button>
-                          )}
-                          {s.status !== 'rejected' && (
-                            <button onClick={() => handleAction(s._id, 'reject')} style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid #ffe3e3', background: '#ffe3e3', color: '#c92a2a', fontSize: '11px', cursor: 'pointer', fontWeight: 600 }}>Reject</button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
+              <tbody className="divide-y divide-gray-50">
+                {subs.map((s) => (
+                  <tr key={s._id} className={`hover:bg-gray-50 ${selected.includes(s._id) ? "bg-red-50" : ""}`}>
+                    <td className="p-3">
+                      <input type="checkbox" checked={selected.includes(s._id)} onChange={() => toggle(s._id)}/>
+                    </td>
+                    <td className="p-3">
+                      <div className="font-semibold text-gray-800">{s.name}</div>
+                      <div className="text-gray-400 text-xs">{s.email}</div>
+                      <div className="text-gray-400 text-xs">{s.phone}</div>
+                    </td>
+                    <td className="p-3">
+                      <span className="bg-blue-50 text-blue-700 border border-blue-100 text-xs font-bold px-2 py-1 rounded-lg">
+                        {s.distance}
+                      </span>
+                    </td>
+                    <td className="p-3 font-bold text-gray-700">{s.timing || "—"}</td>
+                    <td className="p-3 text-xs text-gray-400">{s.eventSlug || <span className="text-red-400">missing</span>}</td>
+                    <td className="p-3">
+                      {s.imageUrl ? (
+                        <button onClick={() => setModal(s.imageUrl)}
+                          className="text-blue-600 hover:underline text-xs font-semibold">
+                          View 🔍
+                        </button>
+                      ) : "—"}
+                    </td>
+                    <td className="p-3">
+                      <span className={`text-xs font-semibold px-2 py-1 rounded-lg ${statusBadge(s.status)}`}>
+                        {s.status}
+                      </span>
+                    </td>
+                    <td className="p-3 text-gray-400 text-xs whitespace-nowrap">
+                      {s.createdAt?.slice(0, 10)}
+                    </td>
+                    <td className="p-3">
+                      <div className="flex gap-1">
+                        {s.status !== "approved" && (
+                          <button onClick={() => approve(s._id)}
+                            className="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-lg hover:bg-green-200">✓</button>
+                        )}
+                        {s.status !== "rejected" && (
+                          <button onClick={() => reject(s._id)}
+                            className="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-lg hover:bg-red-200">✗</button>
+                        )}
+                        <button onClick={() => del(s._id)}
+                          className="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-lg hover:bg-gray-200">🗑</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         )}
       </div>
+
+      {/* Image modal */}
+      {modal && (
+        <div onClick={() => setModal(null)} className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+          <div onClick={(e) => e.stopPropagation()} className="relative max-w-xl w-full">
+            <button onClick={() => setModal(null)} className="absolute -top-10 right-0 text-white text-3xl font-bold">×</button>
+            <img src={modal} alt="proof" className="w-full rounded-2xl shadow-2xl"/>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

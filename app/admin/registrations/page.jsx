@@ -1,118 +1,199 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { adminAPI } from '@/lib/api';
+import { useEffect, useState } from "react";
+import { adminAPI } from "@/lib/api";
 
-export default function RegistrationsPage() {
-  const [registrations, setRegistrations] = useState([]);
-  const [filtered, setFiltered] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [eventFilter, setEventFilter] = useState('');
+export default function AdminRegistrations() {
+  const [events, setEvents]     = useState([]);
+  const [regs, setRegs]         = useState([]);
+  const [total, setTotal]       = useState(0);
+  const [loading, setLoading]   = useState(true);
+  const [eventSlug, setEventSlug] = useState("");
+  const [category, setCategory] = useState("");
+  const [search, setSearch]     = useState("");
 
-  useEffect(() => { loadAll(); }, []);
+  useEffect(() => {
+    adminAPI.getEvents().then((r) => setEvents(r.events || []));
+    load({});
+  }, []);
 
-  const loadAll = async () => {
+  const load = async (params) => {
+    setLoading(true);
     try {
-      const [regRes, evRes] = await Promise.all([adminAPI.getRegistrations({}), adminAPI.getEvents()]);
-      const regs = regRes.registrations || regRes || [];
-      setRegistrations(regs);
-      setFiltered(regs);
-      if (evRes.success) setEvents(evRes.events || []);
-    } catch (e) { console.error(e); }
-    finally { setLoading(false); }
+      const res = await adminAPI.getRegistrations(params);
+      setRegs(res.registrations || []);
+      setTotal(res.total || 0);
+    } catch {}
+    setLoading(false);
   };
 
-  const applyFilters = (s, evSlug) => {
-    let data = [...registrations];
-    if (evSlug) data = data.filter(r => (r.eventSlug || r.event?.slug) === evSlug);
-    if (s) {
-      const q = s.toLowerCase();
-      data = data.filter(r =>
-        (r.user?.name || r.name || '').toLowerCase().includes(q) ||
-        (r.user?.email || r.email || '').toLowerCase().includes(q) ||
-        (r.user?.phone || r.phone || '').toLowerCase().includes(q)
-      );
+  const applyFilter = (overrides = {}) => {
+    const params = { eventSlug, category, search, ...overrides };
+    Object.keys(params).forEach((k) => !params[k] && delete params[k]);
+    load(params);
+  };
+
+  const updateMedal = async (id, medalStatus) => {
+    await adminAPI.updateMedalStatus(id, { medalStatus });
+    applyFilter();
+  };
+
+  // Export to Excel using SheetJS
+  const exportExcel = async () => {
+    if (!eventSlug) { alert("Select an event first to export"); return; }
+
+    try {
+      const res = await adminAPI.exportRegistrations(eventSlug);
+      if (!res.rows?.length) { alert("No registrations found"); return; }
+
+      // Dynamic import xlsx
+      const XLSX = await import("xlsx");
+
+      const headers = [
+        "Sr", "Name", "Email", "Phone", "Category",
+        "Address 1", "Address 2", "Landmark", "City", "State", "Pincode",
+        "Amount", "Payment ID", "Order ID", "Medal Status", "Tracking ID", "Date"
+      ];
+
+      const data = res.rows.map((r) => [
+        r.sr, r.name, r.email, r.phone, r.category,
+        r.address1, r.address2, r.landmark, r.city, r.state, r.pincode,
+        r.amount, r.paymentId, r.orderId, r.medalStatus, r.trackingId, r.date
+      ]);
+
+      const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
+      ws["!cols"] = [6,22,28,14,12,24,20,18,14,14,10,10,22,22,14,16,14].map((w) => ({ wch: w }));
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Registrations");
+      XLSX.writeFile(wb, `${res.event || eventSlug}_registrations.xlsx`);
+    } catch (err) {
+      console.error(err);
+      alert("Export failed");
     }
-    setFiltered(data);
   };
 
   const exportCSV = () => {
-    const rows = [['Name', 'Email', 'Phone', 'Category', 'Event', 'Date', 'Status']];
-    filtered.forEach(r => rows.push([
-      r.user?.name || r.name || '',
-      r.user?.email || r.email || '',
-      r.user?.phone || r.phone || '',
-      r.category || '',
-      r.eventSlug || r.event?.slug || '',
-      r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN') : '',
-      r.status || 'paid'
-    ]));
-    const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
-    const a = document.createElement('a');
-    a.href = 'data:text/csv,' + encodeURIComponent(csv);
-    a.download = `registrations-${eventFilter || 'all'}.csv`;
+    const headers = ["Sr","Name","Email","Phone","Category","City","State","Pincode","Amount","PaymentID","Medal Status","Date"];
+    const rows = regs.map((r, i) => [
+      i+1, r.user?.name||"", r.user?.email||"", r.user?.phone||"",
+      r.category||"", r.user?.city||"", r.user?.state||"", r.user?.pincode||"",
+      r.amount||"", r.paymentId||"", r.medalStatus||"pending",
+      r.createdAt?.slice(0,10)||""
+    ]);
+    const csv = [headers,...rows].map((r)=>r.map((c)=>`"${c||""}"`).join(",")).join("\n");
+    const a = document.createElement("a");
+    a.href = "data:text/csv;charset=utf-8,\uFEFF" + encodeURIComponent(csv);
+    a.download = `registrations-${eventSlug||"all"}.csv`;
     a.click();
   };
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '60px', color: '#868e96' }}>Loading...</div>;
+  const medalColors = {
+    pending:    "bg-yellow-100 text-yellow-700",
+    verified:   "bg-blue-100 text-blue-700",
+    dispatched: "bg-purple-100 text-purple-700",
+    delivered:  "bg-green-100 text-green-700",
+  };
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+      <div className="flex items-start justify-between mb-6 flex-wrap gap-3">
         <div>
-          <h1 style={{ fontSize: '22px', fontWeight: 700, margin: 0 }}>Registrations</h1>
-          <p style={{ color: '#868e96', margin: '4px 0 0', fontSize: '14px' }}>{filtered.length} entries</p>
+          <h1 className="text-2xl font-black text-gray-800">Registrations</h1>
+          <p className="text-gray-500 text-sm mt-1">{total} total registrations</p>
         </div>
-        <button onClick={exportCSV} style={{ padding: '9px 18px', background: '#2f9e44', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}>Export CSV</button>
+        <div className="flex gap-2 flex-wrap">
+          <button onClick={exportCSV}
+            className="border border-gray-300 text-gray-700 text-sm font-semibold px-4 py-2 rounded-xl hover:bg-gray-50">
+            CSV
+          </button>
+          <button onClick={exportExcel}
+            className="bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-green-700">
+            ⬇ Excel (.xlsx)
+          </button>
+        </div>
       </div>
 
-      <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #e9ecef' }}>
-        <div style={{ padding: '14px 20px', borderBottom: '1px solid #e9ecef', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-          <select value={eventFilter} onChange={e => { setEventFilter(e.target.value); applyFilters(search, e.target.value); }}
-            style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid #dee2e6', fontSize: '13px', minWidth: '200px' }}>
-            <option value="">All Events</option>
-            {events.map(ev => <option key={ev._id} value={ev.slug}>{ev.title}</option>)}
-          </select>
-          <input value={search} onChange={e => { setSearch(e.target.value); applyFilters(e.target.value, eventFilter); }}
-            placeholder="Search name, email, phone..."
-            style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid #dee2e6', fontSize: '13px', flex: 1, minWidth: '200px' }} />
-        </div>
+      {/* Filters */}
+      <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-4 flex flex-wrap gap-3">
+        <select value={eventSlug} onChange={(e) => { setEventSlug(e.target.value); applyFilter({ eventSlug: e.target.value }); }}
+          className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 min-w-44">
+          <option value="">All Events</option>
+          {events.map((ev) => (
+            <option key={ev._id} value={ev.slug}>{ev.title} ({ev.registrationCount || 0})</option>
+          ))}
+        </select>
 
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-            <thead>
-              <tr style={{ background: '#f8f9fa' }}>
-                {['#', 'Name', 'Email', 'Phone', 'Category', 'Event', 'Date', 'Status'].map(h => (
-                  <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: '#495057', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #e9ecef' }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length === 0 ? (
-                <tr><td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: '#868e96' }}>No registrations found</td></tr>
-              ) : (
-                filtered.map((r, i) => (
-                  <tr key={r._id || i} style={{ borderBottom: '1px solid #f1f3f5' }}>
-                    <td style={{ padding: '12px 16px', color: '#868e96' }}>{i + 1}</td>
-                    <td style={{ padding: '12px 16px', fontWeight: 600 }}>{r.user?.name || r.name || '—'}</td>
-                    <td style={{ padding: '12px 16px', color: '#495057' }}>{r.user?.email || r.email || '—'}</td>
-                    <td style={{ padding: '12px 16px' }}>{r.user?.phone || r.phone || '—'}</td>
-                    <td style={{ padding: '12px 16px' }}>
-                      <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '20px', background: '#e7f5ff', color: '#1971c2', fontWeight: 600 }}>{r.category || '—'}</span>
+        <select value={category} onChange={(e) => { setCategory(e.target.value); applyFilter({ category: e.target.value }); }}
+          className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+          <option value="">All Categories</option>
+          {["5km","10km","21km"].map((c) => <option key={c} value={c}>{c}</option>)}
+        </select>
+
+        <input value={search} onChange={(e) => { setSearch(e.target.value); applyFilter({ search: e.target.value }); }}
+          placeholder="Search name, email, phone..."
+          className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 flex-1 min-w-40"/>
+      </div>
+
+      {/* Table */}
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        {loading ? (
+          <div className="text-center py-16 text-gray-400">Loading...</div>
+        ) : regs.length === 0 ? (
+          <div className="text-center py-16 text-gray-400">No registrations found</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-100">
+                  {["#","Name","Phone","Category","City/State","Amount","Medal Status","Registered","Action"].map((h) => (
+                    <th key={h} className="p-3 text-left text-xs font-semibold text-gray-500 uppercase whitespace-nowrap">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {regs.map((r, i) => (
+                  <tr key={r._id} className="hover:bg-gray-50">
+                    <td className="p-3 text-gray-400 text-xs">{i+1}</td>
+                    <td className="p-3">
+                      <div className="font-semibold text-gray-800">{r.user?.name||"—"}</div>
+                      <div className="text-gray-400 text-xs">{r.user?.email}</div>
                     </td>
-                    <td style={{ padding: '12px 16px', fontSize: '11px', color: '#868e96' }}>{r.eventSlug || r.event?.slug || '—'}</td>
-                    <td style={{ padding: '12px 16px', fontSize: '11px', color: '#868e96' }}>{r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN') : '—'}</td>
-                    <td style={{ padding: '12px 16px' }}>
-                      <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '20px', background: '#d3f9d8', color: '#2b8a3e', fontWeight: 600 }}>{r.status || 'paid'}</span>
+                    <td className="p-3 text-gray-600 text-xs">{r.user?.phone||"—"}</td>
+                    <td className="p-3">
+                      <span className="bg-blue-50 text-blue-700 text-xs font-bold px-2 py-1 rounded-lg border border-blue-100">
+                        {r.category}
+                      </span>
+                    </td>
+                    <td className="p-3 text-gray-500 text-xs">
+                      {[r.user?.city, r.user?.state].filter(Boolean).join(", ")||"—"}
+                    </td>
+                    <td className="p-3 font-bold text-gray-700">
+                      {r.amount ? `₹${r.amount}` : "—"}
+                    </td>
+                    <td className="p-3">
+                      <span className={`text-xs font-semibold px-2 py-1 rounded-lg ${medalColors[r.medalStatus] || "bg-gray-100 text-gray-500"}`}>
+                        {r.medalStatus || "pending"}
+                      </span>
+                    </td>
+                    <td className="p-3 text-gray-400 text-xs whitespace-nowrap">
+                      {r.createdAt?.slice(0,10)}
+                    </td>
+                    <td className="p-3">
+                      <select value={r.medalStatus||"pending"} onChange={(e) => updateMedal(r._id, e.target.value)}
+                        className="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-red-500">
+                        <option value="pending">Pending</option>
+                        <option value="verified">Verified</option>
+                        <option value="dispatched">Dispatched</option>
+                        <option value="delivered">Delivered</option>
+                      </select>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
