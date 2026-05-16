@@ -128,7 +128,7 @@ export default function Navbar() {
     { name: "Home", href: "/" },
     // { name: "Challenges", href: "/challenges" },
     { name: "Gallery", href: "/gallery" },
-    { name: "Leaderboard", href:"/leaderboard/republic-day-2026" },
+  { name: "Leaderboard", href: "/leaderboard" },
     { name: "About", href: "/about" },
     // { name: "Premium Registration", href: "/premium-registration" },
   ];
