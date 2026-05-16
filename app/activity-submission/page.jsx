@@ -12,6 +12,7 @@ export default function ActivitySubmission() {
   const [runner, setRunner]         = useState(null);
   const [step, setStep]             = useState("search");
   const [distance, setDistance]     = useState("");
+  const [customDist, setCustomDist] = useState("");
   const [timing, setTiming]         = useState("");
   const [file, setFile]             = useState(null);
   const [preview, setPreview]       = useState(null);
@@ -19,19 +20,20 @@ export default function ActivitySubmission() {
 
   const API = process.env.NEXT_PUBLIC_API_URL;
 
+  const DISTANCES = [
+    "1600m", "3.2km", "5km", "10km", "21km",
+    "Cycling 10km", "Cycling 25km", "Cycling 50km"
+  ];
+
   useEffect(() => {
     fetch(`${API}/api/events`)
-      .then((r) => r.json())
-      .then((data) => {
+      .then(r => r.json())
+      .then(data => {
         const all  = data.events || [];
-        // ✅ Live events — active ON, isPrevious OFF
-        const live = all.filter((e) => e.active && !e.isPrevious);
-        // ✅ Past events — active ON, isPrevious ON
-        const past = all.filter((e) => e.active && e.isPrevious);
+        const live = all.filter(e => e.active && !e.isPrevious);
+        const past = all.filter(e => e.active && e.isPrevious);
         setEvents(live);
         setPastEvents(past);
-
-        // Auto-select if ?event= in URL
         const params = new URLSearchParams(window.location.search);
         const ev = params.get("event");
         if (ev) setEventSlug(ev);
@@ -45,7 +47,7 @@ export default function ActivitySubmission() {
     return new Date() > new Date(event.submissionDeadline);
   };
 
-  const selectedEvent    = [...events, ...pastEvents].find((e) => e.slug === eventSlug);
+  const selectedEvent    = [...events, ...pastEvents].find(e => e.slug === eventSlug);
   const submissionClosed = isSubmissionClosed(selectedEvent) || selectedEvent?.isPrevious;
 
   const handleFile = (e) => {
@@ -55,10 +57,22 @@ export default function ActivitySubmission() {
     setPreview(URL.createObjectURL(f));
   };
 
+  const handleCustomDist = (val) => {
+    setCustomDist(val);
+    if (val) {
+      setDistance(`${val}km`);
+    }
+  };
+
+  const handleDistanceBtn = (d) => {
+    setDistance(d);
+    setCustomDist(""); // clear custom input
+  };
+
   async function searchRunner() {
-    if (!eventSlug)         { toast.error("Pehle event select karo"); return; }
-    if (submissionClosed)   { toast.error("Is event ki submission band ho gayi hai"); return; }
-    if (!query.trim())      { toast.error("Phone ya email daalo"); return; }
+    if (!eventSlug)       { toast.error("Please select an event first"); return; }
+    if (submissionClosed) { toast.error("Submissions are closed for this event"); return; }
+    if (!query.trim())    { toast.error("Enter your phone or email"); return; }
 
     try {
       const res  = await fetch(`${API}/api/search-runner`, {
@@ -69,29 +83,29 @@ export default function ActivitySubmission() {
       const data = await res.json();
 
       if (!data.runner) {
-        toast.error("Registration nahi mili. Phone ya email check karo.");
+        toast.error("Registration not found. Please check your phone or email.");
         return;
       }
       if (data.alreadySubmitted) {
         toast.info(
           data.submissionStatus === "approved"
-            ? "Tumhari activity already verify ho gayi! ✅"
-            : "Already submit ho gayi — verification pending."
+            ? "Your activity is already verified! ✅"
+            : "Already submitted — verification pending."
         );
         return;
       }
       setRunner(data.runner);
       setStep("submit");
-      toast.success("Registration mil gayi! ✅");
+      toast.success("Registration found! ✅");
     } catch {
-      toast.error("Server error. Dobara try karo.");
+      toast.error("Server error. Please try again.");
     }
   }
 
   async function submitRun() {
     if (loading)   return;
-    if (!distance) { toast.error("Distance select karo"); return; }
-    if (!file)     { toast.error("Screenshot upload karo"); return; }
+    if (!distance) { toast.error("Please select or enter your distance"); return; }
+    if (!file)     { toast.error("Please upload your run screenshot"); return; }
 
     setLoading(true);
     try {
@@ -108,9 +122,9 @@ export default function ActivitySubmission() {
       const data = await res.json();
 
       if (data.error) toast.error(data.error);
-      else { toast.success("Submit ho gayi! 24 ghante mein verify karenge 🎉"); setStep("done"); }
+      else { toast.success("Submitted successfully! 🎉"); setStep("done"); }
     } catch {
-      toast.error("Server error. Dobara try karo.");
+      toast.error("Server error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -118,17 +132,15 @@ export default function ActivitySubmission() {
 
   const reset = () => {
     setStep("search"); setRunner(null); setQuery("");
-    setDistance(""); setTiming(""); setFile(null); setPreview(null);
+    setDistance(""); setCustomDist(""); setTiming("");
+    setFile(null); setPreview(null);
   };
 
-  // ── Event card component ──────────────────────────────────
   const EventCard = ({ ev, isPast = false }) => {
-    const closed    = isPast || isSubmissionClosed(ev);
+    const closed     = isPast || isSubmissionClosed(ev);
     const isSelected = eventSlug === ev.slug;
-
     return (
       <button
-        key={ev._id}
         onClick={() => !closed && setEventSlug(ev.slug)}
         disabled={closed}
         className={`w-full text-left px-4 py-3 rounded-2xl border-2 transition-all ${
@@ -156,13 +168,6 @@ export default function ActivitySubmission() {
             </span>
           )}
         </div>
-        {ev.submissionDeadline && !closed && (
-          <div className="text-orange-500 text-xs mt-1 font-medium">
-            ⏳ Last date: {new Date(ev.submissionDeadline).toLocaleDateString("en-IN", {
-              day: "numeric", month: "short", year: "numeric"
-            })}
-          </div>
-        )}
       </button>
     );
   };
@@ -176,66 +181,66 @@ export default function ActivitySubmission() {
           Submit Your Activity
         </h1>
         <p className="text-gray-500 text-center text-sm mb-8">
-          Event select karo aur registered phone/email se login karo
+          Select your event and find your registration to get started
         </p>
 
+        {/* ── STEP 1: SEARCH ── */}
         {step === "search" && (
           <div className="bg-white rounded-3xl shadow-xl p-8 space-y-5">
 
-            {/* ── LIVE EVENTS ── */}
+            {/* Live Events */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-3">
                 🟢 Active Events
               </label>
               {events.length === 0 ? (
                 <div className="text-center py-4 text-gray-400 text-sm">
-                  Koi active event nahi hai abhi
+                  No active events right now
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {events.map((ev) => <EventCard key={ev._id} ev={ev} isPast={false} />)}
+                  {events.map(ev => <EventCard key={ev._id} ev={ev} isPast={false}/>)}
                 </div>
               )}
             </div>
 
-            {/* ── PAST EVENTS ── */}
+            {/* Past Events */}
             {pastEvents.length > 0 && (
               <div>
                 <label className="block text-sm font-bold text-gray-500 mb-3 mt-2">
                   🔒 Previous Events (Closed)
                 </label>
                 <div className="space-y-2">
-                  {pastEvents.map((ev) => <EventCard key={ev._id} ev={ev} isPast={true} />)}
+                  {pastEvents.map(ev => <EventCard key={ev._id} ev={ev} isPast={true}/>)}
                 </div>
               </div>
             )}
 
-            {/* Submission closed warning */}
+            {/* Closed warning */}
             {submissionClosed && eventSlug && (
               <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-center">
                 <div className="text-2xl mb-1">🔒</div>
                 <div className="text-red-600 font-bold text-sm">
-                  Is event ki submission band ho gayi hai
+                  Submissions are closed for this event
                 </div>
               </div>
             )}
 
-            {/* Phone/email input */}
+            {/* Phone/email search */}
             {eventSlug && !submissionClosed && (
               <>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Registered Phone ya Email *
+                    Registered Phone or Email *
                   </label>
                   <input
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && searchRunner()}
-                    placeholder="9876543210 ya you@email.com"
+                    onChange={e => setQuery(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && searchRunner()}
+                    placeholder="9876543210 or you@email.com"
                     className="w-full border-2 border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-red-500 transition-colors"
                   />
                 </div>
-
                 <button
                   onClick={searchRunner}
                   disabled={!query.trim()}
@@ -255,12 +260,15 @@ export default function ActivitySubmission() {
         {/* ── STEP 2: SUBMIT ── */}
         {step === "submit" && runner && (
           <div className="bg-white rounded-3xl shadow-xl p-8 space-y-5">
+
+            {/* Event badge */}
             {selectedEvent && (
               <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-2 text-center">
                 <span className="text-red-600 font-bold text-sm">📅 {selectedEvent.title}</span>
               </div>
             )}
 
+            {/* Runner info */}
             <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 flex items-center gap-3">
               <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white font-black text-lg flex-shrink-0">
                 {runner.name?.charAt(0).toUpperCase()}
@@ -271,55 +279,133 @@ export default function ActivitySubmission() {
               </div>
             </div>
 
+            {/* Distance */}
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Distance *</label>
+              <label className="block text-sm font-bold text-gray-700 mb-2">
+                Select Your Distance *
+              </label>
               <div className="grid grid-cols-3 gap-2">
-                {["5km", "10km", "21km"].map((d) => (
-                  <button key={d} onClick={() => setDistance(d)}
-                    className={`py-3 rounded-xl border-2 text-sm font-bold transition-all ${
-                      distance === d ? "bg-red-600 border-red-600 text-white" : "border-gray-200 text-gray-600 hover:border-red-300"
-                    }`}>
+                {DISTANCES.map(d => (
+                  <button
+                    key={d}
+                    onClick={() => handleDistanceBtn(d)}
+                    className={`py-3 rounded-xl border-2 text-xs font-bold transition-all ${
+                      distance === d && !customDist
+                        ? "bg-red-600 border-red-600 text-white"
+                        : "border-gray-200 text-gray-600 hover:border-red-300"
+                    }`}
+                  >
                     {d.toUpperCase()}
                   </button>
                 ))}
               </div>
+
+              {/* Custom distance */}
+              <div className="mt-3 p-3 bg-gray-50 rounded-2xl border border-gray-200">
+                <label className="block text-xs text-gray-500 mb-2 font-semibold">
+                  Or enter your exact distance:
+                </label>
+                <div className="flex gap-2 items-center">
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    value={customDist}
+                    onChange={e => handleCustomDist(e.target.value)}
+                    placeholder="e.g. 7.5"
+                    className="flex-1 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-red-500 transition-colors bg-white"
+                  />
+                  <span className="text-gray-600 font-bold text-sm bg-gray-200 px-3 py-2.5 rounded-xl">
+                    km
+                  </span>
+                </div>
+                <p className="text-gray-400 text-xs mt-1.5">
+                  For any distance not listed above — e.g. 7.5km, 15km, 42km, 100km
+                </p>
+              </div>
+
+              {/* Selected preview */}
+              {distance && (
+                <div className="mt-2 text-center">
+                  <span className="bg-red-50 border border-red-200 text-red-600 text-sm font-bold px-4 py-1.5 rounded-full">
+                    ✓ Selected: {distance.toUpperCase()}
+                  </span>
+                </div>
+              )}
             </div>
 
+            {/* Timing */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                Completion Time <span className="text-gray-400 font-normal text-xs">(optional — leaderboard)</span>
+                Completion Time{" "}
+                <span className="text-gray-400 font-normal text-xs">
+                  (optional — for leaderboard ranking)
+                </span>
               </label>
-              <input value={timing} onChange={(e) => setTiming(e.target.value)}
-                placeholder="HH:MM:SS  jaise 1:23:45"
-                className="w-full border-2 border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-red-500"/>
-              <p className="text-gray-400 text-xs mt-1">🏆 Sabse kam time = leaderboard top</p>
+              <input
+                value={timing}
+                onChange={e => setTiming(e.target.value)}
+                placeholder="HH:MM:SS  e.g. 1:23:45"
+                className="w-full border-2 border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-red-500"
+              />
+              <p className="text-gray-400 text-xs mt-1">
+                🏆 Fastest time = Top of leaderboard
+              </p>
             </div>
 
+            {/* Screenshot */}
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Run Screenshot *</label>
+              <label className="block text-sm font-bold text-gray-700 mb-2">
+                Run Screenshot *
+              </label>
               <label className="block border-2 border-dashed border-gray-200 rounded-2xl p-6 cursor-pointer hover:border-red-300 transition-colors text-center">
                 {preview ? (
                   <img src={preview} alt="preview" className="max-h-40 mx-auto rounded-xl object-contain"/>
                 ) : (
                   <>
                     <div className="text-4xl mb-2">📸</div>
-                    <div className="text-gray-500 text-sm font-medium">Click karke screenshot upload karo</div>
-                    <div className="text-gray-400 text-xs mt-1">Strava, Nike Run Club, Garmin, Google Fit...</div>
+                    <div className="text-gray-500 text-sm font-medium">
+                      Click to upload your screenshot
+                    </div>
+                    <div className="text-gray-400 text-xs mt-1">
+                      Strava · Nike Run Club · Garmin · Google Fit · Any GPS app
+                    </div>
                   </>
                 )}
                 <input type="file" accept="image/*" onChange={handleFile} className="hidden"/>
               </label>
             </div>
 
-            <button onClick={submitRun} disabled={loading || !distance || !file}
+            {/* Submit button */}
+            <button
+              onClick={submitRun}
+              disabled={loading || !distance || !file}
               className={`w-full font-bold py-4 rounded-2xl text-white text-base transition-all ${
-                !loading && distance && file ? "bg-green-600 hover:bg-green-700 hover:scale-[1.02]" : "bg-gray-300 cursor-not-allowed"
-              }`}>
+                !loading && distance && file
+                  ? "bg-green-600 hover:bg-green-700 hover:scale-[1.02]"
+                  : "bg-gray-300 cursor-not-allowed"
+              }`}
+            >
               {loading ? "Submitting..." : "Submit Activity →"}
             </button>
 
-            <button onClick={reset} className="w-full text-gray-400 text-sm py-2 hover:text-gray-600">
-              ← Wapas jaao
+            {/* Verification info */}
+            <div className="bg-green-50 border border-green-200 rounded-2xl p-4 text-center">
+              <div className="text-green-700 font-bold text-sm mb-1">
+                ✅ What happens after submission?
+              </div>
+              <div className="text-green-600 text-xs leading-relaxed">
+                Your activity will be verified within <strong>24 hours</strong>.
+                Once verified, you will receive your <strong>e-certificate</strong> and
+                your medal dispatch process will begin. 🏅
+              </div>
+            </div>
+
+            <button
+              onClick={reset}
+              className="w-full text-gray-400 text-sm py-2 hover:text-gray-600 transition-colors"
+            >
+              ← Go back
             </button>
           </div>
         )}
@@ -328,11 +414,32 @@ export default function ActivitySubmission() {
         {step === "done" && (
           <div className="bg-white rounded-3xl shadow-xl p-10 text-center">
             <div className="text-6xl mb-4">🎉</div>
-            <h2 className="text-2xl font-black mb-3 text-gray-800">Submit Ho Gayi!</h2>
-            <p className="text-gray-500 mb-2 text-sm">Hum 24 ghante mein verify karenge.</p>
-            <p className="text-gray-400 text-xs mb-8">Verification ke baad tumhara medal dispatch ho jaayega.</p>
-            <button onClick={reset} className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-3 rounded-full transition-all">
-              Ek aur submit karo
+            <h2 className="text-2xl font-black mb-3 text-gray-800">
+              Successfully Submitted!
+            </h2>
+            <p className="text-gray-600 mb-2 text-sm font-medium">
+              Your activity is under review.
+            </p>
+
+            <div className="bg-gray-50 rounded-2xl p-5 text-left space-y-3 mb-6 mt-4">
+              {[
+                { icon: "⏳", text: "Activity verification within 24 hours" },
+                { icon: "📜", text: "E-certificate sent after verification" },
+                { icon: "🏅", text: "Medal dispatch process begins" },
+                { icon: "📦", text: "Medal delivered to your address" },
+              ].map((s, i) => (
+                <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
+                  <span className="text-lg">{s.icon}</span>
+                  <span>{s.text}</span>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={reset}
+              className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-3 rounded-full transition-all"
+            >
+              Submit Another
             </button>
           </div>
         )}
