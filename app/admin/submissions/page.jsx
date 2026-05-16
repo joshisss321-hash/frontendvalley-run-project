@@ -14,11 +14,10 @@ export default function AdminSubmissions() {
   const [distance, setDistance] = useState("");
   const [search, setSearch]   = useState("");
   const [selected, setSelected] = useState([]);
-  const [modal, setModal]     = useState(null); // image preview
+  const [modal, setModal]     = useState(null);
 
   useEffect(() => {
     adminAPI.getEvents().then((r) => setEvents(r.events || []));
-    // read URL params
     const p = new URLSearchParams(window.location.search);
     const ev = p.get("event") || "";
     setEventSlug(ev);
@@ -39,7 +38,9 @@ export default function AdminSubmissions() {
 
   const applyFilter = (overrides = {}) => {
     const params = { eventSlug, status, distance, search, ...overrides };
-    // clean empty
+    // ✅ FIX: distance lowercase karo — case mismatch nahi hoga
+    if (params.distance) params.distance = params.distance.toLowerCase();
+    // clean empty values
     Object.keys(params).forEach((k) => !params[k] && delete params[k]);
     load(params);
   };
@@ -111,7 +112,8 @@ export default function AdminSubmissions() {
 
       {/* Filters */}
       <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-4 flex flex-wrap gap-3">
-        <select value={eventSlug} onChange={(e) => { setEventSlug(e.target.value); applyFilter({ eventSlug: e.target.value }); }}
+        <select value={eventSlug}
+          onChange={(e) => { setEventSlug(e.target.value); applyFilter({ eventSlug: e.target.value }); }}
           className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 min-w-44">
           <option value="">All Events</option>
           {events.map((ev) => (
@@ -119,26 +121,31 @@ export default function AdminSubmissions() {
           ))}
         </select>
 
-        <select value={distance} onChange={(e) => { setDistance(e.target.value); applyFilter({ distance: e.target.value }); }}
+        <select value={distance}
+          onChange={(e) => { setDistance(e.target.value); applyFilter({ distance: e.target.value }); }}
           className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
           <option value="">All Distances</option>
-          {["5km","10km","21km"].map((d) => <option key={d} value={d}>{d.toUpperCase()}</option>)}
+          <option value="5km">5KM</option>
+          <option value="10km">10KM</option>
+          <option value="21km">21KM</option>
         </select>
 
-        <input value={search} onChange={(e) => { setSearch(e.target.value); applyFilter({ search: e.target.value }); }}
+        <input value={search}
+          onChange={(e) => { setSearch(e.target.value); applyFilter({ search: e.target.value }); }}
           placeholder="Search name, email, phone..."
           className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 flex-1 min-w-40"/>
       </div>
 
       {/* Status tabs */}
-      <div className="flex gap-1 mb-4">
+      <div className="flex gap-1 mb-4 flex-wrap">
         {[
           { v: "pending",  l: `Pending (${counts.pending})` },
           { v: "approved", l: `Approved (${counts.approved})` },
           { v: "rejected", l: `Rejected (${counts.rejected})` },
           { v: "",         l: "All" },
         ].map((t) => (
-          <button key={t.v} onClick={() => { setStatus(t.v); applyFilter({ status: t.v }); }}
+          <button key={t.v}
+            onClick={() => { setStatus(t.v); applyFilter({ status: t.v }); }}
             className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
               status === t.v
                 ? "bg-red-600 text-white"
@@ -154,14 +161,18 @@ export default function AdminSubmissions() {
         {loading ? (
           <div className="text-center py-16 text-gray-400">Loading...</div>
         ) : subs.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">No submissions found</div>
+          <div className="text-center py-16 text-gray-400">
+            No submissions found — try "All Distances" ya "All" tab
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
                   <th className="p-3 text-left w-8">
-                    <input type="checkbox" checked={selected.length === subs.length} onChange={toggleAll}/>
+                    <input type="checkbox"
+                      checked={selected.length === subs.length && subs.length > 0}
+                      onChange={toggleAll}/>
                   </th>
                   {["Runner","Distance","Timing","Event","Proof","Status","Date","Actions"].map((h) => (
                     <th key={h} className="p-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
@@ -172,7 +183,9 @@ export default function AdminSubmissions() {
                 {subs.map((s) => (
                   <tr key={s._id} className={`hover:bg-gray-50 ${selected.includes(s._id) ? "bg-red-50" : ""}`}>
                     <td className="p-3">
-                      <input type="checkbox" checked={selected.includes(s._id)} onChange={() => toggle(s._id)}/>
+                      <input type="checkbox"
+                        checked={selected.includes(s._id)}
+                        onChange={() => toggle(s._id)}/>
                     </td>
                     <td className="p-3">
                       <div className="font-semibold text-gray-800">{s.name}</div>
@@ -181,11 +194,13 @@ export default function AdminSubmissions() {
                     </td>
                     <td className="p-3">
                       <span className="bg-blue-50 text-blue-700 border border-blue-100 text-xs font-bold px-2 py-1 rounded-lg">
-                        {s.distance}
+                        {s.distance?.toUpperCase()}
                       </span>
                     </td>
-                    <td className="p-3 font-bold text-gray-700">{s.timing || "—"}</td>
-                    <td className="p-3 text-xs text-gray-400">{s.eventSlug || <span className="text-red-400">missing</span>}</td>
+                    <td className="p-3 font-bold text-red-600">{s.timing || "—"}</td>
+                    <td className="p-3 text-xs text-gray-400 max-w-24 truncate">
+                      {s.eventSlug || <span className="text-red-400">missing</span>}
+                    </td>
                     <td className="p-3">
                       {s.imageUrl ? (
                         <button onClick={() => setModal(s.imageUrl)}
@@ -226,9 +241,11 @@ export default function AdminSubmissions() {
 
       {/* Image modal */}
       {modal && (
-        <div onClick={() => setModal(null)} className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+        <div onClick={() => setModal(null)}
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
           <div onClick={(e) => e.stopPropagation()} className="relative max-w-xl w-full">
-            <button onClick={() => setModal(null)} className="absolute -top-10 right-0 text-white text-3xl font-bold">×</button>
+            <button onClick={() => setModal(null)}
+              className="absolute -top-10 right-0 text-white text-3xl font-bold">×</button>
             <img src={modal} alt="proof" className="w-full rounded-2xl shadow-2xl"/>
           </div>
         </div>
