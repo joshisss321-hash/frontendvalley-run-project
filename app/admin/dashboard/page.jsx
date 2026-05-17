@@ -20,7 +20,24 @@ export default function Dashboard() {
   const [imageModal, setImageModal]       = useState(null);
   const [view, setView]                   = useState('events');
 
-  useEffect(() => { loadAll(); }, []);
+  // ✅ Auth check — bina login ke nahi khulega
+  useEffect(() => {
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      router.replace('/admin/login');
+      return;
+    }
+    adminAPI.verifyToken().then(res => {
+      if (!res.success) {
+        localStorage.removeItem('adminToken');
+        router.replace('/admin/login');
+      }
+    }).catch(() => {
+      router.replace('/admin/login');
+    });
+
+    loadAll();
+  }, []);
 
   const loadAll = async () => {
     try {
@@ -87,12 +104,11 @@ export default function Dashboard() {
 
   const totalRegs    = events.reduce((s,e) => s+(e.registrationCount||0), 0);
   const totalRevenue = events.reduce((s,e) => s+(e.registrationCount||0)*(e.price||349), 0);
-  const pendingCount = events.reduce((s,e) => s+(e.pendingSubmissions||0), 0);
 
   return (
     <div style={{ minHeight:'100vh', background:'#f1f5f9', fontFamily:'system-ui,-apple-system,sans-serif', paddingBottom:70 }}>
 
-      {/* ── TOP NAVBAR ── */}
+      {/* TOP NAVBAR */}
       <div style={{ background:'#dc2626', padding:'0 16px', height:56, display:'flex', alignItems:'center', justifyContent:'space-between', position:'sticky', top:0, zIndex:100, boxShadow:'0 2px 8px rgba(220,38,38,0.3)' }}>
         <div style={{ display:'flex', alignItems:'center', gap:10 }}>
           {view === 'detail' && (
@@ -119,16 +135,14 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ── EVENTS VIEW ── */}
+      {/* EVENTS VIEW */}
       {view === 'events' && (
         <div style={{ padding:16 }}>
-
-          {/* Stats */}
           <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, marginBottom:16 }}>
             {[
-              { label:'Total Reg', value:totalRegs,    icon:'👥', color:'#3b82f6' },
-              { label:'Revenue',   value:`₹${Math.round(totalRevenue/1000)}K`, icon:'💰', color:'#22c55e' },
-              { label:'Events',    value:events.filter(e=>e.active&&!e.isPrevious).length, icon:'🔴', color:'#dc2626' },
+              { label:'Total Reg', value:totalRegs, icon:'👥', color:'#3b82f6' },
+              { label:'Revenue', value:`₹${Math.round(totalRevenue/1000)}K`, icon:'💰', color:'#22c55e' },
+              { label:'Events', value:events.filter(e=>e.active&&!e.isPrevious).length, icon:'🔴', color:'#dc2626' },
             ].map(s => (
               <div key={s.label} style={{ background:'white', borderRadius:14, padding:'14px 10px', textAlign:'center', boxShadow:'0 2px 8px rgba(0,0,0,0.06)', borderTop:`3px solid ${s.color}` }}>
                 <div style={{ fontSize:22, marginBottom:2 }}>{s.icon}</div>
@@ -138,7 +152,6 @@ export default function Dashboard() {
             ))}
           </div>
 
-          {/* Header */}
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12 }}>
             <div style={{ fontWeight:700, fontSize:16, color:'#374151' }}>All Events</div>
             <button onClick={()=>router.push('/admin/events/create')}
@@ -147,7 +160,6 @@ export default function Dashboard() {
             </button>
           </div>
 
-          {/* Events list */}
           {loading ? (
             <div style={{ textAlign:'center', padding:60, color:'#9ca3af' }}>Loading...</div>
           ) : (
@@ -155,7 +167,6 @@ export default function Dashboard() {
               {events.map(ev => (
                 <div key={ev._id} style={{ background:'white', borderRadius:16, overflow:'hidden', boxShadow:'0 2px 8px rgba(0,0,0,0.06)' }}>
                   <div style={{ display:'flex', padding:'14px', gap:12 }}>
-                    {/* Thumbnail */}
                     <div style={{ width:64, height:64, borderRadius:12, overflow:'hidden', flexShrink:0, background:'#f3f4f6' }}>
                       {ev.coverImage||ev.heroImage||ev.image ? (
                         <img src={ev.coverImage||ev.heroImage||ev.image} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/>
@@ -163,8 +174,6 @@ export default function Dashboard() {
                         <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:28 }}>🏃</div>
                       )}
                     </div>
-
-                    {/* Info */}
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ fontWeight:700, fontSize:14, color:'#1f2937', lineHeight:1.3, marginBottom:4 }}>{ev.title}</div>
                       <div style={{ fontSize:11, color:'#9ca3af', marginBottom:6 }}>{ev.dates}</div>
@@ -183,8 +192,6 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
-
-                  {/* Buttons */}
                   <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', borderTop:'1px solid #f3f4f6' }}>
                     <button onClick={()=>openEvent(ev)}
                       style={{ padding:'12px', background:'#dc2626', color:'white', border:'none', fontWeight:700, fontSize:13, cursor:'pointer', borderRadius:'0 0 0 16px', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
@@ -202,11 +209,9 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── DETAIL VIEW ── */}
+      {/* DETAIL VIEW */}
       {view === 'detail' && selectedEvent && (
         <div style={{ padding:16 }}>
-
-          {/* Event summary */}
           <div style={{ background:'white', borderRadius:14, padding:'14px', marginBottom:14, boxShadow:'0 2px 8px rgba(0,0,0,0.06)' }}>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
               <div>
@@ -224,27 +229,26 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Tabs */}
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:14 }}>
             <button onClick={()=>switchTab('registrations')}
               style={{ padding:'14px 10px', borderRadius:14, border:'2px solid', fontWeight:700, fontSize:13, cursor:'pointer',
-                borderColor: activeTab==='registrations'?'#dc2626':'#e5e7eb',
-                background: activeTab==='registrations'?'#dc2626':'white',
-                color: activeTab==='registrations'?'white':'#374151' }}>
+                borderColor:activeTab==='registrations'?'#dc2626':'#e5e7eb',
+                background:activeTab==='registrations'?'#dc2626':'white',
+                color:activeTab==='registrations'?'white':'#374151' }}>
               👥 Registrations<br/>
               <span style={{ fontSize:11, fontWeight:400, opacity:0.8 }}>{regs.length} total</span>
             </button>
             <button onClick={()=>switchTab('submissions')}
               style={{ padding:'14px 10px', borderRadius:14, border:'2px solid', fontWeight:700, fontSize:13, cursor:'pointer',
-                borderColor: activeTab==='submissions'?'#dc2626':'#e5e7eb',
-                background: activeTab==='submissions'?'#dc2626':'white',
-                color: activeTab==='submissions'?'white':'#374151' }}>
+                borderColor:activeTab==='submissions'?'#dc2626':'#e5e7eb',
+                background:activeTab==='submissions'?'#dc2626':'white',
+                color:activeTab==='submissions'?'white':'#374151' }}>
               📸 Submissions<br/>
               <span style={{ fontSize:11, fontWeight:400, opacity:0.8 }}>{subCounts.pending} pending</span>
             </button>
           </div>
 
-          {/* ── REGISTRATIONS TAB ── */}
+          {/* REGISTRATIONS TAB */}
           {activeTab === 'registrations' && (
             <div>
               <input value={regSearch}
@@ -273,11 +277,9 @@ export default function Dashboard() {
                           <span style={{ fontSize:15, fontWeight:800, color:'#22c55e' }}>₹{r.amount||selectedEvent.price||349}</span>
                         </div>
                       </div>
-
                       <div style={{ fontSize:12, color:'#6b7280', padding:'8px 12px', background:'#f8fafc', borderRadius:8, marginBottom:10 }}>
                         📍 {[r.user?.address1, r.user?.city, r.user?.state, r.user?.pincode].filter(Boolean).join(', ')||'No address'}
                       </div>
-
                       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                         <span style={{ fontSize:11, color:'#9ca3af' }}>📅 {r.createdAt?.slice(0,10)}</span>
                         <select value={r.medalStatus||'pending'}
@@ -296,10 +298,9 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* ── SUBMISSIONS TAB ── */}
+          {/* SUBMISSIONS TAB */}
           {activeTab === 'submissions' && (
             <div>
-              {/* Status pills */}
               <div style={{ display:'flex', gap:6, marginBottom:14, flexWrap:'wrap' }}>
                 {[
                   { v:'pending',  l:`⏳ Pending (${subCounts.pending})` },
@@ -309,8 +310,8 @@ export default function Dashboard() {
                 ].map(t => (
                   <button key={t.v} onClick={()=>{setSubStatus(t.v);loadSubs(selectedEvent,t.v);}}
                     style={{ padding:'8px 14px', borderRadius:20, border:'none', fontWeight:600, fontSize:12, cursor:'pointer',
-                      background: subStatus===t.v?'#dc2626':'white',
-                      color: subStatus===t.v?'white':'#374151',
+                      background:subStatus===t.v?'#dc2626':'white',
+                      color:subStatus===t.v?'white':'#374151',
                       boxShadow:'0 1px 4px rgba(0,0,0,0.06)' }}>
                     {t.l}
                   </button>
@@ -340,7 +341,6 @@ export default function Dashboard() {
                             )}
                           </div>
                         </div>
-
                         <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
                           <span style={{ fontSize:11, padding:'4px 12px', borderRadius:20, fontWeight:700,
                             background:sub.status==='approved'?'#dcfce7':sub.status==='rejected'?'#fee2e2':'#fef3c7',
@@ -349,7 +349,6 @@ export default function Dashboard() {
                           </span>
                           <span style={{ fontSize:11, color:'#9ca3af' }}>{sub.createdAt?.slice(0,10)}</span>
                         </div>
-
                         {sub.imageUrl && (
                           <button onClick={()=>setImageModal(sub.imageUrl)}
                             style={{ width:'100%', background:'#eff6ff', border:'1.5px solid #bfdbfe', borderRadius:10, padding:'10px', cursor:'pointer', color:'#1d4ed8', fontWeight:600, fontSize:13 }}>
@@ -357,8 +356,6 @@ export default function Dashboard() {
                           </button>
                         )}
                       </div>
-
-                      {/* Action buttons */}
                       {sub.status === 'pending' && (
                         <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', borderTop:'1px solid #f3f4f6' }}>
                           <button onClick={()=>approve(sub._id)}
@@ -413,13 +410,13 @@ export default function Dashboard() {
       {/* Bottom Navigation */}
       <div style={{ position:'fixed', bottom:0, left:0, right:0, background:'white', borderTop:'1px solid #e5e7eb', display:'flex', zIndex:50, boxShadow:'0 -4px 12px rgba(0,0,0,0.08)' }}>
         {[
-          { label:'Events', icon:'📅', action:()=>setView('events'), active: view==='events' },
+          { label:'Events', icon:'📅', action:()=>setView('events'), active:view==='events' },
           { label:'New Event', icon:'➕', action:()=>router.push('/admin/events/create'), active:false },
           { label:'All Subs', icon:'📸', action:()=>router.push('/admin/submissions'), active:false },
           { label:'Edit Events', icon:'✏️', action:()=>router.push('/admin/events'), active:false },
         ].map(item => (
           <button key={item.label} onClick={item.action}
-            style={{ flex:1, padding:'10px 4px', background:item.active?'#fff5f5':'none', border:'none', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:3, borderTop: item.active?'2px solid #dc2626':'2px solid transparent' }}>
+            style={{ flex:1, padding:'10px 4px', background:item.active?'#fff5f5':'none', border:'none', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:3, borderTop:item.active?'2px solid #dc2626':'2px solid transparent' }}>
             <span style={{ fontSize:22 }}>{item.icon}</span>
             <span style={{ fontSize:10, color:item.active?'#dc2626':'#6b7280', fontWeight:600 }}>{item.label}</span>
           </button>
