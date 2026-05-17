@@ -448,7 +448,7 @@ export default function ChallengeCard({ event }) {
     : false;
 
   // Event is past/previous — hide completely from active list
-  if (event.isPrevious) return null;
+  // if (event.isPrevious) return null;
 
   // ── REGISTRATION CLOSED — Event is running ─────────────────────────────
   if (regClosed) {
