@@ -1626,12 +1626,26 @@ function EventCardSmall({ event, router }) {
 
 /* ─── REVIEWS — challenge ke baad, slow + pause on hover/touch ─── */
 function Reviews() {
-  const trackRef = useRef(null);
-  const isPaused = useRef(false);
+  const [reviews, setReviews] = useState([]);
+  const [dbLoaded, setDbLoaded] = useState(false);
 
-  // Pause on hover/touch
-  const pause = () => { isPaused.current = true; if (trackRef.current) trackRef.current.style.animationPlayState = "paused"; };
-  const resume = () => { isPaused.current = false; if (trackRef.current) trackRef.current.style.animationPlayState = "running"; };
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reviews`)
+      .then(r => r.json())
+      .then(d => {
+        if (d.reviews?.length > 0) {
+          setReviews(d.reviews);
+          setDbLoaded(true);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Fallback to hardcoded if DB empty
+  const displayReviews = dbLoaded ? reviews : REVIEWS;
+  const trackRef = useRef(null);
+  const pause  = () => { if (trackRef.current) trackRef.current.style.animationPlayState = "paused"; };
+  const resume = () => { if (trackRef.current) trackRef.current.style.animationPlayState = "running"; };
 
   return (
     <section style={{ padding:"80px 0", background:"#fff", overflow:"hidden" }}>
@@ -1648,30 +1662,22 @@ function Reviews() {
         </div>
       </div>
 
-      {/* ✅ Slow scroll — 60s, pause on hover/touch */}
       <div style={{ overflow:"hidden", maskImage:"linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)", WebkitMaskImage:"linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)" }}>
-        <div
-          ref={trackRef}
-          className="rev-track"
+        <div ref={trackRef} className="rev-track"
           style={{ display:"flex", gap:18, width:"max-content", animation:"revScroll 60s linear infinite", cursor:"grab" }}
-          onMouseEnter={pause}
-          onMouseLeave={resume}
-          onTouchStart={pause}
-          onTouchEnd={resume}
-        >
-          {[...REVIEWS,...REVIEWS].map((r,i)=>(
-            <div key={i} style={{ width:310, borderRadius:20, overflow:"hidden", flexShrink:0, border:"1px solid #f0f0f0", background:"#fff", boxShadow:"0 4px 20px rgba(0,0,0,.05)", transition:"transform .2s, box-shadow .2s" }}
+          onMouseEnter={pause} onMouseLeave={resume}
+          onTouchStart={pause} onTouchEnd={resume}>
+          {[...displayReviews,...displayReviews].map((r,i)=>(
+            <div key={i} style={{ width:310, borderRadius:20, overflow:"hidden", flexShrink:0, border:"1px solid #f0f0f0", background:"#fff", boxShadow:"0 4px 20px rgba(0,0,0,.05)", transition:"transform .2s,box-shadow .2s" }}
               onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-4px)";e.currentTarget.style.boxShadow="0 12px 32px rgba(0,0,0,.1)";}}
               onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 4px 20px rgba(0,0,0,.05)";}}>
-              {/* Image */}
               <div style={{ height:180, overflow:"hidden", position:"relative" }}>
                 <img src={r.imageUrl} alt={r.name} style={{width:"100%",height:"100%",objectFit:"cover"}}/>
                 <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(0,0,0,.6),transparent)"}}/>
                 <div style={{position:"absolute",top:10,left:12,display:"flex",gap:1}}>
-                  {Array(5).fill(0).map((_,i)=><span key={i} style={{color:"#fbbf24",fontSize:12}}>★</span>)}
+                  {Array(r.rating||5).fill(0).map((_,i)=><span key={i} style={{color:"#fbbf24",fontSize:12}}>★</span>)}
                 </div>
               </div>
-              {/* Text */}
               <div style={{padding:"18px 20px 20px"}}>
                 <p style={{fontSize:13,color:"#555",lineHeight:1.8,fontStyle:"italic",marginBottom:14}}>"{r.review}"</p>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>

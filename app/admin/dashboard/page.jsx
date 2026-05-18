@@ -414,6 +414,7 @@ export default function Dashboard() {
           { label:'New Event', icon:'➕', action:()=>router.push('/admin/events/create'), active:false },
           { label:'All Subs', icon:'📸', action:()=>router.push('/admin/submissions'), active:false },
           { label:'Edit Events', icon:'✏️', action:()=>router.push('/admin/events'), active:false },
+          { label:'Reviews', icon:'⭐', action:()=>router.push('/admin/reviews'), active:false },
         ].map(item => (
           <button key={item.label} onClick={item.action}
             style={{ flex:1, padding:'10px 4px', background:item.active?'#fff5f5':'none', border:'none', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:3, borderTop:item.active?'2px solid #dc2626':'2px solid transparent' }}>
