@@ -661,7 +661,7 @@ export default function ChallengeCard({ event }) {
         onMouseLeave={() => setHover(false)}
       >
         {/* Image — portrait ratio */}
-        <div style={{ position: "relative", paddingBottom: "75%", overflow: "hidden", background: "#f3f3f3" }}>
+        <div style={{ position: "relative", paddingBottom: "100%", overflow: "hidden", background: "#f3f3f3" }}>
           {event.coverImage && (
             <img
               src={event.coverImage}
@@ -735,12 +735,6 @@ export default function ChallengeCard({ event }) {
             ))}
           </div>
 
-          {/* Price */}
-          <div style={{ marginBottom: 14, display: "flex", alignItems: "baseline", gap: 4 }}>
-            <span style={{ fontSize: 12, color: "#aaa" }}>From</span>
-            <span style={{ fontSize: 18, fontWeight: 900, color: "#111" }}>₹{event.price || 399}</span>
-          </div>
-
           <Link href={`/activity-submission?event=${event.slug}`} style={{ textDecoration: "none" }}>
             <button style={{
               width: "100%", background: "#16a34a", color: "#fff", border: "none",
@@ -782,7 +776,7 @@ export default function ChallengeCard({ event }) {
         onMouseLeave={() => setHover(false)}
       >
         {/* Image — portrait ratio */}
-        <div style={{ position: "relative", paddingBottom: "75%", overflow: "hidden", background: "#f3f3f3" }}>
+        <div style={{ position: "relative", paddingBottom: "100%", overflow: "hidden", background: "#f3f3f3" }}>
           {event.coverImage && (
             <img
               src={event.coverImage}
@@ -844,12 +838,6 @@ export default function ChallengeCard({ event }) {
 
           {/* Countdown */}
           {event.registrationDeadline && <MiniCountdown deadline={event.registrationDeadline} />}
-
-          {/* Price */}
-          <div style={{ marginBottom: 14, display: "flex", alignItems: "baseline", gap: 4 }}>
-            <span style={{ fontSize: 12, color: "#aaa" }}>From</span>
-            <span style={{ fontSize: 18, fontWeight: 900, color: "#111" }}>₹{event.price || 399}</span>
-          </div>
 
           {/* CTA Button */}
           <button style={{

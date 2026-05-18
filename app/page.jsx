@@ -1499,130 +1499,332 @@ function Stats() {
 }
 
 /* ─── EVENTS ─── */
+// function Events({ events, router }) {
+//   return (
+//     <section id="events-section" style={{ padding:"80px 60px", background:"#fafafa" }} className="mob-pad">
+//       <div style={{ maxWidth:1200, margin:"0 auto" }}>
+//         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:48, flexWrap:"wrap", gap:16 }}>
+//           <div>
+//             <span className="vr-tag">Open Now</span>
+//             <h2 className="mob-h2" style={{ fontSize:48, fontWeight:900, letterSpacing:"-2px", lineHeight:1.05 }}>Active Challenges</h2>
+//           </div>
+//           <button className="vr-btn-secondary" style={{ fontSize:13 }} onClick={() => router.push("/challenges")}>See All →</button>
+//         </div>
+
+//         {events.length === 1 && <EventCardLarge event={events[0]} router={router} />}
+//         {events.length === 2 && (
+//           <div style={{ display:"grid", gridTemplateColumns:"1.5fr 1fr", gap:20 }} className="mob-grid1">
+//             <EventCardLarge event={events[0]} router={router} />
+//             <EventCardSmall event={events[1]} router={router} />
+//           </div>
+//         )}
+//         {events.length >= 3 && (
+//           <div style={{ display:"grid", gridTemplateColumns:"1.4fr 1fr 1fr", gap:20 }} className="mob-grid1">
+//             <EventCardLarge event={events[0]} router={router} />
+//             <div style={{ display:"grid", gap:20 }}>
+//               {events.slice(1,3).map(ev => <EventCardSmall key={ev._id} event={ev} router={router} />)}
+//             </div>
+//             {events.length > 3 && (
+//               <div style={{ display:"grid", gap:20 }}>
+//                 {events.slice(3,5).map(ev => <EventCardSmall key={ev._id} event={ev} router={router} />)}
+//               </div>
+//             )}
+//           </div>
+//         )}
+//       </div>
+//     </section>
+//   );
+// }
+
+// function EventCardLarge({ event, router }) {
+//   const [hover, setHover] = useState(false);
+//   const now = new Date();
+//   const regClosed = event.isRegistrationOpen === false || (event.registrationDeadline && new Date(event.registrationDeadline) < now);
+//   return (
+//     <div className="hover-card" onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)}
+//       onClick={() => router.push(regClosed?`/activity-submission?event=${event.slug}`:`/challenges/${event.slug}`)}
+//       style={{ borderRadius:24, overflow:"hidden", cursor:"pointer", position:"relative", height:480, background:"#111", boxShadow:"0 8px 32px rgba(0,0,0,.08)" }}>
+//       {(event.coverImage||event.image) && (
+//         <img src={event.coverImage||event.image} alt={event.title}
+//           style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", opacity:.55, transform:hover?"scale(1.04)":"scale(1)", transition:"transform .6s ease" }}/>
+//       )}
+//       <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.3) 50%, rgba(0,0,0,.1) 100%)" }} />
+//       <div style={{ position:"absolute", top:20, left:20, display:"flex", gap:8 }}>
+//         {regClosed ? (
+//           <span style={{ display:"inline-flex", alignItems:"center", gap:6, background:"rgba(22,163,74,.9)", color:"#fff", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:100 }}>
+//             <span style={{ width:6, height:6, borderRadius:"50%", background:"#fff", display:"inline-block", animation:"livePulse 1.5s infinite" }}/>Event Running
+//           </span>
+//         ) : (
+//           <span style={{ display:"inline-flex", alignItems:"center", gap:6, background:"rgba(192,57,43,.9)", color:"#fff", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:100 }}>
+//             <span style={{ position:"relative", width:7, height:7, display:"inline-flex" }}>
+//               <span style={{ position:"absolute", inset:0, borderRadius:"50%", background:"rgba(255,255,255,.6)", animation:"ping 1.2s infinite" }}/>
+//               <span style={{ width:7, height:7, borderRadius:"50%", background:"#fff", display:"block" }}/>
+//             </span>
+//             Live Now
+//           </span>
+//         )}
+//         <span style={{ background:"rgba(0,0,0,.5)", color:"rgba(255,255,255,.8)", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:100, backdropFilter:"blur(10px)" }}>
+//           ₹{event.price||399}
+//         </span>
+//       </div>
+//       <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"28px 28px 24px" }}>
+//         <div style={{ display:"flex", gap:8, marginBottom:14 }}>
+//           {["🏅 Medal","📜 Certificate","📦 Free Delivery"].map((t,i) => (
+//             <span key={i} style={{ background:"rgba(255,255,255,.12)", color:"rgba(255,255,255,.8)", fontSize:10, fontWeight:600, padding:"4px 10px", borderRadius:100, backdropFilter:"blur(8px)", whiteSpace:"nowrap" }}>{t}</span>
+//           ))}
+//         </div>
+//         <div style={{ fontSize:12, color:"rgba(255,255,255,.4)", fontWeight:600, letterSpacing:1, textTransform:"uppercase", marginBottom:8 }}>{event.dates}</div>
+//         <h3 style={{ fontSize:26, fontWeight:900, color:"#fff", lineHeight:1.2, marginBottom:20 }}>{event.title}</h3>
+//         <button style={{
+//           display:"inline-flex", alignItems:"center", gap:8, padding:"12px 24px",
+//           background:regClosed?"#16a34a":"#c0392b", color:"#fff", border:"none",
+//           borderRadius:100, fontSize:14, fontWeight:700, cursor:"pointer",
+//           boxShadow:regClosed?"0 6px 20px rgba(22,163,74,.4)":"0 6px 20px rgba(192,57,43,.4)"
+//         }}>
+//           {regClosed?"📸 Submit Activity":"Register Now"} →
+//         </button>
+//       </div>
+//     </div>
+//   );
+// }
+
+// function EventCardSmall({ event, router }) {
+//   const [hover, setHover] = useState(false);
+//   const now = new Date();
+//   const regClosed = event.isRegistrationOpen === false || (event.registrationDeadline && new Date(event.registrationDeadline) < now);
+//   return (
+//     <div className="hover-card" onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)}
+//       onClick={() => router.push(regClosed?`/activity-submission?event=${event.slug}`:`/challenges/${event.slug}`)}
+//       style={{ borderRadius:20, overflow:"hidden", cursor:"pointer", position:"relative", height:220, background:"#111", boxShadow:"0 4px 20px rgba(0,0,0,.06)" }}>
+//       {(event.coverImage||event.image) && (
+//         <img src={event.coverImage||event.image} alt={event.title}
+//           style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", opacity:.5, transform:hover?"scale(1.05)":"scale(1)", transition:"transform .5s ease" }}/>
+//       )}
+//       <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,.2) 100%)" }}/>
+//       <div style={{ position:"absolute", top:14, left:14 }}>
+//         {regClosed ? (
+//           <span style={{ background:"rgba(22,163,74,.85)", color:"#fff", fontSize:10, fontWeight:700, padding:"4px 10px", borderRadius:100, display:"inline-flex", alignItems:"center", gap:5 }}>
+//             <span style={{ width:5, height:5, borderRadius:"50%", background:"#fff", display:"inline-block", animation:"livePulse 1.5s infinite" }}/>Running
+//           </span>
+//         ) : (
+//           <span style={{ background:"rgba(192,57,43,.85)", color:"#fff", fontSize:10, fontWeight:700, padding:"4px 10px", borderRadius:100 }}>● Live</span>
+//         )}
+//       </div>
+//       <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"16px 18px" }}>
+//         <div style={{ fontSize:10, color:"rgba(255,255,255,.4)", fontWeight:600, letterSpacing:1, textTransform:"uppercase", marginBottom:5 }}>{event.dates}</div>
+//         <h3 style={{ fontSize:15, fontWeight:800, color:"#fff", lineHeight:1.3, marginBottom:12 }}>{event.title}</h3>
+//         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+//           <span style={{ fontSize:13, fontWeight:700, color:regClosed?"#4ade80":"#f87171" }}>
+//             {regClosed?"📸 Submit →":"Register →"}
+//           </span>
+//           <span style={{ fontSize:13, fontWeight:800, color:"rgba(255,255,255,.7)" }}>₹{event.price||399}</span>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+import Link from "next/link";
+
+/* ─── EVENTS SECTION — homepage ─── */
 function Events({ events, router }) {
   return (
-    <section id="events-section" style={{ padding:"80px 60px", background:"#fafafa" }} className="mob-pad">
-      <div style={{ maxWidth:1200, margin:"0 auto" }}>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:48, flexWrap:"wrap", gap:16 }}>
+    <section id="events-section" style={{ padding: "80px 60px", background: "#fafafa" }} className="mob-pad">
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+
+        {/* Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 48, flexWrap: "wrap", gap: 16 }}>
           <div>
             <span className="vr-tag">Open Now</span>
-            <h2 className="mob-h2" style={{ fontSize:48, fontWeight:900, letterSpacing:"-2px", lineHeight:1.05 }}>Active Challenges</h2>
+            <h2 className="mob-h2" style={{ fontSize: 48, fontWeight: 900, letterSpacing: "-2px", lineHeight: 1.05 }}>
+              Active Challenges
+            </h2>
           </div>
-          <button className="vr-btn-secondary" style={{ fontSize:13 }} onClick={() => router.push("/challenges")}>See All →</button>
+          <button
+            className="vr-btn-secondary"
+            style={{ fontSize: 13 }}
+            onClick={() => router.push("/challenges")}
+          >
+            See All →
+          </button>
         </div>
 
-        {events.length === 1 && <EventCardLarge event={events[0]} router={router} />}
-        {events.length === 2 && (
-          <div style={{ display:"grid", gridTemplateColumns:"1.5fr 1fr", gap:20 }} className="mob-grid1">
-            <EventCardLarge event={events[0]} router={router} />
-            <EventCardSmall event={events[1]} router={router} />
-          </div>
-        )}
-        {events.length >= 3 && (
-          <div style={{ display:"grid", gridTemplateColumns:"1.4fr 1fr 1fr", gap:20 }} className="mob-grid1">
-            <EventCardLarge event={events[0]} router={router} />
-            <div style={{ display:"grid", gap:20 }}>
-              {events.slice(1,3).map(ev => <EventCardSmall key={ev._id} event={ev} router={router} />)}
+        {/* Portrait cards grid — same as challenges page */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+          gap: 24,
+        }}>
+          {events.map(ev => (
+            <HomeEventCard key={ev._id} event={ev} router={router} />
+          ))}
+
+          {events.length === 0 && (
+            <div style={{ gridColumn: "1/-1", textAlign: "center", padding: "80px 0" }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>🏃</div>
+              <p style={{ fontWeight: 700, fontSize: 18, color: "#ccc" }}>Loading challenges...</p>
             </div>
-            {events.length > 3 && (
-              <div style={{ display:"grid", gap:20 }}>
-                {events.slice(3,5).map(ev => <EventCardSmall key={ev._id} event={ev} router={router} />)}
-              </div>
-            )}
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </section>
   );
 }
 
-function EventCardLarge({ event, router }) {
+/* ─── PORTRAIT CARD — same style as ChallengeCard ─── */
+function HomeEventCard({ event, router }) {
   const [hover, setHover] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
+
   const now = new Date();
-  const regClosed = event.isRegistrationOpen === false || (event.registrationDeadline && new Date(event.registrationDeadline) < now);
+  const regClosed = mounted && (
+    event.isRegistrationOpen === false ||
+    (event.registrationDeadline && new Date(event.registrationDeadline) < now)
+  );
+
+  const handleClick = () => {
+    router.push(regClosed
+      ? `/activity-submission?event=${event.slug}`
+      : `/challenges/${event.slug}`
+    );
+  };
+
   return (
-    <div className="hover-card" onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)}
-      onClick={() => router.push(regClosed?`/activity-submission?event=${event.slug}`:`/challenges/${event.slug}`)}
-      style={{ borderRadius:24, overflow:"hidden", cursor:"pointer", position:"relative", height:480, background:"#111", boxShadow:"0 8px 32px rgba(0,0,0,.08)" }}>
-      {(event.coverImage||event.image) && (
-        <img src={event.coverImage||event.image} alt={event.title}
-          style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", opacity:.55, transform:hover?"scale(1.04)":"scale(1)", transition:"transform .6s ease" }}/>
-      )}
-      <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.3) 50%, rgba(0,0,0,.1) 100%)" }} />
-      <div style={{ position:"absolute", top:20, left:20, display:"flex", gap:8 }}>
-        {regClosed ? (
-          <span style={{ display:"inline-flex", alignItems:"center", gap:6, background:"rgba(22,163,74,.9)", color:"#fff", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:100 }}>
-            <span style={{ width:6, height:6, borderRadius:"50%", background:"#fff", display:"inline-block", animation:"livePulse 1.5s infinite" }}/>Event Running
-          </span>
-        ) : (
-          <span style={{ display:"inline-flex", alignItems:"center", gap:6, background:"rgba(192,57,43,.9)", color:"#fff", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:100 }}>
-            <span style={{ position:"relative", width:7, height:7, display:"inline-flex" }}>
-              <span style={{ position:"absolute", inset:0, borderRadius:"50%", background:"rgba(255,255,255,.6)", animation:"ping 1.2s infinite" }}/>
-              <span style={{ width:7, height:7, borderRadius:"50%", background:"#fff", display:"block" }}/>
-            </span>
-            Live Now
-          </span>
+    <div
+      onClick={handleClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        background: "#fff",
+        borderRadius: 20,
+        overflow: "hidden",
+        border: `1px solid ${hover ? "#e0e0e0" : "#eee"}`,
+        boxShadow: hover ? "0 20px 48px rgba(0,0,0,.1)" : "0 2px 12px rgba(0,0,0,.04)",
+        transform: hover ? "translateY(-6px)" : "translateY(0)",
+        transition: "all .3s ease",
+        cursor: "pointer",
+        width: "100%",
+      }}
+    >
+      {/* ── Image (portrait tall) ── */}
+      <div style={{ position: "relative", paddingBottom: "100%", overflow: "hidden", background: "#f3f3f3" }}>
+        {(event.coverImage || event.image) && (
+          <img
+            src={event.coverImage || event.image}
+            alt={event.title}
+            style={{
+              position: "absolute", inset: 0, width: "100%", height: "100%",
+              objectFit: "cover",
+              transform: hover ? "scale(1.05)" : "scale(1)",
+              transition: "transform .5s ease",
+            }}
+          />
         )}
-        <span style={{ background:"rgba(0,0,0,.5)", color:"rgba(255,255,255,.8)", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:100, backdropFilter:"blur(10px)" }}>
-          ₹{event.price||399}
-        </span>
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,.22) 0%, transparent 40%)" }} />
+
+        {/* Badge */}
+        <div style={{ position: "absolute", top: 14, left: 14, zIndex: 10 }}>
+          {regClosed ? (
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: 7,
+              background: "#16a34a", color: "#fff", fontSize: 11, fontWeight: 700,
+              padding: "6px 14px", borderRadius: 30, letterSpacing: .5,
+            }}>
+              <span style={{ position: "relative", display: "inline-flex", width: 7, height: 7 }}>
+                <span style={{ position: "absolute", inset: 0, borderRadius: "50%", background: "rgba(255,255,255,.7)", animation: "ping 1.2s infinite" }} />
+                <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#fff", display: "inline-block" }} />
+              </span>
+              Event Running
+            </span>
+          ) : (
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: 7,
+              background: "#c0392b", color: "#fff", fontSize: 11, fontWeight: 700,
+              padding: "6px 14px", borderRadius: 30, letterSpacing: .5,
+            }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", display: "inline-block", animation: "pulse 1.5s infinite" }} />
+              Live Now
+            </span>
+          )}
+        </div>
       </div>
-      <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"28px 28px 24px" }}>
-        <div style={{ display:"flex", gap:8, marginBottom:14 }}>
-          {["🏅 Medal","📜 Certificate","📦 Free Delivery"].map((t,i) => (
-            <span key={i} style={{ background:"rgba(255,255,255,.12)", color:"rgba(255,255,255,.8)", fontSize:10, fontWeight:600, padding:"4px 10px", borderRadius:100, backdropFilter:"blur(8px)", whiteSpace:"nowrap" }}>{t}</span>
+
+      {/* ── Content ── */}
+      <div style={{ padding: "20px 20px 18px" }}>
+
+        {/* Title */}
+        <h3 style={{ fontSize: 18, fontWeight: 800, lineHeight: 1.3, color: "#111", margin: "0 0 4px" }}>
+          {event.title}
+        </h3>
+
+        {/* Dates */}
+        <div style={{ fontSize: 13, color: "#c0392b", fontWeight: 600, marginBottom: 12 }}>
+          {event.dates}
+        </div>
+
+        {/* Description */}
+        {event.description && (
+          <p style={{ fontSize: 13, color: "#666", lineHeight: 1.6, margin: "0 0 14px" }}>
+            {event.description}
+          </p>
+        )}
+
+        {/* Feature icons */}
+        <div style={{ display: "flex", gap: 20, marginBottom: 18 }}>
+          {[
+            { icon: "🏃", label: "Run / Walk / Ride" },
+            { icon: "🏅", label: "Medal" },
+            { icon: "🚚", label: "Free ship" },
+          ].map((f) => (
+            <div key={f.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+              <span style={{ fontSize: 20 }}>{f.icon}</span>
+              <span style={{ fontSize: 10, color: "#888", fontWeight: 600, textAlign: "center", whiteSpace: "nowrap" }}>
+                {f.label}
+              </span>
+            </div>
           ))}
         </div>
-        <div style={{ fontSize:12, color:"rgba(255,255,255,.4)", fontWeight:600, letterSpacing:1, textTransform:"uppercase", marginBottom:8 }}>{event.dates}</div>
-        <h3 style={{ fontSize:26, fontWeight:900, color:"#fff", lineHeight:1.2, marginBottom:20 }}>{event.title}</h3>
-        <button style={{
-          display:"inline-flex", alignItems:"center", gap:8, padding:"12px 24px",
-          background:regClosed?"#16a34a":"#c0392b", color:"#fff", border:"none",
-          borderRadius:100, fontSize:14, fontWeight:700, cursor:"pointer",
-          boxShadow:regClosed?"0 6px 20px rgba(22,163,74,.4)":"0 6px 20px rgba(192,57,43,.4)"
-        }}>
-          {regClosed?"📸 Submit Activity":"Register Now"} →
-        </button>
+
+        {/* CTA Button */}
+        {regClosed ? (
+          <button style={{
+            width: "100%", background: "#16a34a", color: "#fff", border: "none",
+            padding: "14px 0", borderRadius: 14, fontSize: 15, fontWeight: 700,
+            cursor: "pointer", boxShadow: "0 4px 14px rgba(22,163,74,.25)",
+            fontFamily: "inherit",
+          }}>
+            📸 Submit Your Activity
+          </button>
+        ) : (
+          <button style={{
+            width: "100%",
+            background: "linear-gradient(90deg, #e91e8c, #c0392b)",
+            color: "#fff", border: "none",
+            padding: "14px 0", borderRadius: 14, fontSize: 15, fontWeight: 700,
+            cursor: "pointer", boxShadow: "0 4px 18px rgba(192,57,43,.3)",
+            fontFamily: "inherit",
+          }}>
+            View &amp; register
+          </button>
+        )}
       </div>
+
+      {/* Bottom glow on hover */}
+      <div style={{
+        height: 3,
+        background: "linear-gradient(90deg,transparent,#c0392b,transparent)",
+        opacity: hover ? 1 : 0,
+        transition: "opacity .3s",
+      }} />
     </div>
   );
 }
 
-function EventCardSmall({ event, router }) {
-  const [hover, setHover] = useState(false);
-  const now = new Date();
-  const regClosed = event.isRegistrationOpen === false || (event.registrationDeadline && new Date(event.registrationDeadline) < now);
-  return (
-    <div className="hover-card" onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)}
-      onClick={() => router.push(regClosed?`/activity-submission?event=${event.slug}`:`/challenges/${event.slug}`)}
-      style={{ borderRadius:20, overflow:"hidden", cursor:"pointer", position:"relative", height:220, background:"#111", boxShadow:"0 4px 20px rgba(0,0,0,.06)" }}>
-      {(event.coverImage||event.image) && (
-        <img src={event.coverImage||event.image} alt={event.title}
-          style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", opacity:.5, transform:hover?"scale(1.05)":"scale(1)", transition:"transform .5s ease" }}/>
-      )}
-      <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,.2) 100%)" }}/>
-      <div style={{ position:"absolute", top:14, left:14 }}>
-        {regClosed ? (
-          <span style={{ background:"rgba(22,163,74,.85)", color:"#fff", fontSize:10, fontWeight:700, padding:"4px 10px", borderRadius:100, display:"inline-flex", alignItems:"center", gap:5 }}>
-            <span style={{ width:5, height:5, borderRadius:"50%", background:"#fff", display:"inline-block", animation:"livePulse 1.5s infinite" }}/>Running
-          </span>
-        ) : (
-          <span style={{ background:"rgba(192,57,43,.85)", color:"#fff", fontSize:10, fontWeight:700, padding:"4px 10px", borderRadius:100 }}>● Live</span>
-        )}
-      </div>
-      <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"16px 18px" }}>
-        <div style={{ fontSize:10, color:"rgba(255,255,255,.4)", fontWeight:600, letterSpacing:1, textTransform:"uppercase", marginBottom:5 }}>{event.dates}</div>
-        <h3 style={{ fontSize:15, fontWeight:800, color:"#fff", lineHeight:1.3, marginBottom:12 }}>{event.title}</h3>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-          <span style={{ fontSize:13, fontWeight:700, color:regClosed?"#4ade80":"#f87171" }}>
-            {regClosed?"📸 Submit →":"Register →"}
-          </span>
-          <span style={{ fontSize:13, fontWeight:800, color:"rgba(255,255,255,.7)" }}>₹{event.price||399}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
+
+
+
 
 /* ─── REVIEWS — challenge ke baad, slow + pause on hover/touch ─── */
 function Reviews() {
