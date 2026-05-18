@@ -1332,10 +1332,9 @@ export default function HomePage() {
         html{scroll-behavior:smooth}
         @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
         @keyframes float{0%,100%{transform:translateY(0px)}50%{transform:translateY(-8px)}}
-        @keyframes revScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
         @keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.9)}}
-        @keyframes fadeSlideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
         @keyframes ping{75%,100%{transform:scale(2);opacity:0}}
+        @keyframes revScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
         .vr-btn-primary{display:inline-flex;align-items:center;gap:8px;padding:15px 36px;background:#c0392b;color:#fff;border:none;border-radius:100px;font-weight:700;font-size:15px;cursor:pointer;transition:all .25s;letter-spacing:.2px;font-family:inherit}
         .vr-btn-primary:hover{background:#a93226;transform:translateY(-2px);box-shadow:0 12px 32px rgba(192,57,43,.3)}
         .vr-btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:transparent;color:#0a0a0a;border:1.5px solid rgba(10,10,10,.2);border-radius:100px;font-weight:600;font-size:15px;cursor:pointer;transition:all .25s;font-family:inherit}
@@ -1355,6 +1354,7 @@ export default function HomePage() {
           .mob-grid1{grid-template-columns:1fr!important}
           .mob-grid2{grid-template-columns:1fr 1fr!important}
           .gallery-grid{grid-template-columns:1fr 1fr!important;grid-template-rows:auto!important}
+          .rev-track{animation-duration:20s!important}
         }
       `}</style>
 
@@ -1363,9 +1363,9 @@ export default function HomePage() {
       <Marquee />
       <Stats />
       {liveEvents.length > 0 && <Events events={liveEvents} router={router} />}
+      <Reviews />
       {medalEvents.length > 0 && <Medal events={medalEvents} />}
       <HowItWorks />
-      <Reviews />
       {gallery.length > 0 && <Gallery images={gallery} />}
       {pastEvents.length > 0 && <Past events={pastEvents} router={router} />}
       <CTA router={router} />
@@ -1374,36 +1374,45 @@ export default function HomePage() {
 }
 
 /* ─── HERO ─── */
-function Hero({ router, liveEvents }) {
-  const [n, setN] = useState(0);
+function Hero({ router }) {
+  // ✅ Countdown 1 → 2000
+  const [count, setCount] = useState(1);
+  const [done, setDone] = useState(false);
+
   useEffect(() => {
-    let c = 0; const t = setInterval(() => { c += 15; if (c >= 2000) { setN(2000); clearInterval(t); } else setN(c); }, 18);
+    let c = 1;
+    const t = setInterval(() => {
+      c += 28;
+      if (c >= 2000) { setCount(2000); setDone(true); clearInterval(t); }
+      else setCount(c);
+    }, 16);
     return () => clearInterval(t);
   }, []);
 
   return (
     <section style={{ position:"relative", minHeight:"100vh", display:"flex", flexDirection:"column", justifyContent:"center", overflow:"hidden", background:"#0a0a0a" }}>
-      {/* BG texture */}
       <div style={{ position:"absolute", inset:0, backgroundImage:"radial-gradient(circle at 20% 50%, rgba(192,57,43,.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(192,57,43,.08) 0%, transparent 40%)", pointerEvents:"none" }} />
       <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px)", backgroundSize:"80px 80px", pointerEvents:"none" }} />
-      {/* Hero image right side */}
       <div className="desk-only" style={{ position:"absolute", right:0, top:0, bottom:0, width:"48%", backgroundImage:"url('/hero.jpg')", backgroundSize:"cover", backgroundPosition:"center", opacity:.25 }} />
       <div className="desk-only" style={{ position:"absolute", right:0, top:0, bottom:0, width:"48%", background:"linear-gradient(to right, #0a0a0a 0%, transparent 40%)" }} />
-      {/* Bottom fade */}
       <div style={{ position:"absolute", bottom:0, left:0, right:0, height:160, background:"linear-gradient(to top,#fff,transparent)", pointerEvents:"none", zIndex:5 }} />
 
       <div style={{ position:"relative", zIndex:10, maxWidth:1200, margin:"0 auto", padding:"140px 60px 100px", width:"100%" }} className="mob-pad mob-center">
-        {/* Eyebrow */}
+
+        {/* ✅ Badge with countdown */}
         <div style={{ display:"inline-flex", alignItems:"center", gap:10, marginBottom:32, padding:"8px 20px 8px 10px", borderRadius:100, border:"1px solid rgba(255,255,255,.12)", background:"rgba(255,255,255,.05)" }}>
-          <span style={{ background:"#c0392b", color:"#fff", fontSize:10, fontWeight:800, padding:"4px 12px", borderRadius:100, letterSpacing:1.5, textTransform:"uppercase" }}>New</span>
-          <span style={{ fontSize:13, color:"rgba(255,255,255,.6)", fontWeight:500 }}>India's #1 Virtual Running Platform</span>
+          <span style={{ background:"#c0392b", color:"#fff", fontSize:10, fontWeight:800, padding:"4px 12px", borderRadius:100, letterSpacing:1.5, textTransform:"uppercase", minWidth:40, textAlign:"center" }}>
+            {done ? "2000+" : count}
+          </span>
+          <span style={{ fontSize:13, color:"rgba(255,255,255,.6)", fontWeight:500 }}>
+            Runners completed across India
+          </span>
         </div>
 
-        {/* Headline */}
         <h1 className="mob-h1" style={{ fontSize:"clamp(52px,8vw,96px)", fontWeight:900, lineHeight:1.0, letterSpacing:"-3px", color:"#fff", maxWidth:700, marginBottom:0 }}>
-         Discipline<br />
-<em style={{ fontStyle:"italic", color:"#c0392b" }}>Builds</em><br />
-<span style={{ color:"rgba(255,255,255,.85)" }}>Legends.</span>
+          Discipline<br />
+          <em style={{ fontStyle:"italic", color:"#c0392b" }}>Builds</em><br />
+          <span style={{ color:"rgba(255,255,255,.85)" }}>Legends.</span>
         </h1>
 
         <div style={{ width:64, height:4, background:"#c0392b", borderRadius:2, margin:"28px 0", opacity:.8 }} />
@@ -1412,8 +1421,7 @@ function Hero({ router, liveEvents }) {
           Complete your distance. Submit your proof. Receive a real medal at your door — free shipping, pan-India.
         </p>
 
-        {/* CTA Buttons */}
-        <div style={{ display:"flex", gap:14, flexWrap:"wrap", marginBottom:72 }} className="mob-stack">
+        <div style={{ display:"flex", gap:14, flexWrap:"wrap", marginBottom:72 }} className="mob-stack mob-center">
           <button className="vr-btn-primary" onClick={() => document.getElementById("events-section")?.scrollIntoView({ behavior:"smooth" })}>
             Explore Challenges →
           </button>
@@ -1422,10 +1430,10 @@ function Hero({ router, liveEvents }) {
           </button>
         </div>
 
-        {/* Floating Stats */}
+        {/* Floating stats */}
         <div style={{ display:"flex", gap:12, flexWrap:"wrap" }} className="mob-center">
           {[
-            { n:`${n}+`, l:"Runners", e:"🏃" },
+            { n:"2000+", l:"Runners", e:"🏃" },
             { n:"4", l:"Events Done", e:"🏆" },
             { n:"Free", l:"Delivery", e:"📦" },
             { n:"24hr", l:"Verify", e:"⚡" },
@@ -1472,7 +1480,7 @@ function Stats() {
       <div style={{ maxWidth:1200, margin:"0 auto" }}>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", border:"1px solid #f0f0f0", borderRadius:20 }} className="mob-grid2">
           {[
-            { n:"600+", l:"Finishers", d:"Runners who completed & earned" },
+            { n:"2000+", l:"Finishers", d:"Runners who completed & earned" },
             { n:"4", l:"Events Hosted", d:"Pan-India virtual challenges" },
             { n:"24hr", l:"Avg Verify", d:"Fastest proof verification" },
             { n:"4.9★", l:"Avg Rating", d:"From 2000+ verified finishers" },
@@ -1503,22 +1511,17 @@ function Events({ events, router }) {
           <button className="vr-btn-secondary" style={{ fontSize:13 }} onClick={() => router.push("/challenges")}>See All →</button>
         </div>
 
-        {/* Featured first event big + rest small */}
-        {events.length === 1 && (
-          <EventCardLarge event={events[0]} router={router} />
-        )}
-
+        {events.length === 1 && <EventCardLarge event={events[0]} router={router} />}
         {events.length === 2 && (
           <div style={{ display:"grid", gridTemplateColumns:"1.5fr 1fr", gap:20 }} className="mob-grid1">
             <EventCardLarge event={events[0]} router={router} />
             <EventCardSmall event={events[1]} router={router} />
           </div>
         )}
-
         {events.length >= 3 && (
           <div style={{ display:"grid", gridTemplateColumns:"1.4fr 1fr 1fr", gap:20 }} className="mob-grid1">
             <EventCardLarge event={events[0]} router={router} />
-            <div style={{ display:"grid", gridTemplateColumns:"1fr", gap:20 }}>
+            <div style={{ display:"grid", gap:20 }}>
               {events.slice(1,3).map(ev => <EventCardSmall key={ev._id} event={ev} router={router} />)}
             </div>
             {events.length > 3 && (
@@ -1537,26 +1540,22 @@ function EventCardLarge({ event, router }) {
   const [hover, setHover] = useState(false);
   const now = new Date();
   const regClosed = event.isRegistrationOpen === false || (event.registrationDeadline && new Date(event.registrationDeadline) < now);
-
   return (
     <div className="hover-card" onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)}
       onClick={() => router.push(regClosed?`/activity-submission?event=${event.slug}`:`/challenges/${event.slug}`)}
       style={{ borderRadius:24, overflow:"hidden", cursor:"pointer", position:"relative", height:480, background:"#111", boxShadow:"0 8px 32px rgba(0,0,0,.08)" }}>
-      {/* Full BG image */}
       {(event.coverImage||event.image) && (
         <img src={event.coverImage||event.image} alt={event.title}
           style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", opacity:.55, transform:hover?"scale(1.04)":"scale(1)", transition:"transform .6s ease" }}/>
       )}
       <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.3) 50%, rgba(0,0,0,.1) 100%)" }} />
-
-      {/* Top badges */}
       <div style={{ position:"absolute", top:20, left:20, display:"flex", gap:8 }}>
         {regClosed ? (
-          <span style={{ display:"inline-flex", alignItems:"center", gap:6, background:"rgba(22,163,74,.9)", color:"#fff", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:100, backdropFilter:"blur(10px)" }}>
+          <span style={{ display:"inline-flex", alignItems:"center", gap:6, background:"rgba(22,163,74,.9)", color:"#fff", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:100 }}>
             <span style={{ width:6, height:6, borderRadius:"50%", background:"#fff", display:"inline-block", animation:"livePulse 1.5s infinite" }}/>Event Running
           </span>
         ) : (
-          <span style={{ display:"inline-flex", alignItems:"center", gap:6, background:"rgba(192,57,43,.9)", color:"#fff", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:100, backdropFilter:"blur(10px)" }}>
+          <span style={{ display:"inline-flex", alignItems:"center", gap:6, background:"rgba(192,57,43,.9)", color:"#fff", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:100 }}>
             <span style={{ position:"relative", width:7, height:7, display:"inline-flex" }}>
               <span style={{ position:"absolute", inset:0, borderRadius:"50%", background:"rgba(255,255,255,.6)", animation:"ping 1.2s infinite" }}/>
               <span style={{ width:7, height:7, borderRadius:"50%", background:"#fff", display:"block" }}/>
@@ -1568,8 +1567,6 @@ function EventCardLarge({ event, router }) {
           ₹{event.price||399}
         </span>
       </div>
-
-      {/* Bottom content */}
       <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"28px 28px 24px" }}>
         <div style={{ display:"flex", gap:8, marginBottom:14 }}>
           {["🏅 Medal","📜 Certificate","📦 Free Delivery"].map((t,i) => (
@@ -1580,11 +1577,11 @@ function EventCardLarge({ event, router }) {
         <h3 style={{ fontSize:26, fontWeight:900, color:"#fff", lineHeight:1.2, marginBottom:20 }}>{event.title}</h3>
         <button style={{
           display:"inline-flex", alignItems:"center", gap:8, padding:"12px 24px",
-          background: regClosed?"#16a34a":"#c0392b", color:"#fff", border:"none",
+          background:regClosed?"#16a34a":"#c0392b", color:"#fff", border:"none",
           borderRadius:100, fontSize:14, fontWeight:700, cursor:"pointer",
-          transition:"all .2s", boxShadow: regClosed?"0 6px 20px rgba(22,163,74,.4)":"0 6px 20px rgba(192,57,43,.4)"
+          boxShadow:regClosed?"0 6px 20px rgba(22,163,74,.4)":"0 6px 20px rgba(192,57,43,.4)"
         }}>
-          {regClosed ? "📸 Submit Activity" : "Register Now"} →
+          {regClosed?"📸 Submit Activity":"Register Now"} →
         </button>
       </div>
     </div>
@@ -1595,7 +1592,6 @@ function EventCardSmall({ event, router }) {
   const [hover, setHover] = useState(false);
   const now = new Date();
   const regClosed = event.isRegistrationOpen === false || (event.registrationDeadline && new Date(event.registrationDeadline) < now);
-
   return (
     <div className="hover-card" onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)}
       onClick={() => router.push(regClosed?`/activity-submission?event=${event.slug}`:`/challenges/${event.slug}`)}
@@ -1605,7 +1601,6 @@ function EventCardSmall({ event, router }) {
           style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", opacity:.5, transform:hover?"scale(1.05)":"scale(1)", transition:"transform .5s ease" }}/>
       )}
       <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,.2) 100%)" }}/>
-
       <div style={{ position:"absolute", top:14, left:14 }}>
         {regClosed ? (
           <span style={{ background:"rgba(22,163,74,.85)", color:"#fff", fontSize:10, fontWeight:700, padding:"4px 10px", borderRadius:100, display:"inline-flex", alignItems:"center", gap:5 }}>
@@ -1615,12 +1610,11 @@ function EventCardSmall({ event, router }) {
           <span style={{ background:"rgba(192,57,43,.85)", color:"#fff", fontSize:10, fontWeight:700, padding:"4px 10px", borderRadius:100 }}>● Live</span>
         )}
       </div>
-
       <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"16px 18px" }}>
         <div style={{ fontSize:10, color:"rgba(255,255,255,.4)", fontWeight:600, letterSpacing:1, textTransform:"uppercase", marginBottom:5 }}>{event.dates}</div>
         <h3 style={{ fontSize:15, fontWeight:800, color:"#fff", lineHeight:1.3, marginBottom:12 }}>{event.title}</h3>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-          <span style={{ fontSize:13, fontWeight:700, color: regClosed?"#4ade80":"#f87171" }}>
+          <span style={{ fontSize:13, fontWeight:700, color:regClosed?"#4ade80":"#f87171" }}>
             {regClosed?"📸 Submit →":"Register →"}
           </span>
           <span style={{ fontSize:13, fontWeight:800, color:"rgba(255,255,255,.7)" }}>₹{event.price||399}</span>
@@ -1630,7 +1624,70 @@ function EventCardSmall({ event, router }) {
   );
 }
 
-/* ─── MEDAL 3D ─── */
+/* ─── REVIEWS — challenge ke baad, slow + pause on hover/touch ─── */
+function Reviews() {
+  const trackRef = useRef(null);
+  const isPaused = useRef(false);
+
+  // Pause on hover/touch
+  const pause = () => { isPaused.current = true; if (trackRef.current) trackRef.current.style.animationPlayState = "paused"; };
+  const resume = () => { isPaused.current = false; if (trackRef.current) trackRef.current.style.animationPlayState = "running"; };
+
+  return (
+    <section style={{ padding:"80px 0", background:"#fff", overflow:"hidden" }}>
+      <div style={{ maxWidth:1200, margin:"0 auto", padding:"0 60px", marginBottom:48 }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", flexWrap:"wrap", gap:16 }}>
+          <div>
+            <span className="vr-tag">Finishers</span>
+            <h2 className="mob-h2" style={{ fontSize:48, fontWeight:900, letterSpacing:"-2px", lineHeight:1.05 }}>What They Say</h2>
+          </div>
+          <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+            {Array(5).fill(0).map((_,i)=><span key={i} style={{fontSize:20,color:"#f59e0b"}}>★</span>)}
+            <span style={{ fontSize:14, color:"#aaa", marginLeft:8, fontWeight:600 }}>4.9 · 2000+ runners</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ✅ Slow scroll — 60s, pause on hover/touch */}
+      <div style={{ overflow:"hidden", maskImage:"linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)", WebkitMaskImage:"linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)" }}>
+        <div
+          ref={trackRef}
+          className="rev-track"
+          style={{ display:"flex", gap:18, width:"max-content", animation:"revScroll 60s linear infinite", cursor:"grab" }}
+          onMouseEnter={pause}
+          onMouseLeave={resume}
+          onTouchStart={pause}
+          onTouchEnd={resume}
+        >
+          {[...REVIEWS,...REVIEWS].map((r,i)=>(
+            <div key={i} style={{ width:310, borderRadius:20, overflow:"hidden", flexShrink:0, border:"1px solid #f0f0f0", background:"#fff", boxShadow:"0 4px 20px rgba(0,0,0,.05)", transition:"transform .2s, box-shadow .2s" }}
+              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-4px)";e.currentTarget.style.boxShadow="0 12px 32px rgba(0,0,0,.1)";}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 4px 20px rgba(0,0,0,.05)";}}>
+              {/* Image */}
+              <div style={{ height:180, overflow:"hidden", position:"relative" }}>
+                <img src={r.imageUrl} alt={r.name} style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+                <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(0,0,0,.6),transparent)"}}/>
+                <div style={{position:"absolute",top:10,left:12,display:"flex",gap:1}}>
+                  {Array(5).fill(0).map((_,i)=><span key={i} style={{color:"#fbbf24",fontSize:12}}>★</span>)}
+                </div>
+              </div>
+              {/* Text */}
+              <div style={{padding:"18px 20px 20px"}}>
+                <p style={{fontSize:13,color:"#555",lineHeight:1.8,fontStyle:"italic",marginBottom:14}}>"{r.review}"</p>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <span style={{fontSize:14,fontWeight:700,color:"#111"}}>{r.name}</span>
+                  <span style={{fontSize:10,fontWeight:700,padding:"3px 9px",borderRadius:100,background:"#fef2f2",color:"#c0392b",border:"1px solid #fecaca"}}>Verified ✓</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── MEDAL — bada size ─── */
 function Medal3D({ event }) {
   const rotY=useRef(0),rotX=useRef(-8),drag=useRef({active:false,lastX:0,lastY:0}),auto=useRef(true),raf=useRef(null),timer=useRef(null),inner=useRef(null);
   const apply=()=>{if(inner.current)inner.current.style.transform=`rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)`;};
@@ -1640,27 +1697,29 @@ function Medal3D({ event }) {
   const onM=(x,y)=>{if(!drag.current.active)return;rotY.current+=(x-drag.current.lastX)*.65;rotX.current=Math.max(-30,Math.min(30,rotX.current-(y-drag.current.lastY)*.4));drag.current.lastX=x;drag.current.lastY=y;apply();};
   const onU=()=>{drag.current.active=false;};
   const face=(e={})=>({position:"absolute",top:0,left:0,right:0,bottom:0,borderRadius:"50%",WebkitBackfaceVisibility:"hidden",backfaceVisibility:"hidden",...e});
+
   return (
-    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:14 }}>
-      <div style={{ width:240, height:240, perspective:"800px", cursor:"grab", userSelect:"none", position:"relative" }}
+    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:16 }}>
+      {/* ✅ Bada size — 300x300 */}
+      <div style={{ width:300, height:300, perspective:"1000px", cursor:"grab", userSelect:"none", position:"relative" }}
         onMouseDown={e=>{e.preventDefault();onD(e.clientX,e.clientY);}} onMouseMove={e=>onM(e.clientX,e.clientY)} onMouseUp={onU} onMouseLeave={onU}
         onTouchStart={e=>{e.preventDefault();onD(e.touches[0].clientX,e.touches[0].clientY);}} onTouchMove={e=>{e.preventDefault();onM(e.touches[0].clientX,e.touches[0].clientY);}} onTouchEnd={onU}>
         <div ref={inner} style={{ width:"100%", height:"100%", position:"relative", transformStyle:"preserve-3d" }}>
-          <div style={face({ boxShadow:"0 20px 60px rgba(0,0,0,.25),0 0 0 1px rgba(255,255,255,.1)" })}>
+          <div style={face({ boxShadow:"0 30px 80px rgba(0,0,0,.3),0 0 0 1px rgba(255,255,255,.1)" })}>
             {event.medalImage&&<img src={event.medalImage} alt="medal" draggable={false} style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",pointerEvents:"none"}}/>}
             <div style={{position:"absolute",inset:0,borderRadius:"50%",background:"linear-gradient(135deg,rgba(255,255,255,.3) 0%,transparent 50%)",pointerEvents:"none"}}/>
           </div>
           <div style={face({ transform:"rotateY(180deg)", background:"#f0ece6" })}>
-            <div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:44,borderRadius:"50%"}}>🇮🇳</div>
+            <div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:52,borderRadius:"50%"}}>🇮🇳</div>
             <div style={{position:"absolute",inset:0,borderRadius:"50%",background:"linear-gradient(135deg,rgba(255,255,255,.2) 0%,transparent 55%)",pointerEvents:"none"}}/>
           </div>
-          <div style={{position:"absolute",inset:0,borderRadius:"50%",transform:"translateZ(-6px)",background:"radial-gradient(ellipse,#9a7320,#5a4010)",WebkitBackfaceVisibility:"hidden",backfaceVisibility:"hidden"}}/>
+          <div style={{position:"absolute",inset:0,borderRadius:"50%",transform:"translateZ(-8px)",background:"radial-gradient(ellipse,#9a7320,#5a4010)",WebkitBackfaceVisibility:"hidden",backfaceVisibility:"hidden"}}/>
         </div>
-        <div style={{position:"absolute",bottom:-12,left:"50%",transform:"translateX(-50%)",width:120,height:14,background:"radial-gradient(ellipse,rgba(0,0,0,.18),transparent)",filter:"blur(5px)",pointerEvents:"none"}}/>
+        <div style={{position:"absolute",bottom:-14,left:"50%",transform:"translateX(-50%)",width:160,height:16,background:"radial-gradient(ellipse,rgba(0,0,0,.2),transparent)",filter:"blur(6px)",pointerEvents:"none"}}/>
       </div>
       <p style={{ fontSize:10, color:"#ccc", letterSpacing:2, textTransform:"uppercase", fontWeight:600 }}>Drag to Rotate</p>
       <div style={{ textAlign:"center" }}>
-        <p style={{ fontSize:14, fontWeight:700, color:"#111", marginBottom:2 }}>{event.title}</p>
+        <p style={{ fontSize:15, fontWeight:700, color:"#111", marginBottom:2 }}>{event.title}</p>
         <p style={{ fontSize:12, color:"#bbb" }}>Premium Finisher Medal</p>
       </div>
     </div>
@@ -1669,10 +1728,9 @@ function Medal3D({ event }) {
 
 function Medal({ events }) {
   return (
-    <section style={{ padding:"80px 60px", background:"#fff" }} className="mob-pad">
+    <section style={{ padding:"80px 60px", background:"#fafafa" }} className="mob-pad">
       <div style={{ maxWidth:1200, margin:"0 auto" }}>
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:80, alignItems:"center" }} className="mob-grid1">
-          {/* Left text */}
           <div>
             <span className="vr-tag">Your Reward</span>
             <h2 className="mob-h2" style={{ fontSize:48, fontWeight:900, letterSpacing:"-2px", lineHeight:1.05, marginBottom:20 }}>
@@ -1682,10 +1740,10 @@ function Medal({ events }) {
             <p style={{ fontSize:16, color:"#888", lineHeight:1.85, marginBottom:36 }}>
               Every finisher receives a premium zinc-alloy medal delivered to their home — completely free. Heavy, detailed, and built to last a lifetime.
             </p>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14, marginBottom:36 }}>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16, marginBottom:36 }}>
               {[["📦","Free Shipping","Pan-India, always"],["⚡","7–10 Days","Fast delivery"],["⭐","Zinc Alloy","Premium metal"],["🔒","Guaranteed","Or full refund"]].map(([e,t,s])=>(
                 <div key={t} style={{ display:"flex", gap:12, alignItems:"flex-start" }}>
-                  <span style={{ fontSize:20, marginTop:2 }}>{e}</span>
+                  <span style={{ fontSize:22, marginTop:2 }}>{e}</span>
                   <div>
                     <div style={{ fontSize:14, fontWeight:700, color:"#111" }}>{t}</div>
                     <div style={{ fontSize:12, color:"#bbb", marginTop:2 }}>{s}</div>
@@ -1694,7 +1752,7 @@ function Medal({ events }) {
               ))}
             </div>
           </div>
-          {/* Right medals */}
+          {/* ✅ Bade medals side by side */}
           <div style={{ display:"flex", justifyContent:"center", gap:48, flexWrap:"wrap" }}>
             {events.slice(0,2).map(ev=><Medal3D key={ev._id} event={ev}/>)}
           </div>
@@ -1713,7 +1771,7 @@ function HowItWorks() {
     { n:"04", e:"🏅", t:"Receive Medal", d:"Premium zinc-alloy medal shipped to your door. Free delivery, 7–10 days." },
   ];
   return (
-    <section id="how-it-works" style={{ padding:"80px 60px", background:"#fafafa" }} className="mob-pad">
+    <section id="how-it-works" style={{ padding:"80px 60px", background:"#fff" }} className="mob-pad">
       <div style={{ maxWidth:1200, margin:"0 auto" }}>
         <div style={{ marginBottom:52 }}>
           <span className="vr-tag">The Process</span>
@@ -1721,7 +1779,7 @@ function HowItWorks() {
         </div>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:0, border:"1px solid #eee", borderRadius:20, overflow:"hidden" }} className="mob-grid2">
           {steps.map((s,i)=>(
-            <div key={i} style={{ padding:"36px 28px", borderRight:i<3?"1px solid #eee":"none", position:"relative", background:i===0?"#fff":"#fff" }}>
+            <div key={i} style={{ padding:"36px 28px", borderRight:i<3?"1px solid #eee":"none", position:"relative", background:"#fff" }}>
               {i===0 && <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:"#c0392b" }}/>}
               <div style={{ fontSize:40, marginBottom:16 }}>{s.e}</div>
               <div style={{ fontSize:11, color:"#ddd", fontWeight:800, letterSpacing:1, marginBottom:8 }}>{s.n}</div>
@@ -1735,56 +1793,11 @@ function HowItWorks() {
   );
 }
 
-/* ─── REVIEWS ─── */
-function Reviews() {
-  return (
-    <section style={{ padding:"80px 0", background:"#fff", overflow:"hidden" }} className="mob-pad">
-      <div style={{ maxWidth:1200, margin:"0 auto", padding:"0 60px" }}>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:48, flexWrap:"wrap", gap:16 }}>
-          <div>
-            <span className="vr-tag">Finishers</span>
-            <h2 className="mob-h2" style={{ fontSize:48, fontWeight:900, letterSpacing:"-2px", lineHeight:1.05 }}>What They Say</h2>
-          </div>
-          <div style={{ display:"flex", gap:4 }}>
-            {Array(5).fill(0).map((_,i)=><span key={i} style={{fontSize:20,color:"#f59e0b"}}>★</span>)}
-            <span style={{ fontSize:14, color:"#aaa", marginLeft:8, fontWeight:600 }}>4.9 from 600+ runners</span>
-          </div>
-        </div>
-      </div>
-      {/* Infinite scroll */}
-      <div style={{ overflow:"hidden", maskImage:"linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)", WebkitMaskImage:"linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)" }}>
-        <div style={{ display:"flex", gap:16, width:"max-content", animation:"revScroll 40s linear infinite" }}>
-          {[...REVIEWS,...REVIEWS].map((r,i)=>(
-            <div key={i} style={{ width:300, borderRadius:20, overflow:"hidden", flexShrink:0, border:"1px solid #f0f0f0", background:"#fff", boxShadow:"0 4px 20px rgba(0,0,0,.05)" }}>
-              <div style={{ height:170, overflow:"hidden", position:"relative" }}>
-                <img src={r.imageUrl} alt={r.name} style={{width:"100%",height:"100%",objectFit:"cover"}}/>
-                <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(0,0,0,.6),transparent)"}}/>
-                <div style={{position:"absolute",top:10,left:12,display:"flex",gap:1}}>
-                  {Array(5).fill(0).map((_,i)=><span key={i} style={{color:"#fbbf24",fontSize:11}}>★</span>)}
-                </div>
-              </div>
-              <div style={{padding:"16px 18px 18px"}}>
-                <p style={{fontSize:13,color:"#555",lineHeight:1.75,fontStyle:"italic",marginBottom:12,display:"-webkit-box",WebkitLineClamp:3,WebkitBoxOrient:"vertical",overflow:"hidden"}}>"{r.review}"</p>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                  <span style={{fontSize:14,fontWeight:700,color:"#111"}}>{r.name}</span>
-                  <span style={{fontSize:10,fontWeight:700,padding:"3px 9px",borderRadius:100,background:"#fef2f2",color:"#c0392b",border:"1px solid #fecaca"}}>Verified ✓</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* ─── GALLERY ─── */
 function Gallery({ images }) {
   const [lb, setLb] = useState(null);
   const shown = images.slice(0, 8);
   useEffect(()=>{const h=e=>{if(e.key==="Escape")setLb(null);};window.addEventListener("keydown",h);return()=>window.removeEventListener("keydown",h);},[]);
-
-  // Bento grid layout
   const sizes = [
     { gridColumn:"span 2", gridRow:"span 2" },
     { gridColumn:"span 1", gridRow:"span 1" },
@@ -1795,7 +1808,6 @@ function Gallery({ images }) {
     { gridColumn:"span 1", gridRow:"span 1" },
     { gridColumn:"span 1", gridRow:"span 1" },
   ];
-
   return (
     <section style={{ padding:"80px 60px", background:"#0a0a0a" }} className="mob-pad">
       <div style={{ maxWidth:1200, margin:"0 auto" }}>
@@ -1804,24 +1816,19 @@ function Gallery({ images }) {
             <span style={{ fontSize:11, fontWeight:700, letterSpacing:2, textTransform:"uppercase", color:"#c0392b" }}>Gallery</span>
             <h2 className="mob-h2" style={{ fontSize:48, fontWeight:900, letterSpacing:"-2px", lineHeight:1.05, color:"#fff" }}>Moments of Glory</h2>
           </div>
-          <p style={{ fontSize:14, color:"rgba(255,255,255,.3)", maxWidth:240, lineHeight:1.6, textAlign:"right" }}>
-            Real runners. Real finishes. Real medals.
-          </p>
+          <p style={{ fontSize:14, color:"rgba(255,255,255,.3)", textAlign:"right" }}>Real runners. Real medals.</p>
         </div>
-
-        {/* Bento grid */}
         <div className="gallery-grid" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gridAutoRows:"160px", gap:12 }}>
           {shown.map((img,i)=>(
             <div key={i} onClick={()=>setLb(i)} style={{ ...sizes[i]||{}, borderRadius:16, overflow:"hidden", cursor:"zoom-in", position:"relative" }}
-              onMouseEnter={e=>{e.currentTarget.querySelector("img").style.transform="scale(1.06)";e.currentTarget.querySelector(".goverlay").style.opacity="1";}}
-              onMouseLeave={e=>{e.currentTarget.querySelector("img").style.transform="scale(1)";e.currentTarget.querySelector(".goverlay").style.opacity="0";}}>
+              onMouseEnter={e=>{e.currentTarget.querySelector("img").style.transform="scale(1.06)";e.currentTarget.querySelector(".go").style.opacity="1";}}
+              onMouseLeave={e=>{e.currentTarget.querySelector("img").style.transform="scale(1)";e.currentTarget.querySelector(".go").style.opacity="0";}}>
               <img src={img} alt="" style={{width:"100%",height:"100%",objectFit:"cover",transition:"transform .4s ease"}}/>
-              <div className="goverlay" style={{position:"absolute",inset:0,background:"rgba(192,57,43,.15)",border:"2px solid rgba(192,57,43,.4)",borderRadius:16,opacity:0,transition:"opacity .3s",pointerEvents:"none"}}/>
+              <div className="go" style={{position:"absolute",inset:0,background:"rgba(192,57,43,.15)",border:"2px solid rgba(192,57,43,.4)",borderRadius:16,opacity:0,transition:"opacity .3s",pointerEvents:"none"}}/>
             </div>
           ))}
         </div>
       </div>
-
       {lb!==null&&(
         <div onClick={()=>setLb(null)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.94)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:20,backdropFilter:"blur(10px)"}}>
           <button onClick={()=>setLb(null)} style={{position:"absolute",top:20,right:20,background:"rgba(255,255,255,.1)",border:"1px solid rgba(255,255,255,.15)",color:"#fff",width:44,height:44,borderRadius:"50%",fontSize:20,cursor:"pointer"}}>×</button>
@@ -1891,11 +1898,10 @@ function CTA({ router }) {
         </button>
         <div style={{ display:"flex", justifyContent:"center", gap:24, marginTop:32, flexWrap:"wrap" }}>
           {["🏅 Real Medal","📦 Free Shipping","⚡ 24hr Verify"].map((t,i)=>(
-            <span key={i} style={{ fontSize:12, color:"rgba(255,255,255,.25)", fontWeight:600, display:"flex", alignItems:"center", gap:6 }}>{t}</span>
+            <span key={i} style={{ fontSize:12, color:"rgba(255,255,255,.25)", fontWeight:600 }}>{t}</span>
           ))}
         </div>
       </div>
     </section>
   );
 }
-
