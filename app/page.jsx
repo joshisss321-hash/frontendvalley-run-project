@@ -1800,7 +1800,7 @@ function HomeEventCard({ event, router }) {
         ) : (
           <button style={{
             width: "100%",
-            background: "linear-gradient(90deg, #e91e8c, #c0392b)",
+            background: "#c0392b",
             color: "#fff", border: "none",
             padding: "14px 0", borderRadius: 14, fontSize: 15, fontWeight: 700,
             cursor: "pointer", boxShadow: "0 4px 18px rgba(192,57,43,.3)",

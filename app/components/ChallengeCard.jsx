@@ -842,7 +842,7 @@ export default function ChallengeCard({ event }) {
           {/* CTA Button */}
           <button style={{
             width: "100%",
-            background: "linear-gradient(90deg, #e91e8c, #c0392b)",
+            background: "#c0392b",
             color: "#fff", border: "none",
             padding: "14px 0", borderRadius: 14, fontSize: 15, fontWeight: 700,
             cursor: "pointer", transition: "all .2s",
