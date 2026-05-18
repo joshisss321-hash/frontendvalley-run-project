@@ -615,15 +615,15 @@ function MiniCountdown({ deadline }) {
   if (!mounted || !t) return null;
 
   return (
-    <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap", marginBottom:14 }}>
-      <span style={{ fontSize:11, color:"#aaa", fontWeight:500 }}>Closes in:</span>
-      {[[t.d,"d"],[t.h,"h"],[t.m,"m"],[t.s,"s"]].map(([v,l]) => (
+    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
+      <span style={{ fontSize: 11, color: "#aaa", fontWeight: 500 }}>Closes in:</span>
+      {[[t.d, "d"], [t.h, "h"], [t.m, "m"], [t.s, "s"]].map(([v, l]) => (
         <span key={l} style={{
-          background:"#fef2f2", color:"#c0392b", fontSize:11, fontWeight:800,
-          padding:"3px 7px", borderRadius:6, border:"1px solid #fca5a5",
-          fontVariantNumeric:"tabular-nums", letterSpacing:.3
+          background: "#fef2f2", color: "#c0392b", fontSize: 11, fontWeight: 800,
+          padding: "3px 7px", borderRadius: 6, border: "1px solid #fca5a5",
+          fontVariantNumeric: "tabular-nums", letterSpacing: .3
         }}>
-          {String(v).padStart(2,"0")}{l}
+          {String(v).padStart(2, "0")}{l}
         </span>
       ))}
     </div>
@@ -644,72 +644,118 @@ export default function ChallengeCard({ event }) {
   // ── REG CLOSED — Event Running ──────────────────────────────
   if (regClosed) {
     return (
-      <div style={{
-        background:"#fff", borderRadius:20, overflow:"hidden",
-        border:`1px solid ${hover?"#e0e0e0":"#eee"}`,
-        boxShadow: hover?"0 20px 48px rgba(0,0,0,.1)":"0 2px 12px rgba(0,0,0,.04)",
-        transform: hover?"translateY(-6px)":"translateY(0)",
-        transition:"all .3s ease", position:"relative"
-      }}
-      onMouseEnter={()=>setHover(true)}
-      onMouseLeave={()=>setHover(false)}>
-
-        {/* Image */}
-        <div style={{ position:"relative", paddingBottom:"58%", overflow:"hidden", background:"#f3f3f3" }}>
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: 20,
+          overflow: "hidden",
+          border: `1px solid ${hover ? "#e0e0e0" : "#eee"}`,
+          boxShadow: hover ? "0 20px 48px rgba(0,0,0,.1)" : "0 2px 12px rgba(0,0,0,.04)",
+          transform: hover ? "translateY(-6px)" : "translateY(0)",
+          transition: "all .3s ease",
+          position: "relative",
+          width: "100%",
+          maxWidth: 360,
+        }}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
+        {/* Image — portrait ratio */}
+        <div style={{ position: "relative", paddingBottom: "75%", overflow: "hidden", background: "#f3f3f3" }}>
           {event.coverImage && (
-            <img src={event.coverImage} alt={event.title}
-              style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", filter:"grayscale(30%) brightness(.9)", transform:hover?"scale(1.04)":"scale(1)", transition:"transform .5s ease" }}/>
+            <img
+              src={event.coverImage}
+              alt={event.title}
+              style={{
+                position: "absolute", inset: 0, width: "100%", height: "100%",
+                objectFit: "cover", filter: "grayscale(30%) brightness(.9)",
+                transform: hover ? "scale(1.04)" : "scale(1)", transition: "transform .5s ease"
+              }}
+            />
           )}
-          <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.55) 0%,transparent 55%)" }}/>
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,.25) 0%, transparent 40%)" }} />
 
           {/* Event Running badge */}
-          <div style={{ position:"absolute", top:14, left:14, zIndex:10 }}>
-            <span style={{ display:"inline-flex", alignItems:"center", gap:7, background:"#16a34a", color:"#fff", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:30, letterSpacing:.5 }}>
-              <span style={{ position:"relative", display:"inline-flex", width:7, height:7 }}>
-                <span style={{ position:"absolute", inset:0, borderRadius:"50%", background:"rgba(255,255,255,.7)", animation:"ping 1.2s infinite" }}/>
-                <span style={{ width:7, height:7, borderRadius:"50%", background:"#fff", display:"inline-block" }}/>
+          <div style={{ position: "absolute", top: 14, left: 14, zIndex: 10 }}>
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: 7,
+              background: "#16a34a", color: "#fff", fontSize: 11, fontWeight: 700,
+              padding: "6px 14px", borderRadius: 30, letterSpacing: .5
+            }}>
+              <span style={{ position: "relative", display: "inline-flex", width: 7, height: 7 }}>
+                <span style={{ position: "absolute", inset: 0, borderRadius: "50%", background: "rgba(255,255,255,.7)", animation: "ping 1.2s infinite" }} />
+                <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#fff", display: "inline-block" }} />
               </span>
               Event Running
             </span>
           </div>
 
-          {/* Reg Closed */}
-          <div style={{ position:"absolute", top:14, right:14, zIndex:10 }}>
-            <span style={{ background:"rgba(0,0,0,.6)", color:"rgba(255,255,255,.7)", fontSize:10, fontWeight:700, padding:"5px 12px", borderRadius:20, border:"1px solid rgba(255,255,255,.15)", backdropFilter:"blur(8px)" }}>
+          {/* Reg Closed badge */}
+          <div style={{ position: "absolute", top: 14, right: 14, zIndex: 10 }}>
+            <span style={{
+              background: "rgba(0,0,0,.6)", color: "rgba(255,255,255,.7)", fontSize: 10,
+              fontWeight: 700, padding: "5px 12px", borderRadius: 20,
+              border: "1px solid rgba(255,255,255,.15)", backdropFilter: "blur(8px)"
+            }}>
               🔒 Reg. Closed
-            </span>
-          </div>
-
-          {/* Price */}
-          <div style={{ position:"absolute", bottom:14, right:14, zIndex:10 }}>
-            <span style={{ background:"rgba(0,0,0,.55)", color:"rgba(255,255,255,.9)", fontSize:12, fontWeight:700, padding:"5px 12px", borderRadius:8, backdropFilter:"blur(8px)" }}>
-              ₹{event.price||399}
             </span>
           </div>
         </div>
 
         {/* Content */}
-        <div style={{ padding:"22px 22px 20px" }}>
-          <div style={{ fontSize:11, color:"#bbb", fontWeight:600, letterSpacing:1, textTransform:"uppercase", marginBottom:6 }}>{event.dates}</div>
-          <h3 style={{ fontSize:17, fontWeight:800, lineHeight:1.35, color:"#222", marginBottom:18 }}>{event.title}</h3>
+        <div style={{ padding: "20px 20px 18px" }}>
+          {/* Title */}
+          <h3 style={{ fontSize: 18, fontWeight: 800, lineHeight: 1.3, color: "#111", margin: "0 0 4px" }}>
+            {event.title}
+          </h3>
 
-          <Link href={`/activity-submission?event=${event.slug}`} style={{ textDecoration:"none" }}>
+          {/* Dates */}
+          <div style={{ fontSize: 13, color: "#c0392b", fontWeight: 600, marginBottom: 12 }}>
+            {event.dates}
+          </div>
+
+          {/* Description */}
+          {event.description && (
+            <p style={{ fontSize: 13, color: "#666", lineHeight: 1.6, margin: "0 0 14px" }}>
+              {event.description}
+            </p>
+          )}
+
+          {/* Feature icons */}
+          <div style={{ display: "flex", gap: 20, marginBottom: 18 }}>
+            {[
+              { icon: "🏃", label: "Run / Walk / Ride" },
+              { icon: "🏅", label: "Medal" },
+              { icon: "🚚", label: "Free ship" },
+            ].map((f) => (
+              <div key={f.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                <span style={{ fontSize: 20 }}>{f.icon}</span>
+                <span style={{ fontSize: 10, color: "#888", fontWeight: 600, textAlign: "center", whiteSpace: "nowrap" }}>{f.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Price */}
+          <div style={{ marginBottom: 14, display: "flex", alignItems: "baseline", gap: 4 }}>
+            <span style={{ fontSize: 12, color: "#aaa" }}>From</span>
+            <span style={{ fontSize: 18, fontWeight: 900, color: "#111" }}>₹{event.price || 399}</span>
+          </div>
+
+          <Link href={`/activity-submission?event=${event.slug}`} style={{ textDecoration: "none" }}>
             <button style={{
-              width:"100%", background:"#16a34a", color:"#fff", border:"none",
-              padding:"13px 0", borderRadius:12, fontSize:14, fontWeight:700,
-              cursor:"pointer", transition:"all .2s", display:"flex", alignItems:"center",
-              justifyContent:"center", gap:8, marginBottom:10,
-              boxShadow:"0 4px 14px rgba(22,163,74,.25)"
+              width: "100%", background: "#16a34a", color: "#fff", border: "none",
+              padding: "14px 0", borderRadius: 14, fontSize: 15, fontWeight: 700,
+              cursor: "pointer", transition: "all .2s",
+              boxShadow: "0 4px 14px rgba(22,163,74,.25)"
             }}
-            onMouseEnter={e=>{e.currentTarget.style.background="#15803d";e.currentTarget.style.transform="scale(1.02)";}}
-            onMouseLeave={e=>{e.currentTarget.style.background="#16a34a";e.currentTarget.style.transform="scale(1)";}}>
+              onMouseEnter={e => { e.currentTarget.style.background = "#15803d"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "#16a34a"; }}>
               📸 Submit Your Activity
             </button>
           </Link>
 
-          <div style={{ textAlign:"center", fontSize:12, color:"#bbb", display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
-            <span>🔒</span>
-            <span>Registration Closed · Event is underway</span>
+          <div style={{ textAlign: "center", fontSize: 11, color: "#bbb", marginTop: 10 }}>
+            🔒 Registration Closed · Event is underway
           </div>
         </div>
       </div>
@@ -718,72 +764,110 @@ export default function ChallengeCard({ event }) {
 
   // ── REG OPEN ────────────────────────────────────────────────
   return (
-    <Link href={`/challenges/${event.slug}`} style={{ textDecoration:"none" }}>
-      <div style={{
-        background:"#fff", borderRadius:20, overflow:"hidden",
-        border:`1px solid ${hover?"#e0e0e0":"#eee"}`,
-        boxShadow: hover?"0 20px 48px rgba(0,0,0,.1)":"0 2px 12px rgba(0,0,0,.04)",
-        transform: hover?"translateY(-6px)":"translateY(0)",
-        transition:"all .3s ease", cursor:"pointer"
-      }}
-      onMouseEnter={()=>setHover(true)}
-      onMouseLeave={()=>setHover(false)}>
-
-        {/* Image */}
-        <div style={{ position:"relative", paddingBottom:"58%", overflow:"hidden", background:"#f3f3f3" }}>
+    <Link href={`/challenges/${event.slug}`} style={{ textDecoration: "none" }}>
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: 20,
+          overflow: "hidden",
+          border: `1px solid ${hover ? "#e0e0e0" : "#eee"}`,
+          boxShadow: hover ? "0 20px 48px rgba(0,0,0,.1)" : "0 2px 12px rgba(0,0,0,.04)",
+          transform: hover ? "translateY(-6px)" : "translateY(0)",
+          transition: "all .3s ease",
+          cursor: "pointer",
+          width: "100%",
+          maxWidth: 360,
+        }}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
+        {/* Image — portrait ratio */}
+        <div style={{ position: "relative", paddingBottom: "75%", overflow: "hidden", background: "#f3f3f3" }}>
           {event.coverImage && (
-            <img src={event.coverImage} alt={event.title}
-              style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", transform:hover?"scale(1.05)":"scale(1)", transition:"transform .5s ease" }}/>
+            <img
+              src={event.coverImage}
+              alt={event.title}
+              style={{
+                position: "absolute", inset: 0, width: "100%", height: "100%",
+                objectFit: "cover",
+                transform: hover ? "scale(1.05)" : "scale(1)", transition: "transform .5s ease"
+              }}
+            />
           )}
-          <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.55) 0%,transparent 55%)" }}/>
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,.25) 0%, transparent 40%)" }} />
 
           {/* Live badge */}
-          <div style={{ position:"absolute", top:14, left:14 }}>
-            <span style={{ display:"inline-flex", alignItems:"center", gap:7, background:"#c0392b", color:"#fff", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:30, letterSpacing:.5 }}>
-              <span style={{ width:6, height:6, borderRadius:"50%", background:"#fff", display:"inline-block", animation:"pulse 1.5s infinite" }}/>
+          <div style={{ position: "absolute", top: 14, left: 14 }}>
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: 7,
+              background: "#c0392b", color: "#fff", fontSize: 11, fontWeight: 700,
+              padding: "6px 14px", borderRadius: 30, letterSpacing: .5
+            }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", display: "inline-block", animation: "pulse 1.5s infinite" }} />
               Live Now
             </span>
-          </div>
-
-          {/* Price badge */}
-          <div style={{ position:"absolute", top:14, right:14 }}>
-            <span style={{ background:"rgba(0,0,0,.55)", color:"rgba(255,255,255,.9)", fontSize:12, fontWeight:700, padding:"5px 12px", borderRadius:8, backdropFilter:"blur(8px)" }}>
-              ₹{event.price||399}
-            </span>
-          </div>
-
-          {/* Bottom info */}
-          <div style={{ position:"absolute", bottom:14, left:14, right:14 }}>
-            <div style={{ display:"flex", gap:8 }}>
-              {["🏅 Medal","📜 Certificate","📦 Free Delivery"].map((tag,i) => (
-                <span key={i} style={{ background:"rgba(0,0,0,.55)", color:"rgba(255,255,255,.8)", fontSize:10, fontWeight:600, padding:"3px 10px", borderRadius:20, backdropFilter:"blur(8px)", whiteSpace:"nowrap" }}>
-                  {tag}
-                </span>
-              ))}
-            </div>
           </div>
         </div>
 
         {/* Content */}
-        <div style={{ padding:"22px 22px 20px" }}>
-          <div style={{ fontSize:11, color:"#bbb", fontWeight:600, letterSpacing:1, textTransform:"uppercase", marginBottom:6 }}>{event.dates}</div>
-          <h3 style={{ fontSize:17, fontWeight:800, lineHeight:1.35, color:"#111", marginBottom:12 }}>{event.title}</h3>
+        <div style={{ padding: "20px 20px 18px" }}>
+          {/* Title */}
+          <h3 style={{ fontSize: 18, fontWeight: 800, lineHeight: 1.3, color: "#111", margin: "0 0 4px" }}>
+            {event.title}
+          </h3>
 
-          {event.registrationDeadline && <MiniCountdown deadline={event.registrationDeadline}/>}
-
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", paddingTop:14, borderTop:"1px solid #f5f5f5" }}>
-            <span style={{ fontSize:14, fontWeight:700, color:"#c0392b", display:"flex", alignItems:"center", gap:6 }}>
-              Register Now →
-            </span>
-            <div style={{ display:"flex", alignItems:"center", gap:4 }}>
-              <span style={{ fontSize:11, color:"#bbb" }}>From</span>
-              <span style={{ fontSize:16, fontWeight:900, color:"#111" }}>₹{event.price||399}</span>
-            </div>
+          {/* Dates */}
+          <div style={{ fontSize: 13, color: "#c0392b", fontWeight: 600, marginBottom: 12 }}>
+            {event.dates}
           </div>
+
+          {/* Description */}
+          {event.description && (
+            <p style={{ fontSize: 13, color: "#666", lineHeight: 1.6, margin: "0 0 14px" }}>
+              {event.description}
+            </p>
+          )}
+
+          {/* Feature icons */}
+          <div style={{ display: "flex", gap: 20, marginBottom: 18 }}>
+            {[
+              { icon: "🏃", label: "Run / Walk / Ride" },
+              { icon: "🏅", label: "Medal" },
+              { icon: "🚚", label: "Free ship" },
+            ].map((f) => (
+              <div key={f.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                <span style={{ fontSize: 20 }}>{f.icon}</span>
+                <span style={{ fontSize: 10, color: "#888", fontWeight: 600, textAlign: "center", whiteSpace: "nowrap" }}>{f.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Countdown */}
+          {event.registrationDeadline && <MiniCountdown deadline={event.registrationDeadline} />}
+
+          {/* Price */}
+          <div style={{ marginBottom: 14, display: "flex", alignItems: "baseline", gap: 4 }}>
+            <span style={{ fontSize: 12, color: "#aaa" }}>From</span>
+            <span style={{ fontSize: 18, fontWeight: 900, color: "#111" }}>₹{event.price || 399}</span>
+          </div>
+
+          {/* CTA Button */}
+          <button style={{
+            width: "100%",
+            background: "linear-gradient(90deg, #e91e8c, #c0392b)",
+            color: "#fff", border: "none",
+            padding: "14px 0", borderRadius: 14, fontSize: 15, fontWeight: 700,
+            cursor: "pointer", transition: "all .2s",
+            boxShadow: "0 4px 18px rgba(192,57,43,.3)"
+          }}
+            onMouseEnter={e => { e.currentTarget.style.opacity = ".88"; }}
+            onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}>
+            View &amp; register
+          </button>
         </div>
 
         {/* Bottom glow on hover */}
-        <div style={{ height:3, background:`linear-gradient(90deg,transparent,#c0392b,transparent)`, opacity:hover?1:0, transition:"opacity .3s" }}/>
+        <div style={{ height: 3, background: "linear-gradient(90deg,transparent,#c0392b,transparent)", opacity: hover ? 1 : 0, transition: "opacity .3s" }} />
       </div>
     </Link>
   );
