@@ -1300,12 +1300,12 @@ const WHATSAPP_URL = "https://whatsapp.com/channel/0029VbCM5KOBVJl3FdMMHI3M";
 const REVIEWS = [
   { id:"1", name:"Gourisha Garg", review:"The medal is even more beautiful and heavier than it looked in the photos — it exceeded my expectations!", imageUrl:"https://ik.imagekit.io/nnx2tg1jf/WhatsApp%20Image%202026-04-29%20at%2012.41.55%20PM.jpeg" },
   { id:"2", name:"Tisha", review:"The quality of the medal is top notch. No doubt. Thank you so much!!! Will be participating further as well.", imageUrl:"https://ik.imagekit.io/nnx2tg1jf/Screenshot%202026-05-05%20134321.png" },
-  { id:"3", name:"Puja Giri", review:"Thank you so much Valley Run. Yesterday received my medal. I am really happy to get such a nice novelty Indian map medal.", imageUrl:"https://ik.imagekit.io/nnx2tg1jf/IMG_20260505_061928.jpg" },
+  { id:"3", name:"Puja Giri", review:"Received my medal yesterday. I am really happy to get such a nice novelty Indian map medal. Thank you Valley Run!", imageUrl:"https://ik.imagekit.io/nnx2tg1jf/IMG_20260505_061928.jpg" },
   { id:"4", name:"Subhojyoti Raha", review:"It was such an amazing experience — absolute goosebumps! Looking forward for more marathons.", imageUrl:"https://res.cloudinary.com/dvlo3swno/image/upload/v1776577531/Screenshot_2026-04-18_214936_oeag4w.png" },
   { id:"5", name:"Swati Saxena", review:"Medal is amazing. What you show is exactly what we received, with amazing quality!", imageUrl:"https://res.cloudinary.com/dvlo3swno/image/upload/v1776529446/Screenshot_2026-04-18_215206_nmh9vw.png" },
   { id:"6", name:"Anshika Singh", review:"It's my first medal for running and I can't explain my happiness. Getting this felt so heartwarming!", imageUrl:"https://res.cloudinary.com/dvlo3swno/image/upload/v1776529445/Screenshot_2026-04-18_215225_kxg4is.png" },
-  { id:"7", name:"Sathish S", review:"Absolutely loved the Virtual Running Challenge. The medal quality is outstanding — heavy, detailed, premium trophy feel.", imageUrl:"https://res.cloudinary.com/dvlo3swno/image/upload/v1776577534/Screenshot_2026-04-18_215018_on44z2.png" },
-  { id:"8", name:"Vipin Sharma", review:"I started running and reduced weight from 87 to 72! Valley Run changed my life.", imageUrl:"https://res.cloudinary.com/dvlo3swno/image/upload/v1776577532/Screenshot_2026-04-18_215027_mlr1z1.png" },
+  { id:"7", name:"Sathish S", review:"Absolutely loved the challenge. The medal quality is outstanding — heavy, detailed, premium trophy feel.", imageUrl:"https://res.cloudinary.com/dvlo3swno/image/upload/v1776577534/Screenshot_2026-04-18_215018_on44z2.png" },
+  { id:"8", name:"Vipin Sharma", review:"I started running and reduced weight from 87 to 72! Valley Run changed my life completely.", imageUrl:"https://res.cloudinary.com/dvlo3swno/image/upload/v1776577532/Screenshot_2026-04-18_215027_mlr1z1.png" },
   { id:"9", name:"Abhishek Nadkarni", review:"Very moved by the gesture of dedicating a run for our Shaheed Jawans. Thanks Valley Run!", imageUrl:"https://res.cloudinary.com/dafwe6lci/image/upload/v1775488524/medal-reviews/a5qjslvtkgc4dznnquno.jpg" },
 ];
 
@@ -1325,135 +1325,139 @@ export default function HomePage() {
   const gallery     = events.flatMap(e => e.gallery || []);
 
   return (
-    <div style={{ background:"#fff", color:"#111", fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif", overflowX:"hidden" }}>
+    <div style={{ background:"#fff", color:"#0a0a0a", fontFamily:"'Inter',-apple-system,BlinkMacSystemFont,sans-serif", overflowX:"hidden" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,900&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         html{scroll-behavior:smooth}
-        @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-        @keyframes slideReview{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-        @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-        .btn-red{background:#c0392b;color:#fff;border:none;padding:14px 32px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;transition:all .25s;letter-spacing:.3px}
-        .btn-red:hover{background:#a93226;transform:translateY(-2px);box-shadow:0 8px 24px rgba(192,57,43,.25)}
-        .btn-outline{background:transparent;color:#111;border:1.5px solid #ddd;padding:14px 28px;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;transition:all .25s}
-        .btn-outline:hover{border-color:#c0392b;color:#c0392b;transform:translateY(-2px)}
-        .card{background:#fff;border:1px solid #eee;border-radius:16px;transition:all .3s;cursor:pointer}
-        .card:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(0,0,0,.09);border-color:#e0e0e0}
-        ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#f5f5f5}::-webkit-scrollbar-thumb{background:#c0392b;border-radius:4px}
-        @media(max-width:768px){
-          .mob-col{grid-template-columns:1fr!important}
-          .mob-col2{grid-template-columns:1fr 1fr!important}
-          .mob-hide{display:none!important}
-          .mob-pad{padding:60px 20px!important}
-          .mob-h1{font-size:40px!important;letter-spacing:-1px!important}
-          .mob-h2{font-size:28px!important;letter-spacing:-.5px!important}
-          .gallery-cols{columns:2!important}
-          .mob-row{flex-direction:column!important}
-          .hero-stats{gap:12px!important}
+        @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+        @keyframes float{0%,100%{transform:translateY(0px)}50%{transform:translateY(-8px)}}
+        @keyframes revScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+        @keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.9)}}
+        @keyframes fadeSlideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes ping{75%,100%{transform:scale(2);opacity:0}}
+        .vr-btn-primary{display:inline-flex;align-items:center;gap:8px;padding:15px 36px;background:#c0392b;color:#fff;border:none;border-radius:100px;font-weight:700;font-size:15px;cursor:pointer;transition:all .25s;letter-spacing:.2px;font-family:inherit}
+        .vr-btn-primary:hover{background:#a93226;transform:translateY(-2px);box-shadow:0 12px 32px rgba(192,57,43,.3)}
+        .vr-btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:transparent;color:#0a0a0a;border:1.5px solid rgba(10,10,10,.2);border-radius:100px;font-weight:600;font-size:15px;cursor:pointer;transition:all .25s;font-family:inherit}
+        .vr-btn-secondary:hover{border-color:#c0392b;color:#c0392b;transform:translateY(-2px)}
+        .vr-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#c0392b;margin-bottom:16px}
+        .hover-card{transition:transform .3s ease,box-shadow .3s ease}
+        .hover-card:hover{transform:translateY(-8px);box-shadow:0 32px 64px rgba(0,0,0,.12)!important}
+        ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:#f0f0f0}::-webkit-scrollbar-thumb{background:#c0392b;border-radius:4px}
+        @media(max-width:900px){
+          .desk-only{display:none!important}
+          .mob-stack{flex-direction:column!important}
+          .mob-full{width:100%!important}
+          .mob-center{text-align:center!important;align-items:center!important}
+          .mob-pad{padding:64px 20px!important}
+          .mob-h1{font-size:44px!important;letter-spacing:-1.5px!important;line-height:1.1!important}
+          .mob-h2{font-size:30px!important;letter-spacing:-.5px!important}
+          .mob-grid1{grid-template-columns:1fr!important}
+          .mob-grid2{grid-template-columns:1fr 1fr!important}
+          .gallery-grid{grid-template-columns:1fr 1fr!important;grid-template-rows:auto!important}
         }
       `}</style>
 
       <Navbar />
-      <HeroSection router={router} liveEvents={liveEvents} />
-      <TrustBar />
-      <StatsSection />
-      {liveEvents.length > 0 && <ChallengesSection events={liveEvents} router={router} />}
-      {medalEvents.length > 0 && <MedalSection events={medalEvents} />}
-      <WhySection />
-      <ReviewsSection />
-      {gallery.length > 0 && <GallerySection images={gallery} />}
-      {pastEvents.length > 0 && <PastSection events={pastEvents} router={router} />}
-      <FinalCTA router={router} />
+      <Hero router={router} liveEvents={liveEvents} />
+      <Marquee />
+      <Stats />
+      {liveEvents.length > 0 && <Events events={liveEvents} router={router} />}
+      {medalEvents.length > 0 && <Medal events={medalEvents} />}
+      <HowItWorks />
+      <Reviews />
+      {gallery.length > 0 && <Gallery images={gallery} />}
+      {pastEvents.length > 0 && <Past events={pastEvents} router={router} />}
+      <CTA router={router} />
     </div>
   );
 }
 
-/* ── HERO ── */
-function HeroSection({ router, liveEvents }) {
-  const [count, setCount] = useState(0);
+/* ─── HERO ─── */
+function Hero({ router, liveEvents }) {
+  const [n, setN] = useState(0);
   useEffect(() => {
-    let c = 0;
-    const t = setInterval(() => { c += 12; if (c >= 600) { setCount(600); clearInterval(t); } else setCount(c); }, 16);
+    let c = 0; const t = setInterval(() => { c += 15; if (c >= 2000) { setN(2000); clearInterval(t); } else setN(c); }, 18);
     return () => clearInterval(t);
   }, []);
 
   return (
-    <section style={{ position:"relative", minHeight:"100vh", display:"flex", alignItems:"center", overflow:"hidden", background:"#0d0d0d" }}>
-      {/* BG */}
-      <div style={{ position:"absolute", inset:0, backgroundImage:"url('/hero.jpg')", backgroundSize:"cover", backgroundPosition:"center 30%", opacity:.3 }} />
-      <div style={{ position:"absolute", inset:0, background:"linear-gradient(110deg,rgba(13,13,13,.96) 45%,rgba(13,13,13,.6))" }} />
-      {/* Grid */}
-      <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px)", backgroundSize:"50px 50px", pointerEvents:"none" }} />
-      {/* Red accent */}
-      <div style={{ position:"absolute", left:0, top:"20%", bottom:"20%", width:3, background:"linear-gradient(to bottom,transparent,#c0392b,transparent)" }} />
+    <section style={{ position:"relative", minHeight:"100vh", display:"flex", flexDirection:"column", justifyContent:"center", overflow:"hidden", background:"#0a0a0a" }}>
+      {/* BG texture */}
+      <div style={{ position:"absolute", inset:0, backgroundImage:"radial-gradient(circle at 20% 50%, rgba(192,57,43,.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(192,57,43,.08) 0%, transparent 40%)", pointerEvents:"none" }} />
+      <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px)", backgroundSize:"80px 80px", pointerEvents:"none" }} />
+      {/* Hero image right side */}
+      <div className="desk-only" style={{ position:"absolute", right:0, top:0, bottom:0, width:"48%", backgroundImage:"url('/hero.jpg')", backgroundSize:"cover", backgroundPosition:"center", opacity:.25 }} />
+      <div className="desk-only" style={{ position:"absolute", right:0, top:0, bottom:0, width:"48%", background:"linear-gradient(to right, #0a0a0a 0%, transparent 40%)" }} />
+      {/* Bottom fade */}
+      <div style={{ position:"absolute", bottom:0, left:0, right:0, height:160, background:"linear-gradient(to top,#fff,transparent)", pointerEvents:"none", zIndex:5 }} />
 
-      <div style={{ position:"relative", zIndex:10, maxWidth:1160, margin:"0 auto", padding:"130px 40px 80px", width:"100%" }}>
-        {/* Pill */}
-        <div style={{ display:"inline-flex", alignItems:"center", gap:10, marginBottom:28, padding:"7px 16px 7px 8px", borderRadius:40, border:"1px solid rgba(192,57,43,.35)", background:"rgba(192,57,43,.1)" }}>
-          <span style={{ background:"#c0392b", borderRadius:20, padding:"3px 10px", fontSize:10, fontWeight:700, letterSpacing:1.5, color:"#fff", textTransform:"uppercase" }}>Live</span>
-          <span style={{ fontSize:13, color:"rgba(255,255,255,.65)", fontWeight:500 }}>India's Premier Virtual Running Platform</span>
+      <div style={{ position:"relative", zIndex:10, maxWidth:1200, margin:"0 auto", padding:"140px 60px 100px", width:"100%" }} className="mob-pad mob-center">
+        {/* Eyebrow */}
+        <div style={{ display:"inline-flex", alignItems:"center", gap:10, marginBottom:32, padding:"8px 20px 8px 10px", borderRadius:100, border:"1px solid rgba(255,255,255,.12)", background:"rgba(255,255,255,.05)" }}>
+          <span style={{ background:"#c0392b", color:"#fff", fontSize:10, fontWeight:800, padding:"4px 12px", borderRadius:100, letterSpacing:1.5, textTransform:"uppercase" }}>New</span>
+          <span style={{ fontSize:13, color:"rgba(255,255,255,.6)", fontWeight:500 }}>India's #1 Virtual Running Platform</span>
         </div>
 
-        <h1 className="mob-h1" style={{ fontSize:"clamp(48px,8vw,88px)", fontWeight:900, lineHeight:1.02, letterSpacing:"-2.5px", color:"#fff", marginBottom:10 }}>
-          Discipline<br />
-          <span style={{ color:"#c0392b" }}>Builds</span> Legends.
+        {/* Headline */}
+        <h1 className="mob-h1" style={{ fontSize:"clamp(52px,8vw,96px)", fontWeight:900, lineHeight:1.0, letterSpacing:"-3px", color:"#fff", maxWidth:700, marginBottom:0 }}>
+         Discipline<br />
+<em style={{ fontStyle:"italic", color:"#c0392b" }}>Builds</em><br />
+<span style={{ color:"rgba(255,255,255,.85)" }}>Legends.</span>
         </h1>
-        <div style={{ width:56, height:3, background:"#c0392b", margin:"20px 0 28px" }} />
 
-        <p style={{ fontSize:17, color:"rgba(255,255,255,.5)", maxWidth:460, lineHeight:1.85, marginBottom:44, fontWeight:400 }}>
-          Run from anywhere. Earn a real medal. Get recognized on India's most trusted virtual challenge platform.
+        <div style={{ width:64, height:4, background:"#c0392b", borderRadius:2, margin:"28px 0", opacity:.8 }} />
+
+        <p style={{ fontSize:18, color:"rgba(255,255,255,.5)", lineHeight:1.85, maxWidth:420, marginBottom:48, fontWeight:400 }}>
+          Complete your distance. Submit your proof. Receive a real medal at your door — free shipping, pan-India.
         </p>
 
-        <div className="mob-row" style={{ display:"flex", gap:14, flexWrap:"wrap", marginBottom:60 }}>
-          <button className="btn-red" style={{ fontSize:15, padding:"16px 36px" }} onClick={() => document.getElementById("challenges")?.scrollIntoView({ behavior:"smooth" })}>
+        {/* CTA Buttons */}
+        <div style={{ display:"flex", gap:14, flexWrap:"wrap", marginBottom:72 }} className="mob-stack">
+          <button className="vr-btn-primary" onClick={() => document.getElementById("events-section")?.scrollIntoView({ behavior:"smooth" })}>
             Explore Challenges →
           </button>
-          <button className="btn-outline" style={{ color:"rgba(255,255,255,.7)", borderColor:"rgba(255,255,255,.2)", background:"transparent", fontSize:15 }} onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior:"smooth" })}>
+          <button className="vr-btn-secondary" style={{ color:"rgba(255,255,255,.7)", borderColor:"rgba(255,255,255,.15)" }} onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior:"smooth" })}>
             How It Works
           </button>
         </div>
 
-        {/* Floating stat cards */}
-        <div className="hero-stats" style={{ display:"flex", gap:14, flexWrap:"wrap" }}>
+        {/* Floating Stats */}
+        <div style={{ display:"flex", gap:12, flexWrap:"wrap" }} className="mob-center">
           {[
-            { n:`${count}+`, l:"Runners", icon:"🏃" },
-            { n:"4", l:"Events", icon:"🏆" },
-            { n:"Free", l:"Delivery", icon:"📦" },
-            { n:"24hr", l:"Verify", icon:"⚡" },
+            { n:`${n}+`, l:"Runners", e:"🏃" },
+            { n:"4", l:"Events Done", e:"🏆" },
+            { n:"Free", l:"Delivery", e:"📦" },
+            { n:"24hr", l:"Verify", e:"⚡" },
           ].map((s,i) => (
             <div key={i} style={{
-              padding:"14px 20px", borderRadius:12, display:"flex", alignItems:"center", gap:12,
-              background:"rgba(255,255,255,.06)", backdropFilter:"blur(16px)",
-              border:"1px solid rgba(255,255,255,.1)",
-              animation:`float ${3+i*.4}s ease-in-out infinite`
+              display:"flex", alignItems:"center", gap:12, padding:"14px 20px", borderRadius:16,
+              background:"rgba(255,255,255,.06)", backdropFilter:"blur(20px)",
+              border:"1px solid rgba(255,255,255,.08)",
+              animation:`float ${2.5+i*.3}s ease-in-out ${i*.2}s infinite`
             }}>
-              <span style={{ fontSize:20 }}>{s.icon}</span>
+              <span style={{ fontSize:22 }}>{s.e}</span>
               <div>
-                <div style={{ fontSize:18, fontWeight:800, color:"#fff", lineHeight:1 }}>{s.n}</div>
-                <div style={{ fontSize:10, color:"rgba(255,255,255,.4)", marginTop:2, textTransform:"uppercase", letterSpacing:1 }}>{s.l}</div>
+                <div style={{ fontSize:20, fontWeight:900, color:"#fff", lineHeight:1 }}>{s.n}</div>
+                <div style={{ fontSize:10, color:"rgba(255,255,255,.35)", marginTop:3, textTransform:"uppercase", letterSpacing:1.5 }}>{s.l}</div>
               </div>
             </div>
           ))}
         </div>
       </div>
-
-      {/* Bottom fade to white */}
-      <div style={{ position:"absolute", bottom:0, left:0, right:0, height:130, background:"linear-gradient(to top,#fff,transparent)", pointerEvents:"none" }} />
     </section>
   );
 }
 
-/* ── TRUST BAR ── */
-function TrustBar() {
-  const items = ["Real Zinc Alloy Medals","Free Pan-India Shipping","Any GPS App Accepted","Verified in 24 Hours","600+ Happy Runners","Razorpay Secured","Digital Certificate","Leaderboard Rankings"];
+/* ─── MARQUEE ─── */
+function Marquee() {
+  const items = ["Real Zinc Alloy Medals","Free Pan-India Shipping","GPS App Proof Accepted","Verified in 24 Hours","2000+ Happy Runners","Razorpay Secured","Digital Certificate","Leaderboard Rankings","Run Anywhere in India"];
   return (
-    <div style={{ borderTop:"1px solid #f0f0f0", borderBottom:"1px solid #f0f0f0", padding:"13px 0", overflow:"hidden", background:"#fafafa" }}>
-      <div style={{ display:"flex", gap:56, width:"max-content", animation:"ticker 25s linear infinite" }}>
-        {[...items,...items].map((item,i) => (
-          <span key={i} style={{ fontSize:11, fontWeight:700, letterSpacing:2, textTransform:"uppercase", color:"#aaa", whiteSpace:"nowrap" }}>
-            {item}<span style={{ color:"#c0392b", marginLeft:28, fontWeight:400 }}>—</span>
+    <div style={{ background:"#fff", borderTop:"1px solid #f0f0f0", borderBottom:"1px solid #f0f0f0", padding:"14px 0", overflow:"hidden" }}>
+      <div style={{ display:"flex", gap:64, width:"max-content", animation:"marquee 30s linear infinite" }}>
+        {[...items,...items].map((x,i) => (
+          <span key={i} style={{ fontSize:11, fontWeight:700, letterSpacing:2, textTransform:"uppercase", color:"#ccc", whiteSpace:"nowrap" }}>
+            {x}<span style={{ color:"#c0392b", marginLeft:32 }}>·</span>
           </span>
         ))}
       </div>
@@ -1461,22 +1465,23 @@ function TrustBar() {
   );
 }
 
-/* ── STATS ── */
-function StatsSection() {
+/* ─── STATS ─── */
+function Stats() {
   return (
-    <section style={{ padding:"72px 40px", background:"#fff" }}>
-      <div style={{ maxWidth:1160, margin:"0 auto" }}>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:0, border:"1px solid #eee", borderRadius:16, overflow:"hidden" }} className="mob-col2">
+    <section style={{ padding:"80px 60px", background:"#fff" }} className="mob-pad">
+      <div style={{ maxWidth:1200, margin:"0 auto" }}>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", border:"1px solid #f0f0f0", borderRadius:20 }} className="mob-grid2">
           {[
-            { n:"600+", l:"Finishers", d:"Runners who earned their medal" },
+            { n:"600+", l:"Finishers", d:"Runners who completed & earned" },
             { n:"4", l:"Events Hosted", d:"Pan-India virtual challenges" },
-            { n:"24hr", l:"Verification", d:"Fast proof review every time" },
-            { n:"4.9★", l:"Avg Rating", d:"From verified finishers" },
+            { n:"24hr", l:"Avg Verify", d:"Fastest proof verification" },
+            { n:"4.9★", l:"Avg Rating", d:"From 2000+ verified finishers" },
           ].map((s,i) => (
-            <div key={i} style={{ padding:"36px 28px", background:i%2===0?"#fff":"#fafafa", borderRight:i<3?"1px solid #eee":"none" }}>
-              <div style={{ fontSize:38, fontWeight:900, color:"#c0392b", letterSpacing:-1, marginBottom:8 }}>{s.n}</div>
-              <div style={{ fontSize:12, fontWeight:700, letterSpacing:1.5, textTransform:"uppercase", color:"#111", marginBottom:8 }}>{s.l}</div>
-              <div style={{ fontSize:13, color:"#aaa", lineHeight:1.6 }}>{s.d}</div>
+            <div key={i} style={{ padding:"40px 32px", borderRight:i<3?"1px solid #f0f0f0":"none", position:"relative" }}>
+              {i===0 && <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:"#c0392b", borderRadius:"20px 0 0 0" }} />}
+              <div style={{ fontSize:44, fontWeight:900, color:"#c0392b", letterSpacing:-1.5, marginBottom:8, lineHeight:1 }}>{s.n}</div>
+              <div style={{ fontSize:12, fontWeight:800, letterSpacing:2, textTransform:"uppercase", color:"#111", marginBottom:8 }}>{s.l}</div>
+              <div style={{ fontSize:13, color:"#bbb", lineHeight:1.6 }}>{s.d}</div>
             </div>
           ))}
         </div>
@@ -1485,167 +1490,243 @@ function StatsSection() {
   );
 }
 
-/* ── CHALLENGES ── */
-function ChallengesSection({ events, router }) {
+/* ─── EVENTS ─── */
+function Events({ events, router }) {
   return (
-    <section id="challenges" style={{ padding:"88px 40px", background:"#f7f6f4" }}>
-      <div style={{ maxWidth:1160, margin:"0 auto" }}>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:44, flexWrap:"wrap", gap:16 }}>
+    <section id="events-section" style={{ padding:"80px 60px", background:"#fafafa" }} className="mob-pad">
+      <div style={{ maxWidth:1200, margin:"0 auto" }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:48, flexWrap:"wrap", gap:16 }}>
           <div>
-            <span style={{ fontSize:11, fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", color:"#c0392b" }}>Currently Open</span>
-            <h2 className="mob-h2" style={{ fontSize:44, fontWeight:900, letterSpacing:-1.5, marginTop:12 }}>Active Challenges</h2>
+            <span className="vr-tag">Open Now</span>
+            <h2 className="mob-h2" style={{ fontSize:48, fontWeight:900, letterSpacing:"-2px", lineHeight:1.05 }}>Active Challenges</h2>
           </div>
-          <button className="btn-outline" onClick={() => router.push("/challenges")}>View All →</button>
+          <button className="vr-btn-secondary" style={{ fontSize:13 }} onClick={() => router.push("/challenges")}>See All →</button>
         </div>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))", gap:20 }} className="mob-col">
-          {events.map(ev => <EventCard key={ev._id} event={ev} router={router} />)}
-        </div>
+
+        {/* Featured first event big + rest small */}
+        {events.length === 1 && (
+          <EventCardLarge event={events[0]} router={router} />
+        )}
+
+        {events.length === 2 && (
+          <div style={{ display:"grid", gridTemplateColumns:"1.5fr 1fr", gap:20 }} className="mob-grid1">
+            <EventCardLarge event={events[0]} router={router} />
+            <EventCardSmall event={events[1]} router={router} />
+          </div>
+        )}
+
+        {events.length >= 3 && (
+          <div style={{ display:"grid", gridTemplateColumns:"1.4fr 1fr 1fr", gap:20 }} className="mob-grid1">
+            <EventCardLarge event={events[0]} router={router} />
+            <div style={{ display:"grid", gridTemplateColumns:"1fr", gap:20 }}>
+              {events.slice(1,3).map(ev => <EventCardSmall key={ev._id} event={ev} router={router} />)}
+            </div>
+            {events.length > 3 && (
+              <div style={{ display:"grid", gap:20 }}>
+                {events.slice(3,5).map(ev => <EventCardSmall key={ev._id} event={ev} router={router} />)}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </section>
   );
 }
 
-function EventCard({ event, router }) {
+function EventCardLarge({ event, router }) {
+  const [hover, setHover] = useState(false);
   const now = new Date();
   const regClosed = event.isRegistrationOpen === false || (event.registrationDeadline && new Date(event.registrationDeadline) < now);
-  const [hover, setHover] = useState(false);
 
   return (
-    <div className="card" onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)}
+    <div className="hover-card" onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)}
       onClick={() => router.push(regClosed?`/activity-submission?event=${event.slug}`:`/challenges/${event.slug}`)}
-      style={{ overflow:"hidden" }}>
-      {/* Image */}
-      <div style={{ position:"relative", paddingBottom:"60%", overflow:"hidden", background:"#eee" }}>
-        {(event.coverImage||event.image) && (
-          <img src={event.coverImage||event.image} alt={event.title}
-            style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", transform:hover?"scale(1.05)":"scale(1)", transition:"transform .5s ease" }} />
+      style={{ borderRadius:24, overflow:"hidden", cursor:"pointer", position:"relative", height:480, background:"#111", boxShadow:"0 8px 32px rgba(0,0,0,.08)" }}>
+      {/* Full BG image */}
+      {(event.coverImage||event.image) && (
+        <img src={event.coverImage||event.image} alt={event.title}
+          style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", opacity:.55, transform:hover?"scale(1.04)":"scale(1)", transition:"transform .6s ease" }}/>
+      )}
+      <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.3) 50%, rgba(0,0,0,.1) 100%)" }} />
+
+      {/* Top badges */}
+      <div style={{ position:"absolute", top:20, left:20, display:"flex", gap:8 }}>
+        {regClosed ? (
+          <span style={{ display:"inline-flex", alignItems:"center", gap:6, background:"rgba(22,163,74,.9)", color:"#fff", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:100, backdropFilter:"blur(10px)" }}>
+            <span style={{ width:6, height:6, borderRadius:"50%", background:"#fff", display:"inline-block", animation:"livePulse 1.5s infinite" }}/>Event Running
+          </span>
+        ) : (
+          <span style={{ display:"inline-flex", alignItems:"center", gap:6, background:"rgba(192,57,43,.9)", color:"#fff", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:100, backdropFilter:"blur(10px)" }}>
+            <span style={{ position:"relative", width:7, height:7, display:"inline-flex" }}>
+              <span style={{ position:"absolute", inset:0, borderRadius:"50%", background:"rgba(255,255,255,.6)", animation:"ping 1.2s infinite" }}/>
+              <span style={{ width:7, height:7, borderRadius:"50%", background:"#fff", display:"block" }}/>
+            </span>
+            Live Now
+          </span>
         )}
-        <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.55) 0%,transparent 60%)" }} />
-        <div style={{ position:"absolute", top:14, left:14 }}>
-          {regClosed ? (
-            <span style={{ background:"rgba(0,0,0,.65)", color:"rgba(255,255,255,.7)", fontSize:10, fontWeight:700, letterSpacing:1.5, textTransform:"uppercase", padding:"5px 12px", borderRadius:6, backdropFilter:"blur(8px)", border:"1px solid rgba(255,255,255,.1)" }}>
-              Event Running
-            </span>
-          ) : (
-            <span style={{ display:"inline-flex", alignItems:"center", gap:6, background:"#c0392b", color:"#fff", fontSize:10, fontWeight:700, letterSpacing:1.5, textTransform:"uppercase", padding:"5px 12px", borderRadius:6 }}>
-              <span style={{ width:5, height:5, borderRadius:"50%", background:"#fff", display:"inline-block", animation:"pulse 1.5s infinite" }} />
-              Live
-            </span>
-          )}
-        </div>
-        <div style={{ position:"absolute", top:14, right:14 }}>
-          <span style={{ background:"rgba(0,0,0,.55)", color:"rgba(255,255,255,.8)", fontSize:11, fontWeight:700, padding:"5px 12px", borderRadius:6, backdropFilter:"blur(8px)" }}>
-            ₹{event.price||399}
-          </span>
-        </div>
+        <span style={{ background:"rgba(0,0,0,.5)", color:"rgba(255,255,255,.8)", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:100, backdropFilter:"blur(10px)" }}>
+          ₹{event.price||399}
+        </span>
       </div>
-      {/* Content */}
-      <div style={{ padding:"22px" }}>
-        <div style={{ fontSize:11, color:"#bbb", fontWeight:600, letterSpacing:1, textTransform:"uppercase", marginBottom:8 }}>{event.dates}</div>
-        <h3 style={{ fontSize:17, fontWeight:800, lineHeight:1.35, color:"#111", marginBottom:20 }}>{event.title}</h3>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", paddingTop:16, borderTop:"1px solid #f5f5f5" }}>
-          <span style={{ fontSize:13, fontWeight:700, color:"#c0392b" }}>
-            {regClosed ? "📸 Submit Activity →" : "Register Now →"}
+
+      {/* Bottom content */}
+      <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"28px 28px 24px" }}>
+        <div style={{ display:"flex", gap:8, marginBottom:14 }}>
+          {["🏅 Medal","📜 Certificate","📦 Free Delivery"].map((t,i) => (
+            <span key={i} style={{ background:"rgba(255,255,255,.12)", color:"rgba(255,255,255,.8)", fontSize:10, fontWeight:600, padding:"4px 10px", borderRadius:100, backdropFilter:"blur(8px)", whiteSpace:"nowrap" }}>{t}</span>
+          ))}
+        </div>
+        <div style={{ fontSize:12, color:"rgba(255,255,255,.4)", fontWeight:600, letterSpacing:1, textTransform:"uppercase", marginBottom:8 }}>{event.dates}</div>
+        <h3 style={{ fontSize:26, fontWeight:900, color:"#fff", lineHeight:1.2, marginBottom:20 }}>{event.title}</h3>
+        <button style={{
+          display:"inline-flex", alignItems:"center", gap:8, padding:"12px 24px",
+          background: regClosed?"#16a34a":"#c0392b", color:"#fff", border:"none",
+          borderRadius:100, fontSize:14, fontWeight:700, cursor:"pointer",
+          transition:"all .2s", boxShadow: regClosed?"0 6px 20px rgba(22,163,74,.4)":"0 6px 20px rgba(192,57,43,.4)"
+        }}>
+          {regClosed ? "📸 Submit Activity" : "Register Now"} →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function EventCardSmall({ event, router }) {
+  const [hover, setHover] = useState(false);
+  const now = new Date();
+  const regClosed = event.isRegistrationOpen === false || (event.registrationDeadline && new Date(event.registrationDeadline) < now);
+
+  return (
+    <div className="hover-card" onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)}
+      onClick={() => router.push(regClosed?`/activity-submission?event=${event.slug}`:`/challenges/${event.slug}`)}
+      style={{ borderRadius:20, overflow:"hidden", cursor:"pointer", position:"relative", height:220, background:"#111", boxShadow:"0 4px 20px rgba(0,0,0,.06)" }}>
+      {(event.coverImage||event.image) && (
+        <img src={event.coverImage||event.image} alt={event.title}
+          style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", opacity:.5, transform:hover?"scale(1.05)":"scale(1)", transition:"transform .5s ease" }}/>
+      )}
+      <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,.2) 100%)" }}/>
+
+      <div style={{ position:"absolute", top:14, left:14 }}>
+        {regClosed ? (
+          <span style={{ background:"rgba(22,163,74,.85)", color:"#fff", fontSize:10, fontWeight:700, padding:"4px 10px", borderRadius:100, display:"inline-flex", alignItems:"center", gap:5 }}>
+            <span style={{ width:5, height:5, borderRadius:"50%", background:"#fff", display:"inline-block", animation:"livePulse 1.5s infinite" }}/>Running
           </span>
-          <div style={{ display:"flex", gap:6 }}>
-            {["🏅","📜","📦"].map((e,i) => (
-              <span key={i} style={{ width:28, height:28, borderRadius:6, background:"#f7f7f7", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, border:"1px solid #eee" }}>{e}</span>
-            ))}
-          </div>
+        ) : (
+          <span style={{ background:"rgba(192,57,43,.85)", color:"#fff", fontSize:10, fontWeight:700, padding:"4px 10px", borderRadius:100 }}>● Live</span>
+        )}
+      </div>
+
+      <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"16px 18px" }}>
+        <div style={{ fontSize:10, color:"rgba(255,255,255,.4)", fontWeight:600, letterSpacing:1, textTransform:"uppercase", marginBottom:5 }}>{event.dates}</div>
+        <h3 style={{ fontSize:15, fontWeight:800, color:"#fff", lineHeight:1.3, marginBottom:12 }}>{event.title}</h3>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+          <span style={{ fontSize:13, fontWeight:700, color: regClosed?"#4ade80":"#f87171" }}>
+            {regClosed?"📸 Submit →":"Register →"}
+          </span>
+          <span style={{ fontSize:13, fontWeight:800, color:"rgba(255,255,255,.7)" }}>₹{event.price||399}</span>
         </div>
       </div>
     </div>
   );
 }
 
-/* ── MEDAL 3D ── */
+/* ─── MEDAL 3D ─── */
 function Medal3D({ event }) {
   const rotY=useRef(0),rotX=useRef(-8),drag=useRef({active:false,lastX:0,lastY:0}),auto=useRef(true),raf=useRef(null),timer=useRef(null),inner=useRef(null);
   const apply=()=>{if(inner.current)inner.current.style.transform=`rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)`;};
-  useEffect(()=>{const tick=()=>{if(auto.current){rotY.current+=.4;apply();}raf.current=requestAnimationFrame(tick);};raf.current=requestAnimationFrame(tick);return()=>cancelAnimationFrame(raf.current);},[]);
+  useEffect(()=>{const tick=()=>{if(auto.current){rotY.current+=.35;apply();}raf.current=requestAnimationFrame(tick);};raf.current=requestAnimationFrame(tick);return()=>cancelAnimationFrame(raf.current);},[]);
   const pause=()=>{auto.current=false;clearTimeout(timer.current);timer.current=setTimeout(()=>{auto.current=true;},3000);};
   const onD=(x,y)=>{drag.current={active:true,lastX:x,lastY:y};pause();};
-  const onM=(x,y)=>{if(!drag.current.active)return;rotY.current+=(x-drag.current.lastX)*.65;rotX.current=Math.max(-35,Math.min(35,rotX.current-(y-drag.current.lastY)*.4));drag.current.lastX=x;drag.current.lastY=y;apply();};
+  const onM=(x,y)=>{if(!drag.current.active)return;rotY.current+=(x-drag.current.lastX)*.65;rotX.current=Math.max(-30,Math.min(30,rotX.current-(y-drag.current.lastY)*.4));drag.current.lastX=x;drag.current.lastY=y;apply();};
   const onU=()=>{drag.current.active=false;};
   const face=(e={})=>({position:"absolute",top:0,left:0,right:0,bottom:0,borderRadius:"50%",WebkitBackfaceVisibility:"hidden",backfaceVisibility:"hidden",...e});
   return (
-    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:16 }}>
-      <div style={{ width:260, height:260, perspective:"900px", cursor:"grab", userSelect:"none", position:"relative" }}
+    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:14 }}>
+      <div style={{ width:240, height:240, perspective:"800px", cursor:"grab", userSelect:"none", position:"relative" }}
         onMouseDown={e=>{e.preventDefault();onD(e.clientX,e.clientY);}} onMouseMove={e=>onM(e.clientX,e.clientY)} onMouseUp={onU} onMouseLeave={onU}
         onTouchStart={e=>{e.preventDefault();onD(e.touches[0].clientX,e.touches[0].clientY);}} onTouchMove={e=>{e.preventDefault();onM(e.touches[0].clientX,e.touches[0].clientY);}} onTouchEnd={onU}>
         <div ref={inner} style={{ width:"100%", height:"100%", position:"relative", transformStyle:"preserve-3d" }}>
-          <div style={face({ boxShadow:"0 24px 60px rgba(0,0,0,.2)" })}>
+          <div style={face({ boxShadow:"0 20px 60px rgba(0,0,0,.25),0 0 0 1px rgba(255,255,255,.1)" })}>
             {event.medalImage&&<img src={event.medalImage} alt="medal" draggable={false} style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",pointerEvents:"none"}}/>}
-            <div style={{position:"absolute",inset:0,borderRadius:"50%",background:"linear-gradient(135deg,rgba(255,255,255,.25) 0%,transparent 55%)",pointerEvents:"none"}}/>
+            <div style={{position:"absolute",inset:0,borderRadius:"50%",background:"linear-gradient(135deg,rgba(255,255,255,.3) 0%,transparent 50%)",pointerEvents:"none"}}/>
           </div>
-          <div style={face({ transform:"rotateY(180deg)", background:"#f0f0f0" })}>
-            {event.medalImageBack?<img src={event.medalImageBack} alt="" draggable={false} style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",pointerEvents:"none"}}/>:<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:36}}>🇮🇳</div>}
+          <div style={face({ transform:"rotateY(180deg)", background:"#f0ece6" })}>
+            <div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:44,borderRadius:"50%"}}>🇮🇳</div>
             <div style={{position:"absolute",inset:0,borderRadius:"50%",background:"linear-gradient(135deg,rgba(255,255,255,.2) 0%,transparent 55%)",pointerEvents:"none"}}/>
           </div>
-          <div style={{position:"absolute",inset:0,borderRadius:"50%",transform:"translateZ(-5px)",background:"radial-gradient(ellipse,#8B6914,#4a3608)",WebkitBackfaceVisibility:"hidden",backfaceVisibility:"hidden"}}/>
+          <div style={{position:"absolute",inset:0,borderRadius:"50%",transform:"translateZ(-6px)",background:"radial-gradient(ellipse,#9a7320,#5a4010)",WebkitBackfaceVisibility:"hidden",backfaceVisibility:"hidden"}}/>
         </div>
-        <div style={{position:"absolute",bottom:-10,left:"50%",transform:"translateX(-50%)",width:130,height:12,background:"radial-gradient(ellipse,rgba(0,0,0,.15),transparent)",filter:"blur(4px)",pointerEvents:"none"}}/>
+        <div style={{position:"absolute",bottom:-12,left:"50%",transform:"translateX(-50%)",width:120,height:14,background:"radial-gradient(ellipse,rgba(0,0,0,.18),transparent)",filter:"blur(5px)",pointerEvents:"none"}}/>
       </div>
-      <p style={{ fontSize:11, color:"#bbb", letterSpacing:1.5, textTransform:"uppercase" }}>Drag to rotate</p>
+      <p style={{ fontSize:10, color:"#ccc", letterSpacing:2, textTransform:"uppercase", fontWeight:600 }}>Drag to Rotate</p>
       <div style={{ textAlign:"center" }}>
-        <p style={{ fontSize:15, fontWeight:700, color:"#111" }}>{event.title}</p>
-        <p style={{ fontSize:12, color:"#bbb", marginTop:3 }}>Premium Finisher Medal</p>
+        <p style={{ fontSize:14, fontWeight:700, color:"#111", marginBottom:2 }}>{event.title}</p>
+        <p style={{ fontSize:12, color:"#bbb" }}>Premium Finisher Medal</p>
       </div>
     </div>
   );
 }
 
-function MedalSection({ events }) {
+function Medal({ events }) {
   return (
-    <section style={{ padding:"88px 40px", background:"#fff" }}>
-      <div style={{ maxWidth:1160, margin:"0 auto", textAlign:"center" }}>
-        <span style={{ fontSize:11, fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", color:"#c0392b" }}>Your Reward</span>
-        <h2 className="mob-h2" style={{ fontSize:44, fontWeight:900, letterSpacing:-1.5, margin:"12px 0 14px" }}>What You Earn</h2>
-        <p style={{ fontSize:15, color:"#888", maxWidth:420, margin:"0 auto 56px", lineHeight:1.8 }}>
-          Every finisher earns a real, heavy zinc-alloy medal — not plastic. Shipped to your door, free.
-        </p>
-        <div style={{ display:"flex", justifyContent:"center", gap:72, flexWrap:"wrap", marginBottom:56 }}>
-          {events.slice(0,2).map(ev=><Medal3D key={ev._id} event={ev}/>)}
-        </div>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:14, maxWidth:640, margin:"0 auto" }} className="mob-col2">
-          {[["📦","Free Shipping","Pan-India"],["⚡","7–10 Days","Delivery"],["⭐","Zinc Alloy","Premium"],["🔒","Guaranteed","Or refund"]].map(([e,t,s])=>(
-            <div key={t} style={{ padding:"20px 12px", border:"1px solid #eee", borderRadius:12, textAlign:"center", background:"#fafafa" }}>
-              <div style={{ fontSize:22, marginBottom:8 }}>{e}</div>
-              <div style={{ fontSize:13, fontWeight:700, color:"#111" }}>{t}</div>
-              <div style={{ fontSize:11, color:"#bbb", marginTop:3 }}>{s}</div>
+    <section style={{ padding:"80px 60px", background:"#fff" }} className="mob-pad">
+      <div style={{ maxWidth:1200, margin:"0 auto" }}>
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:80, alignItems:"center" }} className="mob-grid1">
+          {/* Left text */}
+          <div>
+            <span className="vr-tag">Your Reward</span>
+            <h2 className="mob-h2" style={{ fontSize:48, fontWeight:900, letterSpacing:"-2px", lineHeight:1.05, marginBottom:20 }}>
+              A Real Medal.<br />
+              <span style={{ color:"#c0392b", fontStyle:"italic" }}>Earned.</span> Not Bought.
+            </h2>
+            <p style={{ fontSize:16, color:"#888", lineHeight:1.85, marginBottom:36 }}>
+              Every finisher receives a premium zinc-alloy medal delivered to their home — completely free. Heavy, detailed, and built to last a lifetime.
+            </p>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14, marginBottom:36 }}>
+              {[["📦","Free Shipping","Pan-India, always"],["⚡","7–10 Days","Fast delivery"],["⭐","Zinc Alloy","Premium metal"],["🔒","Guaranteed","Or full refund"]].map(([e,t,s])=>(
+                <div key={t} style={{ display:"flex", gap:12, alignItems:"flex-start" }}>
+                  <span style={{ fontSize:20, marginTop:2 }}>{e}</span>
+                  <div>
+                    <div style={{ fontSize:14, fontWeight:700, color:"#111" }}>{t}</div>
+                    <div style={{ fontSize:12, color:"#bbb", marginTop:2 }}>{s}</div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+          {/* Right medals */}
+          <div style={{ display:"flex", justifyContent:"center", gap:48, flexWrap:"wrap" }}>
+            {events.slice(0,2).map(ev=><Medal3D key={ev._id} event={ev}/>)}
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-/* ── WHY ── */
-function WhySection() {
-  const items = [
-    { icon:"⏳", title:"Fixed Deadlines", desc:"Deadlines create discipline. You don't train someday — you train now." },
-    { icon:"🏅", title:"Real Metal Medals", desc:"Heavy zinc-alloy delivered home. Not digital — something you can hold." },
-    { icon:"📍", title:"Run Anywhere", desc:"Road, treadmill, or track. Any city. Any time within the event window." },
-    { icon:"📸", title:"Easy Proof", desc:"Screenshot from any GPS app. Verified in 24 hours. Simple process." },
-    { icon:"📜", title:"Digital Certificate", desc:"Personalized certificate with your name — shareable on Instagram." },
-    { icon:"🏆", title:"Live Leaderboard", desc:"Your timing ranked publicly. Top performers win exclusive gift hampers." },
+/* ─── HOW IT WORKS ─── */
+function HowItWorks() {
+  const steps = [
+    { n:"01", e:"🏃", t:"Register", d:"Choose your distance. Pay securely via Razorpay. Get instant confirmation." },
+    { n:"02", e:"📍", t:"Run Anywhere", d:"Road, treadmill, or track — anywhere in India during the event window." },
+    { n:"03", e:"📸", t:"Submit Proof", d:"Screenshot from Strava, Nike Run Club, Google Fit, or any GPS app." },
+    { n:"04", e:"🏅", t:"Receive Medal", d:"Premium zinc-alloy medal shipped to your door. Free delivery, 7–10 days." },
   ];
   return (
-    <section style={{ padding:"88px 40px", background:"#f7f6f4" }}>
-      <div style={{ maxWidth:1160, margin:"0 auto" }}>
-        <div style={{ textAlign:"center", marginBottom:48 }}>
-          <span style={{ fontSize:11, fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", color:"#c0392b" }}>Why Valley Run</span>
-          <h2 className="mob-h2" style={{ fontSize:44, fontWeight:900, letterSpacing:-1.5, marginTop:12 }}>Built for Finishers.</h2>
+    <section id="how-it-works" style={{ padding:"80px 60px", background:"#fafafa" }} className="mob-pad">
+      <div style={{ maxWidth:1200, margin:"0 auto" }}>
+        <div style={{ marginBottom:52 }}>
+          <span className="vr-tag">The Process</span>
+          <h2 className="mob-h2" style={{ fontSize:48, fontWeight:900, letterSpacing:"-2px", lineHeight:1.05 }}>Four Steps.<br />One Medal.</h2>
         </div>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:16 }} className="mob-col">
-          {items.map((it,i)=>(
-            <div key={i} className="card" style={{ padding:"28px 24px" }}
-              onMouseEnter={e=>{e.currentTarget.style.borderColor="#f5c6c6";e.currentTarget.style.background="#fffafa";}}
-              onMouseLeave={e=>{e.currentTarget.style.borderColor="#eee";e.currentTarget.style.background="#fff";}}>
-              <div style={{ fontSize:28, marginBottom:14 }}>{it.icon}</div>
-              <div style={{ fontSize:14, fontWeight:700, color:"#111", marginBottom:10 }}>{it.title}</div>
-              <div style={{ fontSize:13, color:"#888", lineHeight:1.7 }}>{it.desc}</div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:0, border:"1px solid #eee", borderRadius:20, overflow:"hidden" }} className="mob-grid2">
+          {steps.map((s,i)=>(
+            <div key={i} style={{ padding:"36px 28px", borderRight:i<3?"1px solid #eee":"none", position:"relative", background:i===0?"#fff":"#fff" }}>
+              {i===0 && <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:"#c0392b" }}/>}
+              <div style={{ fontSize:40, marginBottom:16 }}>{s.e}</div>
+              <div style={{ fontSize:11, color:"#ddd", fontWeight:800, letterSpacing:1, marginBottom:8 }}>{s.n}</div>
+              <div style={{ fontSize:16, fontWeight:800, color:"#111", marginBottom:10 }}>{s.t}</div>
+              <div style={{ fontSize:13, color:"#aaa", lineHeight:1.7 }}>{s.d}</div>
             </div>
           ))}
         </div>
@@ -1654,119 +1735,132 @@ function WhySection() {
   );
 }
 
-/* ── REVIEWS infinite scroll ── */
-function ReviewsSection() {
+/* ─── REVIEWS ─── */
+function Reviews() {
   return (
-    <section style={{ padding:"88px 0", background:"#fff", overflow:"hidden" }}>
-      <div style={{ maxWidth:1160, margin:"0 auto", padding:"0 40px", textAlign:"center", marginBottom:48 }}>
-        <span style={{ fontSize:11, fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", color:"#c0392b" }}>Community</span>
-        <h2 className="mob-h2" style={{ fontSize:44, fontWeight:900, letterSpacing:-1.5, marginTop:12, marginBottom:8 }}>What Finishers Say</h2>
-        <p style={{ fontSize:15, color:"#aaa" }}>600+ runners. Real people. Real medals.</p>
+    <section style={{ padding:"80px 0", background:"#fff", overflow:"hidden" }} className="mob-pad">
+      <div style={{ maxWidth:1200, margin:"0 auto", padding:"0 60px" }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:48, flexWrap:"wrap", gap:16 }}>
+          <div>
+            <span className="vr-tag">Finishers</span>
+            <h2 className="mob-h2" style={{ fontSize:48, fontWeight:900, letterSpacing:"-2px", lineHeight:1.05 }}>What They Say</h2>
+          </div>
+          <div style={{ display:"flex", gap:4 }}>
+            {Array(5).fill(0).map((_,i)=><span key={i} style={{fontSize:20,color:"#f59e0b"}}>★</span>)}
+            <span style={{ fontSize:14, color:"#aaa", marginLeft:8, fontWeight:600 }}>4.9 from 600+ runners</span>
+          </div>
+        </div>
       </div>
-
+      {/* Infinite scroll */}
       <div style={{ overflow:"hidden", maskImage:"linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)", WebkitMaskImage:"linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)" }}>
-        <div style={{ display:"flex", gap:18, width:"max-content", animation:"slideReview 38s linear infinite" }}>
+        <div style={{ display:"flex", gap:16, width:"max-content", animation:"revScroll 40s linear infinite" }}>
           {[...REVIEWS,...REVIEWS].map((r,i)=>(
-            <div key={i} style={{ width:320, borderRadius:16, overflow:"hidden", flexShrink:0, border:"1px solid #eee", background:"#fff", boxShadow:"0 4px 20px rgba(0,0,0,.05)" }}>
-              <div style={{ height:180, overflow:"hidden", position:"relative" }}>
-                <img src={r.imageUrl} alt={r.name} style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
-                <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.5),transparent)" }}/>
-                <div style={{ position:"absolute", top:12, left:12, display:"flex", gap:2 }}>
-                  {Array(5).fill(0).map((_,i)=><span key={i} style={{color:"#f59e0b",fontSize:12}}>★</span>)}
+            <div key={i} style={{ width:300, borderRadius:20, overflow:"hidden", flexShrink:0, border:"1px solid #f0f0f0", background:"#fff", boxShadow:"0 4px 20px rgba(0,0,0,.05)" }}>
+              <div style={{ height:170, overflow:"hidden", position:"relative" }}>
+                <img src={r.imageUrl} alt={r.name} style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+                <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(0,0,0,.6),transparent)"}}/>
+                <div style={{position:"absolute",top:10,left:12,display:"flex",gap:1}}>
+                  {Array(5).fill(0).map((_,i)=><span key={i} style={{color:"#fbbf24",fontSize:11}}>★</span>)}
                 </div>
               </div>
-              <div style={{ padding:"18px 20px" }}>
-                <p style={{ fontSize:13, color:"#555", lineHeight:1.75, fontStyle:"italic", marginBottom:14, display:"-webkit-box", WebkitLineClamp:3, WebkitBoxOrient:"vertical", overflow:"hidden" }}>"{r.review}"</p>
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                  <span style={{ fontSize:14, fontWeight:700, color:"#111" }}>{r.name}</span>
-                  <span style={{ fontSize:10, fontWeight:700, padding:"3px 10px", borderRadius:20, background:"#fef2f2", color:"#c0392b", border:"1px solid #fca5a5" }}>Verified ✓</span>
+              <div style={{padding:"16px 18px 18px"}}>
+                <p style={{fontSize:13,color:"#555",lineHeight:1.75,fontStyle:"italic",marginBottom:12,display:"-webkit-box",WebkitLineClamp:3,WebkitBoxOrient:"vertical",overflow:"hidden"}}>"{r.review}"</p>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <span style={{fontSize:14,fontWeight:700,color:"#111"}}>{r.name}</span>
+                  <span style={{fontSize:10,fontWeight:700,padding:"3px 9px",borderRadius:100,background:"#fef2f2",color:"#c0392b",border:"1px solid #fecaca"}}>Verified ✓</span>
                 </div>
               </div>
             </div>
           ))}
         </div>
       </div>
-
-      {/* CTA bar */}
-      <div style={{ maxWidth:1160, margin:"48px auto 0", padding:"0 40px" }}>
-        <div style={{ background:"#111", borderRadius:16, padding:"36px 44px", display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:20 }} className="mob-row">
-          <div>
-            <p style={{ fontSize:20, fontWeight:800, color:"#fff", marginBottom:4 }}>Ready to earn your medal?</p>
-            <p style={{ fontSize:14, color:"rgba(255,255,255,.4)" }}>600+ runners already finished. Your turn.</p>
-          </div>
-          <button className="btn-red" onClick={() => document.getElementById("challenges")?.scrollIntoView({ behavior:"smooth" })}>
-            Register Now →
-          </button>
-        </div>
-      </div>
     </section>
   );
 }
 
-/* ── GALLERY ── */
-function GallerySection({ images }) {
+/* ─── GALLERY ─── */
+function Gallery({ images }) {
   const [lb, setLb] = useState(null);
-  const shown = images.slice(0, 9);
+  const shown = images.slice(0, 8);
   useEffect(()=>{const h=e=>{if(e.key==="Escape")setLb(null);};window.addEventListener("keydown",h);return()=>window.removeEventListener("keydown",h);},[]);
 
+  // Bento grid layout
+  const sizes = [
+    { gridColumn:"span 2", gridRow:"span 2" },
+    { gridColumn:"span 1", gridRow:"span 1" },
+    { gridColumn:"span 1", gridRow:"span 1" },
+    { gridColumn:"span 1", gridRow:"span 2" },
+    { gridColumn:"span 1", gridRow:"span 1" },
+    { gridColumn:"span 1", gridRow:"span 1" },
+    { gridColumn:"span 1", gridRow:"span 1" },
+    { gridColumn:"span 1", gridRow:"span 1" },
+  ];
+
   return (
-    <section style={{ padding:"88px 40px", background:"#f7f6f4" }}>
-      <div style={{ maxWidth:1160, margin:"0 auto" }}>
-        <div style={{ textAlign:"center", marginBottom:48 }}>
-          <span style={{ fontSize:11, fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", color:"#c0392b" }}>Gallery</span>
-          <h2 className="mob-h2" style={{ fontSize:44, fontWeight:900, letterSpacing:-1.5, marginTop:12 }}>Moments of Glory</h2>
+    <section style={{ padding:"80px 60px", background:"#0a0a0a" }} className="mob-pad">
+      <div style={{ maxWidth:1200, margin:"0 auto" }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:48, flexWrap:"wrap", gap:16 }}>
+          <div>
+            <span style={{ fontSize:11, fontWeight:700, letterSpacing:2, textTransform:"uppercase", color:"#c0392b" }}>Gallery</span>
+            <h2 className="mob-h2" style={{ fontSize:48, fontWeight:900, letterSpacing:"-2px", lineHeight:1.05, color:"#fff" }}>Moments of Glory</h2>
+          </div>
+          <p style={{ fontSize:14, color:"rgba(255,255,255,.3)", maxWidth:240, lineHeight:1.6, textAlign:"right" }}>
+            Real runners. Real finishes. Real medals.
+          </p>
         </div>
-        <div className="gallery-cols" style={{ columns:"3 240px", gap:14 }}>
+
+        {/* Bento grid */}
+        <div className="gallery-grid" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gridAutoRows:"160px", gap:12 }}>
           {shown.map((img,i)=>(
-            <div key={i} onClick={()=>setLb(i)}
-              style={{ breakInside:"avoid", marginBottom:14, borderRadius:12, overflow:"hidden", cursor:"zoom-in", position:"relative" }}
-              onMouseEnter={e=>{e.currentTarget.querySelector("img").style.transform="scale(1.05)";}}
-              onMouseLeave={e=>{e.currentTarget.querySelector("img").style.transform="scale(1)";}}>
-              <img src={img} alt="" style={{ width:"100%", display:"block", transition:"transform .4s ease", borderRadius:12 }}/>
+            <div key={i} onClick={()=>setLb(i)} style={{ ...sizes[i]||{}, borderRadius:16, overflow:"hidden", cursor:"zoom-in", position:"relative" }}
+              onMouseEnter={e=>{e.currentTarget.querySelector("img").style.transform="scale(1.06)";e.currentTarget.querySelector(".goverlay").style.opacity="1";}}
+              onMouseLeave={e=>{e.currentTarget.querySelector("img").style.transform="scale(1)";e.currentTarget.querySelector(".goverlay").style.opacity="0";}}>
+              <img src={img} alt="" style={{width:"100%",height:"100%",objectFit:"cover",transition:"transform .4s ease"}}/>
+              <div className="goverlay" style={{position:"absolute",inset:0,background:"rgba(192,57,43,.15)",border:"2px solid rgba(192,57,43,.4)",borderRadius:16,opacity:0,transition:"opacity .3s",pointerEvents:"none"}}/>
             </div>
           ))}
         </div>
       </div>
 
       {lb!==null&&(
-        <div onClick={()=>setLb(null)} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.92)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:20, backdropFilter:"blur(8px)" }}>
-          <button onClick={()=>setLb(null)} style={{ position:"absolute", top:20, right:20, background:"rgba(255,255,255,.1)", border:"1px solid rgba(255,255,255,.15)", color:"#fff", width:44, height:44, borderRadius:"50%", fontSize:20, cursor:"pointer" }}>×</button>
-          <button onClick={e=>{e.stopPropagation();setLb(p=>(p-1+shown.length)%shown.length);}} style={{ position:"absolute", left:20, background:"rgba(255,255,255,.1)", border:"1px solid rgba(255,255,255,.15)", color:"#fff", width:50, height:50, borderRadius:"50%", fontSize:26, cursor:"pointer" }}>‹</button>
-          <img src={shown[lb]} alt="" onClick={e=>e.stopPropagation()} style={{ maxHeight:"88vh", maxWidth:"88vw", objectFit:"contain", borderRadius:12 }}/>
-          <button onClick={e=>{e.stopPropagation();setLb(p=>(p+1)%shown.length);}} style={{ position:"absolute", right:20, background:"rgba(255,255,255,.1)", border:"1px solid rgba(255,255,255,.15)", color:"#fff", width:50, height:50, borderRadius:"50%", fontSize:26, cursor:"pointer" }}>›</button>
-          <div style={{ position:"absolute", bottom:16, color:"rgba(255,255,255,.3)", fontSize:13 }}>{lb+1}/{shown.length}</div>
+        <div onClick={()=>setLb(null)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.94)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:20,backdropFilter:"blur(10px)"}}>
+          <button onClick={()=>setLb(null)} style={{position:"absolute",top:20,right:20,background:"rgba(255,255,255,.1)",border:"1px solid rgba(255,255,255,.15)",color:"#fff",width:44,height:44,borderRadius:"50%",fontSize:20,cursor:"pointer"}}>×</button>
+          <button onClick={e=>{e.stopPropagation();setLb(p=>(p-1+shown.length)%shown.length);}} style={{position:"absolute",left:20,background:"rgba(255,255,255,.1)",border:"none",color:"#fff",width:52,height:52,borderRadius:"50%",fontSize:26,cursor:"pointer"}}>‹</button>
+          <img src={shown[lb]} alt="" onClick={e=>e.stopPropagation()} style={{maxHeight:"88vh",maxWidth:"88vw",objectFit:"contain",borderRadius:12}}/>
+          <button onClick={e=>{e.stopPropagation();setLb(p=>(p+1)%shown.length);}} style={{position:"absolute",right:20,background:"rgba(255,255,255,.1)",border:"none",color:"#fff",width:52,height:52,borderRadius:"50%",fontSize:26,cursor:"pointer"}}>›</button>
+          <div style={{position:"absolute",bottom:20,color:"rgba(255,255,255,.3)",fontSize:13}}>{lb+1}/{shown.length}</div>
         </div>
       )}
     </section>
   );
 }
 
-/* ── PAST EVENTS ── */
-function PastSection({ events, router }) {
+/* ─── PAST ─── */
+function Past({ events, router }) {
   return (
-    <section style={{ padding:"72px 40px", background:"#fff" }}>
-      <div style={{ maxWidth:1160, margin:"0 auto" }}>
+    <section style={{ padding:"72px 60px", background:"#fff" }} className="mob-pad">
+      <div style={{ maxWidth:1200, margin:"0 auto" }}>
         <div style={{ marginBottom:36 }}>
-          <span style={{ fontSize:11, fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", color:"#ccc" }}>Past Events</span>
-          <h2 style={{ fontSize:32, fontWeight:900, color:"#ccc", letterSpacing:-1, marginTop:10 }}>Previous Challenges</h2>
+          <span style={{ fontSize:11, fontWeight:700, letterSpacing:2, textTransform:"uppercase", color:"#ddd" }}>Past Events</span>
+          <h2 style={{ fontSize:32, fontWeight:900, letterSpacing:-1, color:"#ddd", marginTop:8 }}>Previous Challenges</h2>
         </div>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))", gap:14 }} className="mob-col">
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))", gap:14 }} className="mob-grid2">
           {events.map(ev=>(
-            <div key={ev._id} style={{ borderRadius:14, overflow:"hidden", border:"1px solid #eee", background:"#fafafa" }}>
-              <div style={{ position:"relative", height:140, overflow:"hidden" }}>
-                {(ev.coverImage||ev.image)&&<img src={ev.coverImage||ev.image} alt="" style={{width:"100%",height:"100%",objectFit:"cover",filter:"grayscale(70%) brightness(.85)"}}/>}
-                <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.25)"}}/>
+            <div key={ev._id} style={{ borderRadius:16, overflow:"hidden", border:"1px solid #f5f5f5", background:"#fafafa" }}>
+              <div style={{ position:"relative", height:130, overflow:"hidden" }}>
+                {(ev.coverImage||ev.image)&&<img src={ev.coverImage||ev.image} alt="" style={{width:"100%",height:"100%",objectFit:"cover",filter:"grayscale(80%) brightness(.8)"}}/>}
+                <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.3)"}}/>
                 <div style={{position:"absolute",top:10,left:10,background:"rgba(0,0,0,.6)",padding:"3px 10px",borderRadius:4}}>
-                  <span style={{fontSize:9,fontWeight:700,letterSpacing:1.5,color:"rgba(255,255,255,.5)",textTransform:"uppercase"}}>Completed</span>
+                  <span style={{fontSize:9,fontWeight:700,color:"rgba(255,255,255,.45)",letterSpacing:1.5,textTransform:"uppercase"}}>Completed</span>
                 </div>
               </div>
               <div style={{padding:"14px 16px 16px"}}>
-                <div style={{fontSize:10,color:"#ccc",fontWeight:600,letterSpacing:1,textTransform:"uppercase",marginBottom:4}}>{ev.dates}</div>
-                <h3 style={{fontSize:13,fontWeight:700,color:"#888",marginBottom:12,lineHeight:1.4}}>{ev.title}</h3>
+                <div style={{fontSize:10,color:"#ddd",fontWeight:600,letterSpacing:1,textTransform:"uppercase",marginBottom:4}}>{ev.dates}</div>
+                <h3 style={{fontSize:13,fontWeight:700,color:"#aaa",marginBottom:12,lineHeight:1.4}}>{ev.title}</h3>
                 <button onClick={()=>router.push(`/leaderboard/${ev.slug}`)}
-                  style={{width:"100%",padding:"8px 0",border:"1px solid #eee",borderRadius:8,background:"transparent",color:"#bbb",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",transition:"all .2s"}}
+                  style={{width:"100%",padding:"8px 0",border:"1px solid #eee",borderRadius:8,background:"transparent",color:"#ccc",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",transition:"all .2s"}}
                   onMouseEnter={e=>{e.target.style.borderColor="#c0392b";e.target.style.color="#c0392b";}}
-                  onMouseLeave={e=>{e.target.style.borderColor="#eee";e.target.style.color="#bbb";}}>
+                  onMouseLeave={e=>{e.target.style.borderColor="#eee";e.target.style.color="#ccc";}}>
                   View Results →
                 </button>
               </div>
@@ -1778,27 +1872,30 @@ function PastSection({ events, router }) {
   );
 }
 
-/* ── FINAL CTA ── */
-function FinalCTA({ router }) {
+/* ─── CTA ─── */
+function CTA({ router }) {
   return (
-    <section style={{ padding:"100px 40px", background:"#0d0d0d", textAlign:"center", position:"relative", overflow:"hidden" }}>
-      <div style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", width:600, height:280, background:"radial-gradient(ellipse,rgba(192,57,43,.1),transparent)", pointerEvents:"none" }} />
-      <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px)", backgroundSize:"50px 50px", pointerEvents:"none" }} />
-      <div style={{ position:"relative", zIndex:10, maxWidth:600, margin:"0 auto" }}>
-        <span style={{ fontSize:11, fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", color:"#c0392b" }}>Valley Run</span>
-        <h2 className="mob-h2" style={{ fontSize:"clamp(38px,6vw,64px)", fontWeight:900, color:"#fff", lineHeight:1.05, letterSpacing:"-2px", margin:"18px 0 18px" }}>
+    <section style={{ padding:"100px 60px", background:"#0a0a0a", position:"relative", overflow:"hidden", textAlign:"center" }} className="mob-pad">
+      <div style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", width:700, height:300, background:"radial-gradient(ellipse,rgba(192,57,43,.12),transparent)", pointerEvents:"none" }} />
+      <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px)", backgroundSize:"60px 60px", pointerEvents:"none" }} />
+      <div style={{ position:"relative", zIndex:10, maxWidth:560, margin:"0 auto" }}>
+        <span style={{ fontSize:11, fontWeight:700, letterSpacing:2, textTransform:"uppercase", color:"#c0392b" }}>Valley Run</span>
+        <h2 className="mob-h2" style={{ fontSize:"clamp(40px,6vw,68px)", fontWeight:900, color:"#fff", lineHeight:1.05, letterSpacing:"-2px", margin:"18px 0 20px" }}>
           Your Discipline<br />Has a Deadline.
         </h2>
-        <p style={{ fontSize:16, color:"rgba(255,255,255,.4)", lineHeight:1.8, maxWidth:400, margin:"0 auto 44px" }}>
+        <p style={{ fontSize:16, color:"rgba(255,255,255,.4)", lineHeight:1.85, maxWidth:380, margin:"0 auto 44px" }}>
           Join now. Finish strong. Earn something that reminds you who you are.
         </p>
-        <button className="btn-red" style={{ fontSize:15, padding:"16px 44px" }} onClick={() => document.getElementById("challenges")?.scrollIntoView({ behavior:"smooth" })}>
+        <button className="vr-btn-primary" style={{ fontSize:15, padding:"16px 44px" }} onClick={() => document.getElementById("events-section")?.scrollIntoView({ behavior:"smooth" })}>
           Start Your Challenge →
         </button>
-        <p style={{ fontSize:11, color:"rgba(255,255,255,.2)", marginTop:20, letterSpacing:2, textTransform:"uppercase" }}>
-          Free shipping · Real medal · Pan-India
-        </p>
+        <div style={{ display:"flex", justifyContent:"center", gap:24, marginTop:32, flexWrap:"wrap" }}>
+          {["🏅 Real Medal","📦 Free Shipping","⚡ 24hr Verify"].map((t,i)=>(
+            <span key={i} style={{ fontSize:12, color:"rgba(255,255,255,.25)", fontWeight:600, display:"flex", alignItems:"center", gap:6 }}>{t}</span>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
+
