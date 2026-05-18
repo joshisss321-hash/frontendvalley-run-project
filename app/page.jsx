@@ -1292,22 +1292,21 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import Navbar from "./components/Navbar";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import Navbar from "./components/Navbar";
 
 const WHATSAPP_URL = "https://whatsapp.com/channel/0029VbCM5KOBVJl3FdMMHI3M";
 
 const REVIEWS = [
-  { id: "1", name: "Gourisha Garg", instaId: "", review: "The medal is even more beautiful and heavier than it looked in the photos — it exceeded my expectations! I genuinely loved being a part of your race.", imageUrl: "https://ik.imagekit.io/nnx2tg1jf/WhatsApp%20Image%202026-04-29%20at%2012.41.55%20PM.jpeg", rating: 5 },
-  { id: "2", name: "Tisha", instaId: "", review: "The quality of the medal is top notch. No doubt. Thank you so much!!! Will be participating further as well.", imageUrl: "https://ik.imagekit.io/nnx2tg1jf/Screenshot%202026-05-05%20134321.png", rating: 5 },
-  { id: "3", name: "Puja Giri", instaId: "", review: "Thank you so much Valley Run. Yesterday received my medal. I am really happy to get such a nice novelty Indian map medal.", imageUrl: "https://ik.imagekit.io/nnx2tg1jf/IMG_20260505_061928.jpg", rating: 5 },
-  { id: "4", name: "Subhojyoti Raha", instaId: "SubhojyotiRaha", review: "It was such an amazing experience running for the special occasion — absolute goosebumps! Looking forward for more marathons.", imageUrl: "https://res.cloudinary.com/dvlo3swno/image/upload/v1776577531/Screenshot_2026-04-18_214936_oeag4w.png", rating: 5 },
-  { id: "5", name: "Swati Saxena", instaId: "soulfitfeminine", review: "Medal is amazing. The best part — what you show is exactly what we received, with amazing quality. Other virtual events won't show the medal photo!", imageUrl: "https://res.cloudinary.com/dvlo3swno/image/upload/v1776529446/Screenshot_2026-04-18_215206_nmh9vw.png", rating: 5 },
-  { id: "6", name: "Anshika Singh", instaId: "cappybara_00700", review: "It's my first medal for running and after receiving it I can't explain my happiness. Getting this felt so heartwarming — you made this dream come true 💗", imageUrl: "https://res.cloudinary.com/dvlo3swno/image/upload/v1776529445/Screenshot_2026-04-18_215225_kxg4is.png", rating: 5 },
-  { id: "7", name: "Sathish S", instaId: "Sathish.sa.75", review: "Absolutely loved the Virtual Running Challenge. I just received my FINISHER Medal — the quality is outstanding. It's heavy, detailed and feels like a real premium trophy.", imageUrl: "https://res.cloudinary.com/dvlo3swno/image/upload/v1776577534/Screenshot_2026-04-18_215018_on44z2.png", rating: 5 },
-  { id: "8", name: "Vipin Sharma", instaId: "Some_1_here4u", review: "I started running and found myself in a good healthy condition — reduced weight from 87 to 72! So start, guys who haven't, and continue who are doing.", imageUrl: "https://res.cloudinary.com/dvlo3swno/image/upload/v1776577532/Screenshot_2026-04-18_215027_mlr1z1.png", rating: 5 },
-  { id: "9", name: "Abhishek Girish Nadkarni", instaId: "abhsnad", review: "I am very moved by the gesture of dedicating a run for our Shaheed Jawans. Thanks Valley Run for giving me this opportunity! Also appreciate the prompt medal delivery!", imageUrl: "https://res.cloudinary.com/dafwe6lci/image/upload/v1775488524/medal-reviews/a5qjslvtkgc4dznnquno.jpg", rating: 5 },
+  { id:"1", name:"Gourisha Garg", review:"The medal is even more beautiful and heavier than it looked in the photos — it exceeded my expectations!", imageUrl:"https://ik.imagekit.io/nnx2tg1jf/WhatsApp%20Image%202026-04-29%20at%2012.41.55%20PM.jpeg" },
+  { id:"2", name:"Tisha", review:"The quality of the medal is top notch. No doubt. Thank you so much!!! Will be participating further as well.", imageUrl:"https://ik.imagekit.io/nnx2tg1jf/Screenshot%202026-05-05%20134321.png" },
+  { id:"3", name:"Puja Giri", review:"Thank you so much Valley Run. Yesterday received my medal. I am really happy to get such a nice novelty Indian map medal.", imageUrl:"https://ik.imagekit.io/nnx2tg1jf/IMG_20260505_061928.jpg" },
+  { id:"4", name:"Subhojyoti Raha", review:"It was such an amazing experience — absolute goosebumps! Looking forward for more marathons.", imageUrl:"https://res.cloudinary.com/dvlo3swno/image/upload/v1776577531/Screenshot_2026-04-18_214936_oeag4w.png" },
+  { id:"5", name:"Swati Saxena", review:"Medal is amazing. What you show is exactly what we received, with amazing quality!", imageUrl:"https://res.cloudinary.com/dvlo3swno/image/upload/v1776529446/Screenshot_2026-04-18_215206_nmh9vw.png" },
+  { id:"6", name:"Anshika Singh", review:"It's my first medal for running and I can't explain my happiness. Getting this felt so heartwarming!", imageUrl:"https://res.cloudinary.com/dvlo3swno/image/upload/v1776529445/Screenshot_2026-04-18_215225_kxg4is.png" },
+  { id:"7", name:"Sathish S", review:"Absolutely loved the Virtual Running Challenge. The medal quality is outstanding — heavy, detailed, premium trophy feel.", imageUrl:"https://res.cloudinary.com/dvlo3swno/image/upload/v1776577534/Screenshot_2026-04-18_215018_on44z2.png" },
+  { id:"8", name:"Vipin Sharma", review:"I started running and reduced weight from 87 to 72! Valley Run changed my life.", imageUrl:"https://res.cloudinary.com/dvlo3swno/image/upload/v1776577532/Screenshot_2026-04-18_215027_mlr1z1.png" },
+  { id:"9", name:"Abhishek Nadkarni", review:"Very moved by the gesture of dedicating a run for our Shaheed Jawans. Thanks Valley Run!", imageUrl:"https://res.cloudinary.com/dafwe6lci/image/upload/v1775488524/medal-reviews/a5qjslvtkgc4dznnquno.jpg" },
 ];
 
 export default function HomePage() {
@@ -1326,60 +1325,46 @@ export default function HomePage() {
   const gallery     = events.flatMap(e => e.gallery || []);
 
   return (
-    <div className="vr-root">
+    <div style={{ background:"#fff", color:"#111", fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif", overflowX:"hidden" }}>
       <style>{`
-        .vr-root{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#1a1a1a;background:#fff;overflow-x:hidden}
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         html{scroll-behavior:smooth}
         @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-        @keyframes fadeup{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes dot{0%,100%{opacity:1}50%{opacity:.3}}
-        .anim-1{animation:fadeup .7s ease both}
-        .anim-2{animation:fadeup .7s .15s ease both}
-        .anim-3{animation:fadeup .7s .3s ease both}
-        .anim-4{animation:fadeup .7s .45s ease both}
-        .hover-lift{transition:transform .25s ease,box-shadow .25s ease}
-        .hover-lift:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.1)}
-        .vr-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:4px;font-size:14px;font-weight:600;letter-spacing:.3px;cursor:pointer;transition:all .2s;border:none}
-        .vr-btn-red{background:#c0392b;color:#fff}.vr-btn-red:hover{background:#a93226}
-        .vr-btn-outline{background:transparent;color:#1a1a1a;border:1.5px solid #1a1a1a}.vr-btn-outline:hover{background:#1a1a1a;color:#fff}
-        .vr-btn-outline-white{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.6)}.vr-btn-outline-white:hover{background:rgba(255,255,255,.1)}
-        .vr-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#c0392b;margin-bottom:14px}
-        .vr-h1{font-size:clamp(40px,7vw,80px);font-weight:800;line-height:1.05;letter-spacing:-1.5px}
-        .vr-h2{font-size:clamp(28px,4vw,48px);font-weight:800;line-height:1.1;letter-spacing:-1px}
-        .vr-body{font-size:16px;line-height:1.75;color:#555}
-        section{padding:88px 0}
-        .container{max-width:1140px;margin:0 auto;padding:0 24px}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        @keyframes slideReview{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+        .btn-red{background:#c0392b;color:#fff;border:none;padding:14px 32px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;transition:all .25s;letter-spacing:.3px}
+        .btn-red:hover{background:#a93226;transform:translateY(-2px);box-shadow:0 8px 24px rgba(192,57,43,.25)}
+        .btn-outline{background:transparent;color:#111;border:1.5px solid #ddd;padding:14px 28px;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;transition:all .25s}
+        .btn-outline:hover{border-color:#c0392b;color:#c0392b;transform:translateY(-2px)}
+        .card{background:#fff;border:1px solid #eee;border-radius:16px;transition:all .3s;cursor:pointer}
+        .card:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(0,0,0,.09);border-color:#e0e0e0}
+        ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#f5f5f5}::-webkit-scrollbar-thumb{background:#c0392b;border-radius:4px}
         @media(max-width:768px){
-          section{padding:60px 0}
-          .vr-h1{letter-spacing:-0.5px}
-          .vr-h2{letter-spacing:-0.5px}
-          .hide-mobile{display:none!important}
-          .col-2{grid-template-columns:1fr!important}
-          .col-3{grid-template-columns:1fr!important}
-          .col-4{grid-template-columns:1fr 1fr!important}
-          .hero-btns{flex-direction:column;align-items:flex-start!important}
-          .hero-stats{gap:24px!important}
-          .hiw-right{display:none!important}
+          .mob-col{grid-template-columns:1fr!important}
+          .mob-col2{grid-template-columns:1fr 1fr!important}
+          .mob-hide{display:none!important}
+          .mob-pad{padding:60px 20px!important}
+          .mob-h1{font-size:40px!important;letter-spacing:-1px!important}
+          .mob-h2{font-size:28px!important;letter-spacing:-.5px!important}
           .gallery-cols{columns:2!important}
-          .rev-arrows button{display:none!important}
+          .mob-row{flex-direction:column!important}
+          .hero-stats{gap:12px!important}
         }
       `}</style>
 
       <Navbar />
-
       <HeroSection router={router} liveEvents={liveEvents} />
       <TrustBar />
       <StatsSection />
-      <WhySection />
-      <HowItWorksSection />
       {liveEvents.length > 0 && <ChallengesSection events={liveEvents} router={router} />}
       {medalEvents.length > 0 && <MedalSection events={medalEvents} />}
+      <WhySection />
       <ReviewsSection />
       {gallery.length > 0 && <GallerySection images={gallery} />}
       {pastEvents.length > 0 && <PastSection events={pastEvents} router={router} />}
-      <WhatsAppSection />
-      <FAQSection />
       <FinalCTA router={router} />
     </div>
   );
@@ -1390,70 +1375,85 @@ function HeroSection({ router, liveEvents }) {
   const [count, setCount] = useState(0);
   useEffect(() => {
     let c = 0;
-    const t = setInterval(() => { c += 10; if (c >= 600) { setCount(600); clearInterval(t); } else setCount(c); }, 20);
+    const t = setInterval(() => { c += 12; if (c >= 600) { setCount(600); clearInterval(t); } else setCount(c); }, 16);
     return () => clearInterval(t);
   }, []);
 
   return (
-    <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", background: "#0d0d0d", padding: 0 }}>
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/hero.jpg')", backgroundSize: "cover", backgroundPosition: "center 30%", opacity: .35 }} />
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(105deg,rgba(13,13,13,.95) 45%,rgba(13,13,13,.5))" }} />
-      {/* red left bar */}
-      <div style={{ position: "absolute", left: 0, top: "15%", bottom: "15%", width: 3, background: "#c0392b" }} />
+    <section style={{ position:"relative", minHeight:"100vh", display:"flex", alignItems:"center", overflow:"hidden", background:"#0d0d0d" }}>
+      {/* BG */}
+      <div style={{ position:"absolute", inset:0, backgroundImage:"url('/hero.jpg')", backgroundSize:"cover", backgroundPosition:"center 30%", opacity:.3 }} />
+      <div style={{ position:"absolute", inset:0, background:"linear-gradient(110deg,rgba(13,13,13,.96) 45%,rgba(13,13,13,.6))" }} />
+      {/* Grid */}
+      <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px)", backgroundSize:"50px 50px", pointerEvents:"none" }} />
+      {/* Red accent */}
+      <div style={{ position:"absolute", left:0, top:"20%", bottom:"20%", width:3, background:"linear-gradient(to bottom,transparent,#c0392b,transparent)" }} />
 
-      <div className="container" style={{ position: "relative", zIndex: 10, paddingTop: 120, paddingBottom: 80, width: "100%" }}>
-        {/* live pill */}
-        <div className="anim-1" style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 32, padding: "7px 16px", border: "1px solid rgba(255,255,255,.15)", borderRadius: 2, background: "rgba(255,255,255,.05)" }}>
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#c0392b", display: "inline-block", animation: "dot 1.5s infinite" }} />
-          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "rgba(255,255,255,.7)", textTransform: "uppercase" }}>{count}+ Runners across India</span>
+      <div style={{ position:"relative", zIndex:10, maxWidth:1160, margin:"0 auto", padding:"130px 40px 80px", width:"100%" }}>
+        {/* Pill */}
+        <div style={{ display:"inline-flex", alignItems:"center", gap:10, marginBottom:28, padding:"7px 16px 7px 8px", borderRadius:40, border:"1px solid rgba(192,57,43,.35)", background:"rgba(192,57,43,.1)" }}>
+          <span style={{ background:"#c0392b", borderRadius:20, padding:"3px 10px", fontSize:10, fontWeight:700, letterSpacing:1.5, color:"#fff", textTransform:"uppercase" }}>Live</span>
+          <span style={{ fontSize:13, color:"rgba(255,255,255,.65)", fontWeight:500 }}>India's Premier Virtual Running Platform</span>
         </div>
 
-        <h1 className="vr-h1 anim-2" style={{ color: "#fff", maxWidth: 660, marginBottom: 12 }}>
+        <h1 className="mob-h1" style={{ fontSize:"clamp(48px,8vw,88px)", fontWeight:900, lineHeight:1.02, letterSpacing:"-2.5px", color:"#fff", marginBottom:10 }}>
           Discipline<br />
-          <span style={{ color: "#c0392b" }}>Builds</span> Legends.
+          <span style={{ color:"#c0392b" }}>Builds</span> Legends.
         </h1>
-        <div className="anim-2" style={{ width: 64, height: 3, background: "#c0392b", marginBottom: 28 }} />
+        <div style={{ width:56, height:3, background:"#c0392b", margin:"20px 0 28px" }} />
 
-        <p className="vr-body anim-3" style={{ color: "rgba(255,255,255,.6)", maxWidth: 460, marginBottom: 40 }}>
-          Anyone can start. Very few finish. Valley Run challenges you to earn something real — a medal that arrives at your door as proof you didn't quit.
+        <p style={{ fontSize:17, color:"rgba(255,255,255,.5)", maxWidth:460, lineHeight:1.85, marginBottom:44, fontWeight:400 }}>
+          Run from anywhere. Earn a real medal. Get recognized on India's most trusted virtual challenge platform.
         </p>
 
-        <div className="hero-btns anim-4" style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-          <button className="vr-btn vr-btn-red" onClick={() => document.getElementById("challenges")?.scrollIntoView({ behavior: "smooth" })}>
-            View Active Challenges
+        <div className="mob-row" style={{ display:"flex", gap:14, flexWrap:"wrap", marginBottom:60 }}>
+          <button className="btn-red" style={{ fontSize:15, padding:"16px 36px" }} onClick={() => document.getElementById("challenges")?.scrollIntoView({ behavior:"smooth" })}>
+            Explore Challenges →
           </button>
-          <button className="vr-btn vr-btn-outline-white" onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}>
-            How It Works ↓
+          <button className="btn-outline" style={{ color:"rgba(255,255,255,.7)", borderColor:"rgba(255,255,255,.2)", background:"transparent", fontSize:15 }} onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior:"smooth" })}>
+            How It Works
           </button>
         </div>
 
-        {/* stats */}
-        <div className="hero-stats anim-4" style={{ display: "flex", gap: 56, marginTop: 72, paddingTop: 40, borderTop: "1px solid rgba(255,255,255,.1)", flexWrap: "wrap" }}>
-          {[["600+","Finishers"],["4","Events Completed"],["Free","Pan-India Delivery"],["Real","Zinc Alloy Medals"]].map(([n,l]) => (
-            <div key={l}>
-              <div style={{ fontSize: 26, fontWeight: 800, color: "#fff", letterSpacing: -0.5 }}>{n}</div>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,.4)", textTransform: "uppercase", letterSpacing: 1.5, marginTop: 4 }}>{l}</div>
+        {/* Floating stat cards */}
+        <div className="hero-stats" style={{ display:"flex", gap:14, flexWrap:"wrap" }}>
+          {[
+            { n:`${count}+`, l:"Runners", icon:"🏃" },
+            { n:"4", l:"Events", icon:"🏆" },
+            { n:"Free", l:"Delivery", icon:"📦" },
+            { n:"24hr", l:"Verify", icon:"⚡" },
+          ].map((s,i) => (
+            <div key={i} style={{
+              padding:"14px 20px", borderRadius:12, display:"flex", alignItems:"center", gap:12,
+              background:"rgba(255,255,255,.06)", backdropFilter:"blur(16px)",
+              border:"1px solid rgba(255,255,255,.1)",
+              animation:`float ${3+i*.4}s ease-in-out infinite`
+            }}>
+              <span style={{ fontSize:20 }}>{s.icon}</span>
+              <div>
+                <div style={{ fontSize:18, fontWeight:800, color:"#fff", lineHeight:1 }}>{s.n}</div>
+                <div style={{ fontSize:10, color:"rgba(255,255,255,.4)", marginTop:2, textTransform:"uppercase", letterSpacing:1 }}>{s.l}</div>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* bottom fade */}
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 100, background: "linear-gradient(to top,#fff,transparent)" }} />
+      {/* Bottom fade to white */}
+      <div style={{ position:"absolute", bottom:0, left:0, right:0, height:130, background:"linear-gradient(to top,#fff,transparent)", pointerEvents:"none" }} />
     </section>
   );
 }
 
 /* ── TRUST BAR ── */
 function TrustBar() {
-  const items = ["Real Zinc Alloy Medals","Free Pan-India Delivery","Any GPS App Accepted","Verified in 24 Hours","Made for Indian Runners","Razorpay Secured Payments","Digital Certificate Included","Leaderboard Recognition"];
+  const items = ["Real Zinc Alloy Medals","Free Pan-India Shipping","Any GPS App Accepted","Verified in 24 Hours","600+ Happy Runners","Razorpay Secured","Digital Certificate","Leaderboard Rankings"];
   return (
-    <div style={{ borderTop: "1px solid #eee", borderBottom: "1px solid #eee", padding: "13px 0", overflow: "hidden", background: "#fff" }}>
-      <div style={{ display: "flex", gap: 64, width: "max-content", animation: "ticker 28s linear infinite" }}>
+    <div style={{ borderTop:"1px solid #f0f0f0", borderBottom:"1px solid #f0f0f0", padding:"13px 0", overflow:"hidden", background:"#fafafa" }}>
+      <div style={{ display:"flex", gap:56, width:"max-content", animation:"ticker 25s linear infinite" }}>
         {[...items,...items].map((item,i) => (
-          <span key={i} style={{ fontSize: 12, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase", color: "#888", whiteSpace: "nowrap" }}>
-            {item}
-            <span style={{ color: "#c0392b", marginLeft: 32, fontWeight: 400 }}>—</span>
+          <span key={i} style={{ fontSize:11, fontWeight:700, letterSpacing:2, textTransform:"uppercase", color:"#aaa", whiteSpace:"nowrap" }}>
+            {item}<span style={{ color:"#c0392b", marginLeft:28, fontWeight:400 }}>—</span>
           </span>
         ))}
       </div>
@@ -1464,105 +1464,21 @@ function TrustBar() {
 /* ── STATS ── */
 function StatsSection() {
   return (
-    <section style={{ padding: "72px 0", background: "#fff" }}>
-      <div className="container">
-        <div className="col-4" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0, border: "1px solid #eee" }}>
+    <section style={{ padding:"72px 40px", background:"#fff" }}>
+      <div style={{ maxWidth:1160, margin:"0 auto" }}>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:0, border:"1px solid #eee", borderRadius:16, overflow:"hidden" }} className="mob-col2">
           {[
-            { n: "600+", l: "Finishers", d: "Runners who completed and earned their medal" },
-            { n: "4", l: "Events", d: "Pan-India virtual running events organized" },
-            { n: "24hr", l: "Verification", d: "Fast activity proof review, every time" },
-            { n: "100%", l: "Real Medals", d: "Premium zinc alloy, not plastic or paper" },
-          ].map((s, i) => (
-            <div key={i} style={{ padding: "36px 28px", borderRight: i < 3 ? "1px solid #eee" : "none" }}>
-              <div style={{ fontSize: 36, fontWeight: 800, color: "#c0392b", letterSpacing: -1, marginBottom: 6 }}>{s.n}</div>
-              <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#1a1a1a", marginBottom: 8 }}>{s.l}</div>
-              <div style={{ fontSize: 13, color: "#888", lineHeight: 1.6 }}>{s.d}</div>
+            { n:"600+", l:"Finishers", d:"Runners who earned their medal" },
+            { n:"4", l:"Events Hosted", d:"Pan-India virtual challenges" },
+            { n:"24hr", l:"Verification", d:"Fast proof review every time" },
+            { n:"4.9★", l:"Avg Rating", d:"From verified finishers" },
+          ].map((s,i) => (
+            <div key={i} style={{ padding:"36px 28px", background:i%2===0?"#fff":"#fafafa", borderRight:i<3?"1px solid #eee":"none" }}>
+              <div style={{ fontSize:38, fontWeight:900, color:"#c0392b", letterSpacing:-1, marginBottom:8 }}>{s.n}</div>
+              <div style={{ fontSize:12, fontWeight:700, letterSpacing:1.5, textTransform:"uppercase", color:"#111", marginBottom:8 }}>{s.l}</div>
+              <div style={{ fontSize:13, color:"#aaa", lineHeight:1.6 }}>{s.d}</div>
             </div>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ── WHY ── */
-function WhySection() {
-  const items = [
-    { icon: "⏳", title: "Fixed Deadlines", desc: "Structure creates discipline. You don't train someday — you train before the deadline." },
-    { icon: "🏅", title: "Real Finisher Medal", desc: "Heavy zinc-alloy medal delivered home. Not digital badges — something you can hold." },
-    { icon: "📍", title: "Run Anywhere", desc: "Road, treadmill, or track. Any city. Any time within the event window." },
-    { icon: "📸", title: "Easy Verification", desc: "Screenshot from Strava, Nike Run Club, Google Fit, or any GPS app. Verified in 24 hours." },
-    { icon: "📜", title: "Digital Certificate", desc: "Personalized certificate with your name — shareable on LinkedIn and Instagram." },
-    { icon: "🏆", title: "Leaderboard", desc: "Your timing gets ranked publicly. Fastest finishers get recognized and win gift hampers." },
-  ];
-  return (
-    <section style={{ background: "#f7f7f5" }}>
-      <div className="container">
-        <div className="col-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
-          <div>
-            <span className="vr-tag">Why Valley Run</span>
-            <h2 className="vr-h2" style={{ marginBottom: 20 }}>
-              More Than a Race.<br />A Proof of Who You Are.
-            </h2>
-            <p className="vr-body">
-              This is not entertainment. Valley Run is built for people who want structure, accountability, and a reward that lasts — not just a participation trophy.
-            </p>
-          </div>
-          <div className="col-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1, background: "#e8e8e4", border: "1px solid #e8e8e4" }}>
-            {items.map((it, i) => (
-              <div key={i} className="hover-lift" style={{ background: "#fff", padding: "28px 22px", cursor: "default" }}>
-                <div style={{ fontSize: 26, marginBottom: 12 }}>{it.icon}</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a", marginBottom: 8 }}>{it.title}</div>
-                <div style={{ fontSize: 13, color: "#777", lineHeight: 1.7 }}>{it.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ── HOW IT WORKS ── */
-function HowItWorksSection() {
-  const [active, setActive] = useState(0);
-  const steps = [
-    { n: "01", icon: "🏃", title: "Register Online", desc: "Choose your distance — 1600m, 5km, 10km, or 21km. Pay securely via Razorpay. Takes under 2 minutes." },
-    { n: "02", icon: "📍", title: "Run Anywhere", desc: "Road, treadmill, or track — anywhere in India, during the event window. Your city, your schedule." },
-    { n: "03", icon: "📸", title: "Submit Proof", desc: "Screenshot from Strava, Nike Run Club, Google Fit or any GPS app showing date + distance. We verify in 24 hours." },
-    { n: "04", icon: "🏅", title: "Receive Your Medal", desc: "Premium zinc-alloy finisher medal shipped to your door. Free delivery, pan-India, 7–10 working days." },
-  ];
-  useEffect(() => { const t = setInterval(() => setActive(p => (p+1)%4), 3200); return () => clearInterval(t); }, []);
-
-  return (
-    <section id="how-it-works" style={{ background: "#fff" }}>
-      <div className="container">
-        <span className="vr-tag">The Process</span>
-        <h2 className="vr-h2" style={{ marginBottom: 56 }}>Four Steps to Your Medal</h2>
-        <div className="col-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            {steps.map((s,i) => (
-              <div key={i} onClick={() => setActive(i)} style={{
-                display: "flex", gap: 20, padding: "20px 22px", cursor: "pointer",
-                borderLeft: active===i ? "3px solid #c0392b" : "3px solid transparent",
-                background: active===i ? "#fef8f7" : "#fff",
-                transition: "all .25s"
-              }}>
-                <span style={{ fontSize: 20, fontWeight: 800, color: active===i ? "#c0392b" : "#ddd", minWidth: 32, transition: "color .25s" }}>{s.n}</span>
-                <div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: "#1a1a1a", marginBottom: 4 }}>{s.title}</div>
-                  {active===i && <div style={{ fontSize: 13, color: "#666", lineHeight: 1.7 }}>{s.desc}</div>}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="hiw-right" style={{ height: 340, background: "#f7f7f5", borderRadius: 4, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", border: "1px solid #eee", gap: 12 }}>
-            <div style={{ fontSize: 72 }}>{steps[active].icon}</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: "#1a1a1a" }}>{steps[active].title}</div>
-            <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
-              {steps.map((_,i) => <div key={i} style={{ width: active===i?24:8, height:8, borderRadius:4, background: active===i?"#c0392b":"#ddd", transition:"all .3s" }} />)}
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -1572,16 +1488,16 @@ function HowItWorksSection() {
 /* ── CHALLENGES ── */
 function ChallengesSection({ events, router }) {
   return (
-    <section id="challenges" style={{ background: "#f7f7f5" }}>
-      <div className="container">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 48, flexWrap: "wrap", gap: 16 }}>
+    <section id="challenges" style={{ padding:"88px 40px", background:"#f7f6f4" }}>
+      <div style={{ maxWidth:1160, margin:"0 auto" }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:44, flexWrap:"wrap", gap:16 }}>
           <div>
-            <span className="vr-tag">Currently Open</span>
-            <h2 className="vr-h2">Active Challenges</h2>
+            <span style={{ fontSize:11, fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", color:"#c0392b" }}>Currently Open</span>
+            <h2 className="mob-h2" style={{ fontSize:44, fontWeight:900, letterSpacing:-1.5, marginTop:12 }}>Active Challenges</h2>
           </div>
-          <button className="vr-btn vr-btn-outline" style={{ fontSize: 13 }} onClick={() => router.push("/challenges")}>All Challenges →</button>
+          <button className="btn-outline" onClick={() => router.push("/challenges")}>View All →</button>
         </div>
-        <div className="col-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))", gap:20 }} className="mob-col">
           {events.map(ev => <EventCard key={ev._id} event={ev} router={router} />)}
         </div>
       </div>
@@ -1595,41 +1511,47 @@ function EventCard({ event, router }) {
   const [hover, setHover] = useState(false);
 
   return (
-    <div className="hover-lift" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
-      style={{ background: "#fff", border: "1px solid #e8e8e4", borderRadius: 4, overflow: "hidden", cursor: "pointer" }}
-      onClick={() => router.push(regClosed ? `/activity-submission?event=${event.slug}` : `/challenges/${event.slug}`)}>
-      {/* image */}
-      <div style={{ position: "relative", paddingBottom: "62%", overflow: "hidden", background: "#eee" }}>
+    <div className="card" onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)}
+      onClick={() => router.push(regClosed?`/activity-submission?event=${event.slug}`:`/challenges/${event.slug}`)}
+      style={{ overflow:"hidden" }}>
+      {/* Image */}
+      <div style={{ position:"relative", paddingBottom:"60%", overflow:"hidden", background:"#eee" }}>
         {(event.coverImage||event.image) && (
           <img src={event.coverImage||event.image} alt={event.title}
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", transform: hover ? "scale(1.04)" : "scale(1)", transition: "transform .5s ease" }} />
+            style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", transform:hover?"scale(1.05)":"scale(1)", transition:"transform .5s ease" }} />
         )}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,.5) 0%, transparent 50%)" }} />
-        {/* badge */}
-        <div style={{ position: "absolute", top: 14, left: 14 }}>
+        <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.55) 0%,transparent 60%)" }} />
+        <div style={{ position:"absolute", top:14, left:14 }}>
           {regClosed ? (
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(0,0,0,.65)", color: "#ccc", fontSize: 10, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", padding: "5px 12px", borderRadius: 2 }}>
+            <span style={{ background:"rgba(0,0,0,.65)", color:"rgba(255,255,255,.7)", fontSize:10, fontWeight:700, letterSpacing:1.5, textTransform:"uppercase", padding:"5px 12px", borderRadius:6, backdropFilter:"blur(8px)", border:"1px solid rgba(255,255,255,.1)" }}>
               Event Running
             </span>
           ) : (
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#c0392b", color: "#fff", fontSize: 10, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", padding: "5px 12px", borderRadius: 2 }}>
-              <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#fff", animation: "dot 1.5s infinite", display: "inline-block" }} />
+            <span style={{ display:"inline-flex", alignItems:"center", gap:6, background:"#c0392b", color:"#fff", fontSize:10, fontWeight:700, letterSpacing:1.5, textTransform:"uppercase", padding:"5px 12px", borderRadius:6 }}>
+              <span style={{ width:5, height:5, borderRadius:"50%", background:"#fff", display:"inline-block", animation:"pulse 1.5s infinite" }} />
               Live
             </span>
           )}
         </div>
+        <div style={{ position:"absolute", top:14, right:14 }}>
+          <span style={{ background:"rgba(0,0,0,.55)", color:"rgba(255,255,255,.8)", fontSize:11, fontWeight:700, padding:"5px 12px", borderRadius:6, backdropFilter:"blur(8px)" }}>
+            ₹{event.price||399}
+          </span>
+        </div>
       </div>
-      {/* content */}
-      <div style={{ padding: "22px 22px 24px" }}>
-        <div style={{ fontSize: 11, color: "#aaa", fontWeight: 600, letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>{event.dates}</div>
-        <h3 style={{ fontSize: 16, fontWeight: 700, lineHeight: 1.35, color: "#1a1a1a", marginBottom: 18 }}>{event.title}</h3>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 16, borderTop: "1px solid #f0f0ee" }}>
-          {regClosed ? (
-            <span style={{ fontSize: 13, fontWeight: 600, color: "#c0392b" }}>📸 Submit Activity →</span>
-          ) : (
-            <span style={{ fontSize: 13, fontWeight: 600, color: "#c0392b" }}>Register Now →</span>
-          )}
-          <span style={{ fontSize: 13, color: "#bbb", fontWeight: 500 }}>₹{event.price || 399}</span>
+      {/* Content */}
+      <div style={{ padding:"22px" }}>
+        <div style={{ fontSize:11, color:"#bbb", fontWeight:600, letterSpacing:1, textTransform:"uppercase", marginBottom:8 }}>{event.dates}</div>
+        <h3 style={{ fontSize:17, fontWeight:800, lineHeight:1.35, color:"#111", marginBottom:20 }}>{event.title}</h3>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", paddingTop:16, borderTop:"1px solid #f5f5f5" }}>
+          <span style={{ fontSize:13, fontWeight:700, color:"#c0392b" }}>
+            {regClosed ? "📸 Submit Activity →" : "Register Now →"}
+          </span>
+          <div style={{ display:"flex", gap:6 }}>
+            {["🏅","📜","📦"].map((e,i) => (
+              <span key={i} style={{ width:28, height:28, borderRadius:6, background:"#f7f7f7", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, border:"1px solid #eee" }}>{e}</span>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -1638,44 +1560,36 @@ function EventCard({ event, router }) {
 
 /* ── MEDAL 3D ── */
 function Medal3D({ event }) {
-  const rotY = useRef(0), rotX = useRef(-8);
-  const drag = useRef({ active:false, lastX:0, lastY:0 });
-  const auto = useRef(true), raf = useRef(null), timer = useRef(null);
-  const inner = useRef(null);
-  const apply = () => { if (inner.current) inner.current.style.transform = `rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)`; };
-  useEffect(() => {
-    const tick = () => { if (auto.current) { rotY.current += .4; apply(); } raf.current = requestAnimationFrame(tick); };
-    raf.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf.current);
-  }, []);
-  const pause = () => { auto.current=false; clearTimeout(timer.current); timer.current=setTimeout(()=>{auto.current=true;},3000); };
+  const rotY=useRef(0),rotX=useRef(-8),drag=useRef({active:false,lastX:0,lastY:0}),auto=useRef(true),raf=useRef(null),timer=useRef(null),inner=useRef(null);
+  const apply=()=>{if(inner.current)inner.current.style.transform=`rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)`;};
+  useEffect(()=>{const tick=()=>{if(auto.current){rotY.current+=.4;apply();}raf.current=requestAnimationFrame(tick);};raf.current=requestAnimationFrame(tick);return()=>cancelAnimationFrame(raf.current);},[]);
+  const pause=()=>{auto.current=false;clearTimeout(timer.current);timer.current=setTimeout(()=>{auto.current=true;},3000);};
   const onD=(x,y)=>{drag.current={active:true,lastX:x,lastY:y};pause();};
   const onM=(x,y)=>{if(!drag.current.active)return;rotY.current+=(x-drag.current.lastX)*.65;rotX.current=Math.max(-35,Math.min(35,rotX.current-(y-drag.current.lastY)*.4));drag.current.lastX=x;drag.current.lastY=y;apply();};
   const onU=()=>{drag.current.active=false;};
   const face=(e={})=>({position:"absolute",top:0,left:0,right:0,bottom:0,borderRadius:"50%",WebkitBackfaceVisibility:"hidden",backfaceVisibility:"hidden",...e});
-
   return (
-    <div style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:16 }}>
-      <div style={{ width:280,height:280,perspective:"900px",cursor:"grab",userSelect:"none",position:"relative" }}
+    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:16 }}>
+      <div style={{ width:260, height:260, perspective:"900px", cursor:"grab", userSelect:"none", position:"relative" }}
         onMouseDown={e=>{e.preventDefault();onD(e.clientX,e.clientY);}} onMouseMove={e=>onM(e.clientX,e.clientY)} onMouseUp={onU} onMouseLeave={onU}
         onTouchStart={e=>{e.preventDefault();onD(e.touches[0].clientX,e.touches[0].clientY);}} onTouchMove={e=>{e.preventDefault();onM(e.touches[0].clientX,e.touches[0].clientY);}} onTouchEnd={onU}>
-        <div ref={inner} style={{width:"100%",height:"100%",position:"relative",transformStyle:"preserve-3d"}}>
-          <div style={face({background:"#111",boxShadow:"0 20px 60px rgba(0,0,0,.5)"})}>
-            {event.medalImage && <img src={event.medalImage} alt="medal" draggable={false} style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",pointerEvents:"none"}} />}
-            <div style={{position:"absolute",inset:0,borderRadius:"50%",background:"linear-gradient(135deg,rgba(255,255,255,.18) 0%,transparent 50%)",pointerEvents:"none"}} />
+        <div ref={inner} style={{ width:"100%", height:"100%", position:"relative", transformStyle:"preserve-3d" }}>
+          <div style={face({ boxShadow:"0 24px 60px rgba(0,0,0,.2)" })}>
+            {event.medalImage&&<img src={event.medalImage} alt="medal" draggable={false} style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",pointerEvents:"none"}}/>}
+            <div style={{position:"absolute",inset:0,borderRadius:"50%",background:"linear-gradient(135deg,rgba(255,255,255,.25) 0%,transparent 55%)",pointerEvents:"none"}}/>
           </div>
-          <div style={face({transform:"rotateY(180deg)",background:"#111",boxShadow:"0 20px 60px rgba(0,0,0,.4)"})}>
-            {event.medalImageBack ? <img src={event.medalImageBack} alt="medal back" draggable={false} style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",pointerEvents:"none"}} /> : <div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:36}}>🇮🇳</div>}
-            <div style={{position:"absolute",inset:0,borderRadius:"50%",background:"linear-gradient(135deg,rgba(255,255,255,.12) 0%,transparent 50%)",pointerEvents:"none"}} />
+          <div style={face({ transform:"rotateY(180deg)", background:"#f0f0f0" })}>
+            {event.medalImageBack?<img src={event.medalImageBack} alt="" draggable={false} style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",pointerEvents:"none"}}/>:<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:36}}>🇮🇳</div>}
+            <div style={{position:"absolute",inset:0,borderRadius:"50%",background:"linear-gradient(135deg,rgba(255,255,255,.2) 0%,transparent 55%)",pointerEvents:"none"}}/>
           </div>
-          <div style={{position:"absolute",inset:0,borderRadius:"50%",transform:"translateZ(-5px)",background:"radial-gradient(ellipse,#7a5c0f,#4a3608)",WebkitBackfaceVisibility:"hidden",backfaceVisibility:"hidden"}} />
+          <div style={{position:"absolute",inset:0,borderRadius:"50%",transform:"translateZ(-5px)",background:"radial-gradient(ellipse,#8B6914,#4a3608)",WebkitBackfaceVisibility:"hidden",backfaceVisibility:"hidden"}}/>
         </div>
-        <div style={{position:"absolute",bottom:-8,left:"50%",transform:"translateX(-50%)",width:130,height:10,background:"radial-gradient(ellipse,rgba(0,0,0,.18),transparent)",filter:"blur(4px)",pointerEvents:"none"}} />
+        <div style={{position:"absolute",bottom:-10,left:"50%",transform:"translateX(-50%)",width:130,height:12,background:"radial-gradient(ellipse,rgba(0,0,0,.15),transparent)",filter:"blur(4px)",pointerEvents:"none"}}/>
       </div>
-      <p style={{fontSize:11,color:"#bbb",letterSpacing:1,textTransform:"uppercase"}}>Drag to rotate</p>
-      <div style={{textAlign:"center"}}>
-        <p style={{fontSize:15,fontWeight:700,color:"#1a1a1a"}}>{event.title}</p>
-        <p style={{fontSize:12,color:"#999",marginTop:3}}>Premium Finisher Medal</p>
+      <p style={{ fontSize:11, color:"#bbb", letterSpacing:1.5, textTransform:"uppercase" }}>Drag to rotate</p>
+      <div style={{ textAlign:"center" }}>
+        <p style={{ fontSize:15, fontWeight:700, color:"#111" }}>{event.title}</p>
+        <p style={{ fontSize:12, color:"#bbb", marginTop:3 }}>Premium Finisher Medal</p>
       </div>
     </div>
   );
@@ -1683,22 +1597,22 @@ function Medal3D({ event }) {
 
 function MedalSection({ events }) {
   return (
-    <section style={{ background: "#fff" }}>
-      <div className="container" style={{ textAlign: "center" }}>
-        <span className="vr-tag">Your Reward</span>
-        <h2 className="vr-h2" style={{ marginBottom: 12 }}>What You Earn</h2>
-        <p className="vr-body" style={{ maxWidth: 480, margin: "0 auto 56px" }}>
-          Every finisher earns a real, heavy zinc-alloy medal — not plastic, not paper. Shipped to your door, free.
+    <section style={{ padding:"88px 40px", background:"#fff" }}>
+      <div style={{ maxWidth:1160, margin:"0 auto", textAlign:"center" }}>
+        <span style={{ fontSize:11, fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", color:"#c0392b" }}>Your Reward</span>
+        <h2 className="mob-h2" style={{ fontSize:44, fontWeight:900, letterSpacing:-1.5, margin:"12px 0 14px" }}>What You Earn</h2>
+        <p style={{ fontSize:15, color:"#888", maxWidth:420, margin:"0 auto 56px", lineHeight:1.8 }}>
+          Every finisher earns a real, heavy zinc-alloy medal — not plastic. Shipped to your door, free.
         </p>
-        <div style={{ display: "flex", justifyContent: "center", gap: 72, flexWrap: "wrap" }}>
-          {events.slice(0,2).map(ev => <Medal3D key={ev._id} event={ev} />)}
+        <div style={{ display:"flex", justifyContent:"center", gap:72, flexWrap:"wrap", marginBottom:56 }}>
+          {events.slice(0,2).map(ev=><Medal3D key={ev._id} event={ev}/>)}
         </div>
-        <div className="col-4" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16, marginTop: 56, maxWidth: 680, margin: "56px auto 0" }}>
-          {[["📦","Free Shipping","Pan-India"],["⚡","7–10 Days","Delivery"],["⭐","Zinc Alloy","Premium Metal"],["🔒","Guaranteed","Or full refund"]].map(([e,t,s]) => (
-            <div key={t} style={{ padding: "22px 12px", border: "1px solid #eee", borderRadius: 4 }}>
-              <div style={{ fontSize: 22, marginBottom: 8 }}>{e}</div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a" }}>{t}</div>
-              <div style={{ fontSize: 11, color: "#aaa", marginTop: 3 }}>{s}</div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:14, maxWidth:640, margin:"0 auto" }} className="mob-col2">
+          {[["📦","Free Shipping","Pan-India"],["⚡","7–10 Days","Delivery"],["⭐","Zinc Alloy","Premium"],["🔒","Guaranteed","Or refund"]].map(([e,t,s])=>(
+            <div key={t} style={{ padding:"20px 12px", border:"1px solid #eee", borderRadius:12, textAlign:"center", background:"#fafafa" }}>
+              <div style={{ fontSize:22, marginBottom:8 }}>{e}</div>
+              <div style={{ fontSize:13, fontWeight:700, color:"#111" }}>{t}</div>
+              <div style={{ fontSize:11, color:"#bbb", marginTop:3 }}>{s}</div>
             </div>
           ))}
         </div>
@@ -1707,78 +1621,80 @@ function MedalSection({ events }) {
   );
 }
 
-/* ── REVIEWS ── */
-function ReviewsSection() {
-  const [cur, setCur] = useState(0);
-  const timer = useRef(null);
-  const n = REVIEWS.length;
-  const reset = () => { clearInterval(timer.current); timer.current=setInterval(()=>setCur(p=>(p+1)%n),5500); };
-  useEffect(() => { timer.current=setInterval(()=>setCur(p=>(p+1)%n),5500); return ()=>clearInterval(timer.current); }, [n]);
-  const vis = [0,1,2].map(o=>REVIEWS[(cur+o)%n]);
-
+/* ── WHY ── */
+function WhySection() {
+  const items = [
+    { icon:"⏳", title:"Fixed Deadlines", desc:"Deadlines create discipline. You don't train someday — you train now." },
+    { icon:"🏅", title:"Real Metal Medals", desc:"Heavy zinc-alloy delivered home. Not digital — something you can hold." },
+    { icon:"📍", title:"Run Anywhere", desc:"Road, treadmill, or track. Any city. Any time within the event window." },
+    { icon:"📸", title:"Easy Proof", desc:"Screenshot from any GPS app. Verified in 24 hours. Simple process." },
+    { icon:"📜", title:"Digital Certificate", desc:"Personalized certificate with your name — shareable on Instagram." },
+    { icon:"🏆", title:"Live Leaderboard", desc:"Your timing ranked publicly. Top performers win exclusive gift hampers." },
+  ];
   return (
-    <section style={{ background: "#f7f7f5" }}>
-      <div className="container">
-        <div style={{ textAlign: "center", marginBottom: 52 }}>
-          <span className="vr-tag">Community</span>
-          <h2 className="vr-h2">What Finishers Say</h2>
-          <p className="vr-body" style={{ marginTop: 12 }}>600+ runners completed their challenge. Real people, real medals.</p>
+    <section style={{ padding:"88px 40px", background:"#f7f6f4" }}>
+      <div style={{ maxWidth:1160, margin:"0 auto" }}>
+        <div style={{ textAlign:"center", marginBottom:48 }}>
+          <span style={{ fontSize:11, fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", color:"#c0392b" }}>Why Valley Run</span>
+          <h2 className="mob-h2" style={{ fontSize:44, fontWeight:900, letterSpacing:-1.5, marginTop:12 }}>Built for Finishers.</h2>
         </div>
-
-        <div className="rev-arrows" style={{ position: "relative" }}>
-          <div className="col-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}>
-            {vis.map((r,i) => (
-              <div key={`${r.id}-${i}`} className="hover-lift" style={{ background: "#fff", border: "1px solid #e8e8e4", borderRadius: 4, overflow: "hidden" }}>
-                <div style={{ position: "relative", height: 200, overflow: "hidden" }}>
-                  <img src={r.imageUrl} alt={r.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,.4), transparent)" }} />
-                  <div style={{ position: "absolute", top: 12, left: 12, display: "flex", alignItems: "center", gap: 5, background: "rgba(0,0,0,.55)", padding: "4px 10px", borderRadius: 2 }}>
-                    <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#22c55e", display: "inline-block" }} />
-                    <span style={{ fontSize: 10, fontWeight: 600, color: "#fff", letterSpacing: .5 }}>Verified Runner</span>
-                  </div>
-                </div>
-                <div style={{ padding: "18px 20px 22px" }}>
-                  <div style={{ display: "flex", gap: 2, marginBottom: 10 }}>
-                    {Array(5).fill(0).map((_,i)=><span key={i} style={{color:"#f59e0b",fontSize:13}}>★</span>)}
-                  </div>
-                  <p style={{ fontSize: 13, color: "#555", lineHeight: 1.75, marginBottom: 16, display: "-webkit-box", WebkitLineClamp: 4, WebkitBoxOrient: "vertical", overflow: "hidden", fontStyle: "italic" }}>
-                    "{r.review}"
-                  </p>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a" }}>{r.name}</span>
-                    {r.instaId && (
-                      <a href={`https://instagram.com/${r.instaId}`} target="_blank" rel="noopener noreferrer"
-                        style={{ fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 30, background: "linear-gradient(135deg,#f9a8d4,#fb923c,#a855f7)", color: "#fff", textDecoration: "none" }}>
-                        @{r.instaId}
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* arrows */}
-          {[-1,1].map(dir=>(
-            <button key={dir} onClick={()=>{setCur(p=>(p+dir+n)%n);reset();}}
-              style={{ position:"absolute", [dir===-1?"left":"right"]:-22, top:"45%", transform:"translateY(-50%)", width:42, height:42, borderRadius:"50%", background:"#fff", border:"1px solid #ddd", fontSize:18, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 8px rgba(0,0,0,.08)", color:"#555" }}>
-              {dir===-1?"‹":"›"}
-            </button>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:16 }} className="mob-col">
+          {items.map((it,i)=>(
+            <div key={i} className="card" style={{ padding:"28px 24px" }}
+              onMouseEnter={e=>{e.currentTarget.style.borderColor="#f5c6c6";e.currentTarget.style.background="#fffafa";}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor="#eee";e.currentTarget.style.background="#fff";}}>
+              <div style={{ fontSize:28, marginBottom:14 }}>{it.icon}</div>
+              <div style={{ fontSize:14, fontWeight:700, color:"#111", marginBottom:10 }}>{it.title}</div>
+              <div style={{ fontSize:13, color:"#888", lineHeight:1.7 }}>{it.desc}</div>
+            </div>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
 
-        {/* dots */}
-        <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 28 }}>
-          {REVIEWS.map((_,i) => <button key={i} onClick={()=>{setCur(i);reset();}} style={{ width:i===cur?22:7, height:7, borderRadius:4, border:"none", background:i===cur?"#c0392b":"#ddd", cursor:"pointer", transition:"all .3s" }} />)}
+/* ── REVIEWS infinite scroll ── */
+function ReviewsSection() {
+  return (
+    <section style={{ padding:"88px 0", background:"#fff", overflow:"hidden" }}>
+      <div style={{ maxWidth:1160, margin:"0 auto", padding:"0 40px", textAlign:"center", marginBottom:48 }}>
+        <span style={{ fontSize:11, fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", color:"#c0392b" }}>Community</span>
+        <h2 className="mob-h2" style={{ fontSize:44, fontWeight:900, letterSpacing:-1.5, marginTop:12, marginBottom:8 }}>What Finishers Say</h2>
+        <p style={{ fontSize:15, color:"#aaa" }}>600+ runners. Real people. Real medals.</p>
+      </div>
+
+      <div style={{ overflow:"hidden", maskImage:"linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)", WebkitMaskImage:"linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)" }}>
+        <div style={{ display:"flex", gap:18, width:"max-content", animation:"slideReview 38s linear infinite" }}>
+          {[...REVIEWS,...REVIEWS].map((r,i)=>(
+            <div key={i} style={{ width:320, borderRadius:16, overflow:"hidden", flexShrink:0, border:"1px solid #eee", background:"#fff", boxShadow:"0 4px 20px rgba(0,0,0,.05)" }}>
+              <div style={{ height:180, overflow:"hidden", position:"relative" }}>
+                <img src={r.imageUrl} alt={r.name} style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
+                <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.5),transparent)" }}/>
+                <div style={{ position:"absolute", top:12, left:12, display:"flex", gap:2 }}>
+                  {Array(5).fill(0).map((_,i)=><span key={i} style={{color:"#f59e0b",fontSize:12}}>★</span>)}
+                </div>
+              </div>
+              <div style={{ padding:"18px 20px" }}>
+                <p style={{ fontSize:13, color:"#555", lineHeight:1.75, fontStyle:"italic", marginBottom:14, display:"-webkit-box", WebkitLineClamp:3, WebkitBoxOrient:"vertical", overflow:"hidden" }}>"{r.review}"</p>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                  <span style={{ fontSize:14, fontWeight:700, color:"#111" }}>{r.name}</span>
+                  <span style={{ fontSize:10, fontWeight:700, padding:"3px 10px", borderRadius:20, background:"#fef2f2", color:"#c0392b", border:"1px solid #fca5a5" }}>Verified ✓</span>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
+      </div>
 
-        {/* CTA */}
-        <div style={{ marginTop: 52, background: "#1a1a1a", borderRadius: 4, padding: "40px 44px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 20 }}>
+      {/* CTA bar */}
+      <div style={{ maxWidth:1160, margin:"48px auto 0", padding:"0 40px" }}>
+        <div style={{ background:"#111", borderRadius:16, padding:"36px 44px", display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:20 }} className="mob-row">
           <div>
-            <p style={{ fontSize: 22, fontWeight: 800, color: "#fff", letterSpacing: -.3, marginBottom: 4 }}>Ready to earn your medal?</p>
-            <p style={{ fontSize: 14, color: "rgba(255,255,255,.45)" }}>600+ runners already finished. Your turn.</p>
+            <p style={{ fontSize:20, fontWeight:800, color:"#fff", marginBottom:4 }}>Ready to earn your medal?</p>
+            <p style={{ fontSize:14, color:"rgba(255,255,255,.4)" }}>600+ runners already finished. Your turn.</p>
           </div>
-          <button className="vr-btn vr-btn-red" onClick={() => document.getElementById("challenges")?.scrollIntoView({ behavior: "smooth" })}>
+          <button className="btn-red" onClick={() => document.getElementById("challenges")?.scrollIntoView({ behavior:"smooth" })}>
             Register Now →
           </button>
         </div>
@@ -1787,37 +1703,38 @@ function ReviewsSection() {
   );
 }
 
-/* ── GALLERY MASONRY ── */
+/* ── GALLERY ── */
 function GallerySection({ images }) {
   const [lb, setLb] = useState(null);
-  const shown = images.slice(0, 10);
-  useEffect(() => { const h=e=>{if(e.key==="Escape")setLb(null);}; window.addEventListener("keydown",h); return ()=>window.removeEventListener("keydown",h); }, []);
+  const shown = images.slice(0, 9);
+  useEffect(()=>{const h=e=>{if(e.key==="Escape")setLb(null);};window.addEventListener("keydown",h);return()=>window.removeEventListener("keydown",h);},[]);
 
   return (
-    <section style={{ background: "#fff" }}>
-      <div className="container">
-        <div style={{ textAlign: "center", marginBottom: 52 }}>
-          <span className="vr-tag">Gallery</span>
-          <h2 className="vr-h2">Real Runners. Real Medals.</h2>
-          <p className="vr-body" style={{ marginTop: 10 }}>Submit your proof, get featured here.</p>
+    <section style={{ padding:"88px 40px", background:"#f7f6f4" }}>
+      <div style={{ maxWidth:1160, margin:"0 auto" }}>
+        <div style={{ textAlign:"center", marginBottom:48 }}>
+          <span style={{ fontSize:11, fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", color:"#c0392b" }}>Gallery</span>
+          <h2 className="mob-h2" style={{ fontSize:44, fontWeight:900, letterSpacing:-1.5, marginTop:12 }}>Moments of Glory</h2>
         </div>
-        <div className="gallery-cols" style={{ columns: "3 260px", gap: 14 }}>
-          {shown.map((img,i) => (
-            <div key={i} onClick={()=>setLb(i)} style={{ breakInside:"avoid", marginBottom:14, borderRadius:4, overflow:"hidden", cursor:"zoom-in", position:"relative" }}>
-              <img src={img} alt="" style={{ width:"100%", display:"block", transition:"transform .4s ease" }}
-                onMouseEnter={e=>e.target.style.transform="scale(1.03)"}
-                onMouseLeave={e=>e.target.style.transform="scale(1)"} />
+        <div className="gallery-cols" style={{ columns:"3 240px", gap:14 }}>
+          {shown.map((img,i)=>(
+            <div key={i} onClick={()=>setLb(i)}
+              style={{ breakInside:"avoid", marginBottom:14, borderRadius:12, overflow:"hidden", cursor:"zoom-in", position:"relative" }}
+              onMouseEnter={e=>{e.currentTarget.querySelector("img").style.transform="scale(1.05)";}}
+              onMouseLeave={e=>{e.currentTarget.querySelector("img").style.transform="scale(1)";}}>
+              <img src={img} alt="" style={{ width:"100%", display:"block", transition:"transform .4s ease", borderRadius:12 }}/>
             </div>
           ))}
         </div>
       </div>
-      {lb!==null && (
-        <div onClick={()=>setLb(null)} style={{ position:"fixed",inset:0,background:"rgba(0,0,0,.92)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:20 }}>
-          <button onClick={()=>setLb(null)} style={{ position:"absolute",top:20,right:20,background:"rgba(255,255,255,.12)",border:"none",color:"#fff",width:40,height:40,borderRadius:"50%",fontSize:20,cursor:"pointer" }}>×</button>
-          <button onClick={e=>{e.stopPropagation();setLb(p=>(p-1+shown.length)%shown.length);}} style={{ position:"absolute",left:20,background:"rgba(255,255,255,.12)",border:"none",color:"#fff",width:48,height:48,borderRadius:"50%",fontSize:24,cursor:"pointer" }}>‹</button>
-          <img src={shown[lb]} alt="" onClick={e=>e.stopPropagation()} style={{ maxHeight:"88vh",maxWidth:"88vw",objectFit:"contain",borderRadius:4 }} />
-          <button onClick={e=>{e.stopPropagation();setLb(p=>(p+1)%shown.length);}} style={{ position:"absolute",right:20,background:"rgba(255,255,255,.12)",border:"none",color:"#fff",width:48,height:48,borderRadius:"50%",fontSize:24,cursor:"pointer" }}>›</button>
-          <div style={{ position:"absolute",bottom:16,color:"rgba(255,255,255,.4)",fontSize:13 }}>{lb+1} / {shown.length}</div>
+
+      {lb!==null&&(
+        <div onClick={()=>setLb(null)} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.92)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:20, backdropFilter:"blur(8px)" }}>
+          <button onClick={()=>setLb(null)} style={{ position:"absolute", top:20, right:20, background:"rgba(255,255,255,.1)", border:"1px solid rgba(255,255,255,.15)", color:"#fff", width:44, height:44, borderRadius:"50%", fontSize:20, cursor:"pointer" }}>×</button>
+          <button onClick={e=>{e.stopPropagation();setLb(p=>(p-1+shown.length)%shown.length);}} style={{ position:"absolute", left:20, background:"rgba(255,255,255,.1)", border:"1px solid rgba(255,255,255,.15)", color:"#fff", width:50, height:50, borderRadius:"50%", fontSize:26, cursor:"pointer" }}>‹</button>
+          <img src={shown[lb]} alt="" onClick={e=>e.stopPropagation()} style={{ maxHeight:"88vh", maxWidth:"88vw", objectFit:"contain", borderRadius:12 }}/>
+          <button onClick={e=>{e.stopPropagation();setLb(p=>(p+1)%shown.length);}} style={{ position:"absolute", right:20, background:"rgba(255,255,255,.1)", border:"1px solid rgba(255,255,255,.15)", color:"#fff", width:50, height:50, borderRadius:"50%", fontSize:26, cursor:"pointer" }}>›</button>
+          <div style={{ position:"absolute", bottom:16, color:"rgba(255,255,255,.3)", fontSize:13 }}>{lb+1}/{shown.length}</div>
         </div>
       )}
     </section>
@@ -1827,31 +1744,29 @@ function GallerySection({ images }) {
 /* ── PAST EVENTS ── */
 function PastSection({ events, router }) {
   return (
-    <section style={{ background: "#f7f7f5" }}>
-      <div className="container">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 40, flexWrap: "wrap", gap: 12 }}>
-          <div>
-            <span className="vr-tag" style={{ color: "#999" }}>Past Events</span>
-            <h2 className="vr-h2" style={{ color: "#666" }}>Previous Challenges</h2>
-          </div>
+    <section style={{ padding:"72px 40px", background:"#fff" }}>
+      <div style={{ maxWidth:1160, margin:"0 auto" }}>
+        <div style={{ marginBottom:36 }}>
+          <span style={{ fontSize:11, fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", color:"#ccc" }}>Past Events</span>
+          <h2 style={{ fontSize:32, fontWeight:900, color:"#ccc", letterSpacing:-1, marginTop:10 }}>Previous Challenges</h2>
         </div>
-        <div className="col-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
-          {events.map(ev => (
-            <div key={ev._id} style={{ background: "#fff", border: "1px solid #e8e8e4", borderRadius: 4, overflow: "hidden", opacity: .8 }}>
-              <div style={{ position: "relative", height: 160, overflow: "hidden", background: "#eee" }}>
-                {(ev.coverImage||ev.image) && <img src={ev.coverImage||ev.image} alt={ev.title} style={{ width:"100%",height:"100%",objectFit:"cover",filter:"grayscale(70%)" }} />}
-                <div style={{ position:"absolute",inset:0,background:"rgba(0,0,0,.35)" }} />
-                <div style={{ position:"absolute",top:12,left:12,background:"rgba(0,0,0,.6)",padding:"4px 10px",borderRadius:2 }}>
-                  <span style={{ fontSize:10,fontWeight:700,letterSpacing:1.5,textTransform:"uppercase",color:"#ccc" }}>Completed</span>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))", gap:14 }} className="mob-col">
+          {events.map(ev=>(
+            <div key={ev._id} style={{ borderRadius:14, overflow:"hidden", border:"1px solid #eee", background:"#fafafa" }}>
+              <div style={{ position:"relative", height:140, overflow:"hidden" }}>
+                {(ev.coverImage||ev.image)&&<img src={ev.coverImage||ev.image} alt="" style={{width:"100%",height:"100%",objectFit:"cover",filter:"grayscale(70%) brightness(.85)"}}/>}
+                <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.25)"}}/>
+                <div style={{position:"absolute",top:10,left:10,background:"rgba(0,0,0,.6)",padding:"3px 10px",borderRadius:4}}>
+                  <span style={{fontSize:9,fontWeight:700,letterSpacing:1.5,color:"rgba(255,255,255,.5)",textTransform:"uppercase"}}>Completed</span>
                 </div>
               </div>
-              <div style={{ padding: "16px 18px 18px" }}>
-                <div style={{ fontSize:11,color:"#bbb",fontWeight:600,letterSpacing:1,textTransform:"uppercase",marginBottom:6 }}>{ev.dates}</div>
-                <h3 style={{ fontSize:14,fontWeight:700,color:"#666",marginBottom:14,lineHeight:1.35 }}>{ev.title}</h3>
+              <div style={{padding:"14px 16px 16px"}}>
+                <div style={{fontSize:10,color:"#ccc",fontWeight:600,letterSpacing:1,textTransform:"uppercase",marginBottom:4}}>{ev.dates}</div>
+                <h3 style={{fontSize:13,fontWeight:700,color:"#888",marginBottom:12,lineHeight:1.4}}>{ev.title}</h3>
                 <button onClick={()=>router.push(`/leaderboard/${ev.slug}`)}
-                  style={{ width:"100%",padding:"9px 0",border:"1px solid #ddd",borderRadius:2,background:"transparent",color:"#888",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",transition:"all .2s" }}
+                  style={{width:"100%",padding:"8px 0",border:"1px solid #eee",borderRadius:8,background:"transparent",color:"#bbb",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",transition:"all .2s"}}
                   onMouseEnter={e=>{e.target.style.borderColor="#c0392b";e.target.style.color="#c0392b";}}
-                  onMouseLeave={e=>{e.target.style.borderColor="#ddd";e.target.style.color="#888";}}>
+                  onMouseLeave={e=>{e.target.style.borderColor="#eee";e.target.style.color="#bbb";}}>
                   View Results →
                 </button>
               </div>
@@ -1863,93 +1778,25 @@ function PastSection({ events, router }) {
   );
 }
 
-/* ── WHATSAPP ── */
-function WhatsAppSection() {
-  return (
-    <section style={{ background: "#fff", padding: "72px 0" }}>
-      <div className="container">
-        <div style={{ background: "linear-gradient(120deg,#075E54,#128C7E)", borderRadius: 4, padding: "44px 48px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
-          <div>
-            <h3 style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 8 }}>Stay Updated 📣</h3>
-            <p style={{ fontSize: 14, color: "rgba(255,255,255,.65)", maxWidth: 380, lineHeight: 1.7 }}>
-              Get live event updates, result announcements, and medal dispatch alerts on WhatsApp.
-            </p>
-          </div>
-          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
-            style={{ background: "#25D366", color: "#fff", padding: "14px 28px", borderRadius: 4, fontWeight: 700, fontSize: 14, textDecoration: "none", letterSpacing: .3 }}>
-            Join WhatsApp Channel →
-          </a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ── FAQ ── */
-function FAQSection() {
-  const [open, setOpen] = useState(null);
-  const faqs = [
-    { q: "What apps can I use to track my run?", a: "Any GPS app works — Strava, Nike Run Club, Google Fit, Garmin, Samsung Health, Apple Fitness, or a treadmill screenshot. It should clearly show date, distance, and your profile." },
-    { q: "Can I run on a treadmill?", a: "Absolutely! Valley Run is fully virtual — treadmill, road, track, park. All count. What matters is the distance and your discipline." },
-    { q: "When will I receive my medal?", a: "Medals dispatch in batches after the event window closes. Delivery is 7–10 working days. You'll get a tracking number via WhatsApp or email once shipped." },
-    { q: "Is shipping really free?", a: "100% free, pan-India. Tier 1, 2, and 3 cities all included — no hidden charges whatsoever." },
-    { q: "Do I need to complete the distance in one go?", a: "Yes — one continuous activity on your tracking app. Split or combined activities won't be accepted as valid proof." },
-    { q: "Can I register for multiple distances?", a: "Yes! Each registration is separate and comes with its own medal and certificate. Many runners do both 5km and 10km." },
-  ];
-
-  return (
-    <section style={{ background: "#f7f7f5" }}>
-      <div className="container">
-        <div style={{ maxWidth: 680 }}>
-          <span className="vr-tag">FAQ</span>
-          <h2 className="vr-h2" style={{ marginBottom: 40 }}>Common Questions</h2>
-          {faqs.map((f,i) => (
-            <div key={i} style={{ borderBottom: "1px solid #e8e8e4" }}>
-              <button onClick={()=>setOpen(open===i?null:i)}
-                style={{ width:"100%",display:"flex",justifyContent:"space-between",alignItems:"center",padding:"20px 0",background:"none",border:"none",cursor:"pointer",textAlign:"left",gap:16 }}>
-                <span style={{ fontSize: 15, fontWeight: 600, color: "#1a1a1a" }}>{f.q}</span>
-                <span style={{ fontSize: 20, color: open===i?"#c0392b":"#ccc", transform: open===i?"rotate(45deg)":"none", transition:"transform .3s,color .2s", flexShrink:0 }}>+</span>
-              </button>
-              {open===i && <div style={{ paddingBottom: 20 }}><p style={{ fontSize:14,color:"#666",lineHeight:1.8 }}>{f.a}</p></div>}
-            </div>
-          ))}
-
-          <div style={{ marginTop: 44, padding: "28px 32px", border: "1px solid #e8e8e4", background: "#fff", borderRadius: 4, display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <div style={{ flex: 1, minWidth: 200 }}>
-              <p style={{ fontSize: 15, fontWeight: 700, color: "#1a1a1a", marginBottom: 4 }}>Still have questions?</p>
-              <p style={{ fontSize: 13, color: "#aaa" }}>We reply within a few hours.</p>
-            </div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <a href="https://whatsapp.com/channel/0029VbCM5KOBVJl3FdMMHI3M" target="_blank" rel="noopener noreferrer"
-                style={{ background:"#25D366",color:"#fff",padding:"11px 22px",borderRadius:4,fontWeight:600,fontSize:13,textDecoration:"none" }}>💬 WhatsApp</a>
-              <a href="mailto:valleyrun.official@gmail.com"
-                style={{ border:"1.5px solid #ddd",color:"#555",padding:"11px 22px",borderRadius:4,fontWeight:600,fontSize:13,textDecoration:"none" }}>✉️ Email</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* ── FINAL CTA ── */
 function FinalCTA({ router }) {
   return (
-    <section style={{ background: "#0d0d0d", padding: "100px 0", textAlign: "center", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 500, height: 250, background: "radial-gradient(ellipse, rgba(192,57,43,.12), transparent)", pointerEvents: "none" }} />
-      <div className="container" style={{ position: "relative", zIndex: 10 }}>
-        <span style={{ display: "inline-block", fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: "#c0392b", marginBottom: 20 }}>Valley Run</span>
-        <h2 style={{ fontSize: "clamp(36px,6vw,64px)", fontWeight: 800, color: "#fff", lineHeight: 1.08, letterSpacing: -1.5, marginBottom: 20 }}>
+    <section style={{ padding:"100px 40px", background:"#0d0d0d", textAlign:"center", position:"relative", overflow:"hidden" }}>
+      <div style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", width:600, height:280, background:"radial-gradient(ellipse,rgba(192,57,43,.1),transparent)", pointerEvents:"none" }} />
+      <div style={{ position:"absolute", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px)", backgroundSize:"50px 50px", pointerEvents:"none" }} />
+      <div style={{ position:"relative", zIndex:10, maxWidth:600, margin:"0 auto" }}>
+        <span style={{ fontSize:11, fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", color:"#c0392b" }}>Valley Run</span>
+        <h2 className="mob-h2" style={{ fontSize:"clamp(38px,6vw,64px)", fontWeight:900, color:"#fff", lineHeight:1.05, letterSpacing:"-2px", margin:"18px 0 18px" }}>
           Your Discipline<br />Has a Deadline.
         </h2>
-        <p style={{ fontSize: 16, color: "rgba(255,255,255,.45)", lineHeight: 1.8, maxWidth: 420, margin: "0 auto 40px" }}>
+        <p style={{ fontSize:16, color:"rgba(255,255,255,.4)", lineHeight:1.8, maxWidth:400, margin:"0 auto 44px" }}>
           Join now. Finish strong. Earn something that reminds you who you are.
         </p>
-        <button className="vr-btn vr-btn-red" style={{ fontSize: 15, padding: "16px 40px" }} onClick={() => document.getElementById("challenges")?.scrollIntoView({ behavior: "smooth" })}>
+        <button className="btn-red" style={{ fontSize:15, padding:"16px 44px" }} onClick={() => document.getElementById("challenges")?.scrollIntoView({ behavior:"smooth" })}>
           Start Your Challenge →
         </button>
-        <p style={{ fontSize: 12, color: "rgba(255,255,255,.2)", marginTop: 24, letterSpacing: 1.5, textTransform: "uppercase" }}>
-          Free shipping · Real medal · Pan-India delivery
+        <p style={{ fontSize:11, color:"rgba(255,255,255,.2)", marginTop:20, letterSpacing:2, textTransform:"uppercase" }}>
+          Free shipping · Real medal · Pan-India
         </p>
       </div>
     </section>
