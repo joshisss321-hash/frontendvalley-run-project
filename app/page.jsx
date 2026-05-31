@@ -1672,6 +1672,40 @@ function Events({ events, router }) {
 }
 
 /* ─── PORTRAIT CARD — same style as ChallengeCard ─── */
+function MiniCountdown({ deadline }) {
+  const calc = () => {
+    if (!deadline) return null;
+    const diff = new Date(deadline).getTime() - Date.now();
+    if (diff <= 0) return null;
+    return {
+      d: Math.floor(diff / 86400000),
+      h: Math.floor((diff / 3600000) % 24),
+      m: Math.floor((diff / 60000) % 60),
+      s: Math.floor((diff / 1000) % 60),
+    };
+  };
+  const [t, setT] = useState(null);
+  useEffect(() => {
+    setT(calc());
+    const i = setInterval(() => setT(calc()), 1000);
+    return () => clearInterval(i);
+  }, [deadline]);
+  if (!t) return null;
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:14, flexWrap:"wrap" }}>
+      <span style={{ fontSize:11, color:"#aaa", fontWeight:500 }}>Closes in:</span>
+      {[[t.d,"d"],[t.h,"h"],[t.m,"m"],[t.s,"s"]].map(([v,l]) => (
+        <span key={l} style={{
+          background:"#fef2f2", color:"#c0392b", fontSize:11, fontWeight:800,
+          padding:"3px 8px", borderRadius:6, border:"1px solid #fca5a5",
+          fontVariantNumeric:"tabular-nums", letterSpacing:.3
+        }}>
+          {String(v).padStart(2,"0")}{l}
+        </span>
+      ))}
+    </div>
+  );
+}
 function HomeEventCard({ event, router }) {
   const [hover, setHover] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -1772,6 +1806,11 @@ function HomeEventCard({ event, router }) {
         )}
 
         {/* Feature icons */}
+        {/* Countdown */}
+{!regClosed && event.registrationDeadline && (
+  <MiniCountdown deadline={event.registrationDeadline} />
+)}
+
         <div style={{ display: "flex", gap: 20, marginBottom: 18 }}>
           {[
             { icon: "🏃", label: "Run / Walk / Ride" },
