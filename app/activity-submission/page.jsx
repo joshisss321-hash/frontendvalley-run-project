@@ -339,7 +339,7 @@ export default function ActivitySubmission() {
               <label className="block text-sm font-bold text-gray-700 mb-2">
                 Completion Time{" "}
                 <span className="text-gray-400 font-normal text-xs">
-                  (optional — for leaderboard ranking)
+                  (for leaderboard ranking)
                 </span>
               </label>
               <input
@@ -424,7 +424,7 @@ export default function ActivitySubmission() {
             <div className="bg-gray-50 rounded-2xl p-5 text-left space-y-3 mb-6 mt-4">
               {[
                 { icon: "⏳", text: "Activity verification within 24 hours" },
-                { icon: "📜", text: "E-certificate sent after verification" },
+                { icon: "📜", text: "E-certificate sent after verification in mail" },
                 { icon: "🏅", text: "Medal dispatch process begins" },
                 { icon: "📦", text: "Medal delivered to your address" },
               ].map((s, i) => (
@@ -435,12 +435,6 @@ export default function ActivitySubmission() {
               ))}
             </div>
 
-            <button
-              onClick={reset}
-              className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-3 rounded-full transition-all"
-            >
-              Submit Another
-            </button>
           </div>
         )}
       </div>
