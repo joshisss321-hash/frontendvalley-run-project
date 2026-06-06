@@ -1956,8 +1956,12 @@ function Medal3D({ event }) {
             {event.medalImage&&<img src={event.medalImage} alt="medal" draggable={false} style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",pointerEvents:"none"}}/>}
             <div style={{position:"absolute",inset:0,borderRadius:"50%",background:"linear-gradient(135deg,rgba(255,255,255,.3) 0%,transparent 50%)",pointerEvents:"none"}}/>
           </div>
-          <div style={face({ transform:"rotateY(180deg)", background:"#f0ece6" })}>
-            <div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:52,borderRadius:"50%"}}>🇮🇳</div>
+          <div style={face({ transform:"rotateY(180deg)", background: event.medalImageBack ? "#111" : "#f0ece6" })}>
+  {event.medalImageBack
+    ? <img src={event.medalImageBack} alt="back" draggable={false}
+        style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",pointerEvents:"none"}}/>
+    : <div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:52,borderRadius:"50%"}}>🇮🇳</div>
+  }
             <div style={{position:"absolute",inset:0,borderRadius:"50%",background:"linear-gradient(135deg,rgba(255,255,255,.2) 0%,transparent 55%)",pointerEvents:"none"}}/>
           </div>
           <div style={{position:"absolute",inset:0,borderRadius:"50%",transform:"translateZ(-8px)",background:"radial-gradient(ellipse,#9a7320,#5a4010)",WebkitBackfaceVisibility:"hidden",backfaceVisibility:"hidden"}}/>
