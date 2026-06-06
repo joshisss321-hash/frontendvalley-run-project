@@ -53,8 +53,10 @@ const now2 = new Date();
 const regPassed = selectedEvent?.registrationDeadline 
   ? new Date(selectedEvent.registrationDeadline) < now2 
   : false;
-const isEventOpen = selectedEvent?.isRegistrationOpen && !regPassed;
-const submissionClosed = isSubmissionClosed(selectedEvent) || selectedEvent?.isPrevious || !isEventOpen;
+// const isEventOpen = selectedEvent?.isRegistrationOpen && !regPassed;
+// const submissionClosed = isSubmissionClosed(selectedEvent) || selectedEvent?.isPrevious || !isEventOpen;
+const submissionOpen2 = !selectedEvent?.isRegistrationOpen || regPassed;
+const submissionClosed = isSubmissionClosed(selectedEvent) || selectedEvent?.isPrevious || !submissionOpen2;
   const handleFile = (e) => {
     const f = e.target.files[0];
     if (!f) return;
@@ -147,8 +149,10 @@ const submissionClosed = isSubmissionClosed(selectedEvent) || selectedEvent?.isP
 const regDeadlinePassed = ev.registrationDeadline 
   ? new Date(ev.registrationDeadline) < now 
   : false;
-const isOpen = ev.isRegistrationOpen && !regDeadlinePassed;
-const closed = isPast || isSubmissionClosed(ev) || !isOpen;
+// const isOpen = ev.isRegistrationOpen && !regDeadlinePassed;
+// const closed = isPast || isSubmissionClosed(ev) || !isOpen;
+const submissionOpen = !ev.isRegistrationOpen || regDeadlinePassed;
+const closed = isPast || isSubmissionClosed(ev) || !submissionOpen;
     const isSelected = eventSlug === ev.slug;
     return (
       <button
