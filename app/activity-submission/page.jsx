@@ -48,8 +48,13 @@ export default function ActivitySubmission() {
   };
 
   const selectedEvent    = [...events, ...pastEvents].find(e => e.slug === eventSlug);
-  const submissionClosed = isSubmissionClosed(selectedEvent) || selectedEvent?.isPrevious;
-
+  // const submissionClosed = isSubmissionClosed(selectedEvent) || selectedEvent?.isPrevious;
+const now2 = new Date();
+const regPassed = selectedEvent?.registrationDeadline 
+  ? new Date(selectedEvent.registrationDeadline) < now2 
+  : false;
+const isEventOpen = selectedEvent?.isRegistrationOpen && !regPassed;
+const submissionClosed = isSubmissionClosed(selectedEvent) || selectedEvent?.isPrevious || !isEventOpen;
   const handleFile = (e) => {
     const f = e.target.files[0];
     if (!f) return;
@@ -137,7 +142,13 @@ export default function ActivitySubmission() {
   };
 
   const EventCard = ({ ev, isPast = false }) => {
-    const closed     = isPast || isSubmissionClosed(ev);
+    // const closed     = isPast || isSubmissionClosed(ev);
+    const now = new Date();
+const regDeadlinePassed = ev.registrationDeadline 
+  ? new Date(ev.registrationDeadline) < now 
+  : false;
+const isOpen = ev.isRegistrationOpen && !regDeadlinePassed;
+const closed = isPast || isSubmissionClosed(ev) || !isOpen;
     const isSelected = eventSlug === ev.slug;
     return (
       <button
