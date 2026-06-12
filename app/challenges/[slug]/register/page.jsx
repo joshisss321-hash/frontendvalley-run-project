@@ -434,6 +434,14 @@ export default function RegisterPage() {
                   <option>Running 10Km</option>
                   <option>Running 21Km</option>
                 </optgroup>
+
+
+                <optgroup label="Walking">
+  <option>Walking 2Km</option>
+  <option>Walking 5Km</option>
+  <option>Walking 10Km</option>
+  <option>Walking 21Km</option>
+</optgroup>
                 <optgroup label="Cycling">
                   <option>Cycling 10Km</option>
                   <option>Cycling 25Km</option>
