@@ -349,7 +349,7 @@ export default function SuccessClient() {
           <ul className="space-y-4 text-gray-700">
             <li>✔ Complete your selected distance before deadline.</li>
             <li>✔ Take a screenshot from your fitness app.</li>
-            <li>✔ Submit your screenshot on our WhatsApp channel.</li>
+            <li>✔ 📩 Once you complete your distance, go back to the event page where you registered.After registration closes, a "Submit Activity" button will appear there.Click it, enter your registered mobile number to find your registration, and submit your activity screenshot..</li>
             <li>✔ Join our WhatsApp channel to stay updated.</li>
 
             {/* Dynamic Deadline */}
@@ -385,7 +385,7 @@ export default function SuccessClient() {
               rel="noopener noreferrer"
               className="inline-block bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg transition hover:scale-105"
             >
-              Join WhatsApp Channel & Submit Screenshot
+              Join WhatsApp Channel to stay updated.
             </a>
           </div>
         </div>

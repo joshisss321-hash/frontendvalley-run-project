@@ -1815,7 +1815,7 @@ function HomeEventCard({ event, router }) {
           {[
             { icon: "🏃", label: "Run / Walk / Ride" },
             { icon: "🏅", label: "Medal" },
-            { icon: "🚚", label: "Free ship" },
+            { icon: "🚚", label: "Free ship" },   
           ].map((f) => (
             <div key={f.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
               <span style={{ fontSize: 20 }}>{f.icon}</span>
