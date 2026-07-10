@@ -1383,7 +1383,7 @@ function Hero({ router }) {
     let c = 1;
     const t = setInterval(() => {
       c += 28;
-      if (c >= 2000) { setCount(2000); setDone(true); clearInterval(t); }
+      if (c >= 4000) { setCount(2000); setDone(true); clearInterval(t); }
       else setCount(c);
     }, 16);
     return () => clearInterval(t);
@@ -1402,7 +1402,7 @@ function Hero({ router }) {
         {/* ✅ Badge with countdown */}
         <div style={{ display:"inline-flex", alignItems:"center", gap:10, marginBottom:32, padding:"8px 20px 8px 10px", borderRadius:100, border:"1px solid rgba(255,255,255,.12)", background:"rgba(255,255,255,.05)" }}>
           <span style={{ background:"#c0392b", color:"#fff", fontSize:10, fontWeight:800, padding:"4px 12px", borderRadius:100, letterSpacing:1.5, textTransform:"uppercase", minWidth:40, textAlign:"center" }}>
-            {done ? "2000+" : count}
+            {done ? "4000+" : count}
           </span>
           <span style={{ fontSize:13, color:"rgba(255,255,255,.6)", fontWeight:500 }}>
             Runners completed across India
