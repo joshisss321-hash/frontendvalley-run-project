@@ -1433,8 +1433,8 @@ function Hero({ router }) {
         {/* Floating stats */}
         <div style={{ display:"flex", gap:12, flexWrap:"wrap" }} className="mob-center">
           {[
-            { n:"2000+", l:"Runners", e:"🏃" },
-            { n:"4", l:"Events Done", e:"🏆" },
+            { n:"4000+", l:"Runners", e:"🏃" },
+            { n:"6", l:"Events Done", e:"🏆" },
             { n:"Free", l:"Delivery", e:"📦" },
             { n:"24hr", l:"Verify", e:"⚡" },
           ].map((s,i) => (
