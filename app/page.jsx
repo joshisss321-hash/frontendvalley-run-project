@@ -1459,7 +1459,7 @@ function Hero({ router }) {
 
 /* ─── MARQUEE ─── */
 function Marquee() {
-  const items = ["Real Zinc Alloy Medals","Free Pan-India Shipping","GPS App Proof Accepted","Verified in 24 Hours","2000+ Happy Runners","Razorpay Secured","Digital Certificate","Leaderboard Rankings","Run Anywhere in India"];
+  const items = ["Real Zinc Alloy Medals","Free Pan-India Shipping","GPS App Proof Accepted","Verified in 24 Hours","4000+ Happy Runners","Razorpay Secured","Digital Certificate","Leaderboard Rankings","Run Anywhere in India"];
   return (
     <div style={{ background:"#fff", borderTop:"1px solid #f0f0f0", borderBottom:"1px solid #f0f0f0", padding:"14px 0", overflow:"hidden" }}>
       <div style={{ display:"flex", gap:64, width:"max-content", animation:"marquee 30s linear infinite" }}>
@@ -1480,10 +1480,10 @@ function Stats() {
       <div style={{ maxWidth:1200, margin:"0 auto" }}>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", border:"1px solid #f0f0f0", borderRadius:20 }} className="mob-grid2">
           {[
-            { n:"2000+", l:"Finishers", d:"Runners who completed & earned" },
-            { n:"4", l:"Events Hosted", d:"Pan-India virtual challenges" },
+            { n:"4000+", l:"Finishers", d:"Runners who completed & earned" },
+            { n:"6", l:"Events Hosted", d:"Pan-India virtual challenges" },
             { n:"24hr", l:"Avg Verify", d:"Fastest proof verification" },
-            { n:"4.9★", l:"Avg Rating", d:"From 2000+ verified finishers" },
+            { n:"4.9★", l:"Avg Rating", d:"From 4000+ verified finishers" },
           ].map((s,i) => (
             <div key={i} style={{ padding:"40px 32px", borderRight:i<3?"1px solid #f0f0f0":"none", position:"relative" }}>
               {i===0 && <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:"#c0392b", borderRadius:"20px 0 0 0" }} />}
