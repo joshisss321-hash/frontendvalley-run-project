@@ -1383,7 +1383,7 @@ function Hero({ router }) {
     let c = 1;
     const t = setInterval(() => {
       c += 28;
-      if (c >= 4000) { setCount(2000); setDone(true); clearInterval(t); }
+      if (c >= 4000) { setCount(4000); setDone(true); clearInterval(t); }
       else setCount(c);
     }, 16);
     return () => clearInterval(t);
