@@ -47,9 +47,9 @@ export default function LoginPage() {
     if (res.success) {
       setStep("otp");
       setCooldown(60);
-      setInfo(`OTP ${email} pe bhej diya. Inbox (aur spam) check kijiye.`);
+      setInfo(`Code sent to ${email}. Check your inbox (and spam folder).`);
     } else {
-      setError(res.message || "OTP bhejne mein dikkat aayi");
+      setError(res.message || "Could not send the code. Please try again.");
       if (res.retryAfter) setCooldown(res.retryAfter);
     }
   };
@@ -67,7 +67,7 @@ export default function LoginPage() {
       setUserSession(res.token, res.user);
       router.replace("/profile");
     } else {
-      setError(res.message || "OTP verify nahi hua");
+      setError(res.message || "Could not verify that code");
       setCode("");
     }
   };
@@ -82,7 +82,7 @@ export default function LoginPage() {
               My Profile
             </h1>
             <p className="text-gray-600 text-sm">
-              Apni registrations, medals aur stats dekhne ke liye login kijiye
+              Sign in to see your registrations, medals and stats
             </p>
           </div>
 
@@ -101,11 +101,11 @@ export default function LoginPage() {
                     autoFocus
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="aapka@email.com"
+                    placeholder="you@example.com"
                     className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
                   <p className="text-xs text-gray-500 mt-2">
-                    Wahi email jo aapne event registration ke waqt di thi
+                    Use the same email you registered with
                   </p>
                 </div>
 
@@ -121,16 +121,16 @@ export default function LoginPage() {
                   className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition"
                 >
                   {loading
-                    ? "Bhej rahe hain..."
+                    ? "Sending..."
                     : cooldown > 0
-                      ? `${cooldown}s baad try karein`
-                      : "Send OTP →"}
+                      ? `Try again in ${cooldown}s`
+                      : "Send Code →"}
                 </button>
 
                 <p className="text-center text-sm text-gray-500">
-                  Abhi tak register nahi kiya?{" "}
+                  Not registered yet?{" "}
                   <Link href="/challenges" className="text-red-600 font-semibold hover:underline">
-                    Event dekhiye
+                    Browse events
                   </Link>
                 </p>
               </form>
@@ -141,7 +141,7 @@ export default function LoginPage() {
               <form onSubmit={verifyOtp} className="space-y-5">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    6-digit OTP
+                    6-digit code
                   </label>
                   <input
                     ref={otpRef}
@@ -173,7 +173,7 @@ export default function LoginPage() {
                   disabled={loading || code.length !== 6}
                   className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition"
                 >
-                  {loading ? "Check kar rahe hain..." : "Login →"}
+                  {loading ? "Verifying..." : "Sign in →"}
                 </button>
 
                 <div className="flex items-center justify-between text-sm">
@@ -182,7 +182,7 @@ export default function LoginPage() {
                     onClick={() => { setStep("email"); setCode(""); setError(""); }}
                     className="text-gray-500 hover:text-gray-800"
                   >
-                    ← Email badlein
+                    ← Change email
                   </button>
 
                   <button
@@ -191,7 +191,7 @@ export default function LoginPage() {
                     disabled={cooldown > 0 || loading}
                     className="text-red-600 font-semibold disabled:text-gray-400"
                   >
-                    {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend OTP"}
+                    {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
                   </button>
                 </div>
               </form>
@@ -199,7 +199,7 @@ export default function LoginPage() {
           </div>
 
           <p className="text-center text-xs text-gray-400 mt-6">
-            Koi password nahi — har baar email pe ek naya code aayega
+            No password needed — we email you a fresh code each time
           </p>
         </div>
       </section>

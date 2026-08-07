@@ -86,7 +86,7 @@ export default function AdminSubmissions() {
   const exportExcel = async () => {
     try {
       const res = await adminAPI.exportSubmissions({ eventSlug, status, distance, search });
-      if (!res.rows?.length) { alert("Is filter mein koi submission nahi"); return; }
+      if (!res.rows?.length) { alert("No submissions match this filter"); return; }
 
       const XLSX = await import("xlsx");
       const headers = ["Sr","Name","Email","Phone","Event","Distance","Timing","Status","Admin Note","Date","Proof Image"];
@@ -189,7 +189,7 @@ export default function AdminSubmissions() {
           <div className="text-center py-16 text-gray-400">Loading...</div>
         ) : subs.length === 0 ? (
           <div className="text-center py-16 text-gray-400">
-            No submissions found — try "All Distances" ya "All" tab
+            No submissions found — try the "All Distances" or "All" tab
           </div>
         ) : (
           <div className="overflow-x-auto">

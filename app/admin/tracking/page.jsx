@@ -70,7 +70,7 @@ export default function AdminTrackingPage() {
       const rows = XLSX.utils.sheet_to_json(ws, { defval: "" });
 
       if (!rows.length) {
-        setError("Sheet khaali hai ya padhi nahi ja saki");
+        setError("The sheet is empty or could not be read");
         return;
       }
 
@@ -83,7 +83,7 @@ export default function AdminTrackingPage() {
         courier:    guessColumn(hdrs, "courier"),
       });
     } catch (err) {
-      setError("File padhne mein dikkat: " + err.message);
+      setError("Could not read the file: " + err.message);
     }
   };
 
@@ -104,7 +104,7 @@ export default function AdminTrackingPage() {
     try {
       const res = await trackingAPI.preview(eventSlug, buildRows());
       if (res.success) setPreview(res);
-      else setError(res.message || "Preview fail ho gaya");
+      else setError(res.message || "Preview failed");
     } catch (err) {
       setError("Preview fail: " + err.message);
     }
@@ -119,9 +119,9 @@ export default function AdminTrackingPage() {
       : preview.summary.matched - preview.summary.overwrites;
 
     if (!confirm(
-      `${willUpdate} registrations ko "dispatched" mark kiya jayega` +
-      (notify ? ` aur ${willUpdate} emails bheje jayenge.` : ".") +
-      "\n\nAage badhein?"
+      `${willUpdate} registrations will be marked as "dispatched"` +
+      (notify ? ` and ${willUpdate} emails will be sent.` : ".") +
+      "\n\nContinue?"
     )) return;
 
     setBusy(true); setError("");
@@ -129,7 +129,7 @@ export default function AdminTrackingPage() {
     try {
       const res = await trackingAPI.commit(eventSlug, buildRows(), { notify, overwrite });
       if (res.success) { setResult(res); setPreview(null); }
-      else setError(res.message || "Update fail ho gaya");
+      else setError(res.message || "Update failed");
     } catch (err) {
       setError("Update fail: " + err.message);
     }
@@ -151,8 +151,8 @@ export default function AdminTrackingPage() {
           <div>
             <h1 className="text-2xl font-black text-gray-800">📦 Medal Tracking Upload</h1>
             <p className="text-gray-500 text-sm mt-1">
-              Courier ki sheet upload kijiye — phone se match hoga, tracking ID
-              seedhe user ki profile mein chali jayegi
+              Upload the courier sheet — rows are matched by phone, and each tracking ID
+              goes straight to the runner&apos;s profile
             </p>
           </div>
           <button
@@ -172,7 +172,7 @@ export default function AdminTrackingPage() {
         {/* ── SUCCESS ── */}
         {result && (
           <div className="bg-white rounded-2xl border border-green-200 p-6 mb-4">
-            <h2 className="text-lg font-bold text-green-700 mb-3">✅ Ho gaya!</h2>
+            <h2 className="text-lg font-bold text-green-700 mb-3">✅ Done</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
               {[
                 { label: "Updated",  value: result.updated,      cls: "text-green-600" },
@@ -190,7 +190,7 @@ export default function AdminTrackingPage() {
               onClick={reset}
               className="bg-gray-900 text-white text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-gray-800"
             >
-              Nayi sheet upload karein
+              Upload another sheet
             </button>
           </div>
         )}
@@ -200,7 +200,7 @@ export default function AdminTrackingPage() {
             {/* ── STEP 1: EVENT ── */}
             <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-4">
               <h2 className="font-bold text-gray-800 mb-3">
-                <span className="text-red-600">1.</span> Event chuniye
+                <span className="text-red-600">1.</span> Choose the event
               </h2>
               <select
                 value={eventSlug}
@@ -217,10 +217,10 @@ export default function AdminTrackingPage() {
             {/* ── STEP 2: FILE ── */}
             <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-4">
               <h2 className="font-bold text-gray-800 mb-1">
-                <span className="text-red-600">2.</span> Sheet upload kijiye
+                <span className="text-red-600">2.</span> Upload the sheet
               </h2>
               <p className="text-xs text-gray-500 mb-4">
-                .xlsx, .xls ya .csv — phone aur tracking ID columns zaroori hain
+                .xlsx, .xls or .csv — phone and tracking ID columns are required
               </p>
 
               <label className="block border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-red-400 hover:bg-red-50/30 transition">
@@ -232,10 +232,10 @@ export default function AdminTrackingPage() {
                 />
                 <p className="text-3xl mb-2">📄</p>
                 <p className="font-semibold text-gray-700">
-                  {fileName || "Click karke file chuniye"}
+                  {fileName || "Click to choose a file"}
                 </p>
                 {rawRows.length > 0 && (
-                  <p className="text-xs text-gray-500 mt-1">{rawRows.length} rows mili</p>
+                  <p className="text-xs text-gray-500 mt-1">{rawRows.length} rows found</p>
                 )}
               </label>
             </div>
@@ -244,10 +244,10 @@ export default function AdminTrackingPage() {
             {headers.length > 0 && (
               <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-4">
                 <h2 className="font-bold text-gray-800 mb-1">
-                  <span className="text-red-600">3.</span> Columns match kijiye
+                  <span className="text-red-600">3.</span> Match the columns
                 </h2>
                 <p className="text-xs text-gray-500 mb-4">
-                  Auto-detect ho gaya hai — galat ho to badal lijiye
+                  Auto-detected — change any that look wrong
                 </p>
 
                 <div className="grid sm:grid-cols-3 gap-4">
@@ -283,7 +283,7 @@ export default function AdminTrackingPage() {
                 {map.phone && map.trackingId && (
                   <div className="mt-5 bg-gray-50 rounded-xl p-4">
                     <p className="text-[11px] uppercase tracking-wide text-gray-500 font-semibold mb-2">
-                      Pehli 3 rows
+                      First 3 rows
                     </p>
                     <div className="overflow-x-auto">
                       <table className="text-xs w-full">
@@ -313,7 +313,7 @@ export default function AdminTrackingPage() {
                   disabled={!canPreview || busy}
                   className="mt-5 bg-gray-900 disabled:bg-gray-300 text-white text-sm font-bold px-6 py-3 rounded-xl hover:bg-gray-800 transition"
                 >
-                  {busy ? "Check kar rahe hain..." : "Preview matches →"}
+                  {busy ? "Checking..." : "Preview matches →"}
                 </button>
               </div>
             )}
@@ -322,7 +322,7 @@ export default function AdminTrackingPage() {
             {preview && (
               <div className="bg-white rounded-2xl border-2 border-gray-900 p-6 mb-4">
                 <h2 className="font-bold text-gray-800 mb-4">
-                  <span className="text-red-600">4.</span> Confirm kijiye — {preview.event}
+                  <span className="text-red-600">4.</span> Confirm — {preview.event}
                 </h2>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
@@ -341,8 +341,8 @@ export default function AdminTrackingPage() {
 
                 {preview.summary.unknownCourier > 0 && (
                   <p className="text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-4 py-3 mb-4">
-                    ⚠️ {preview.summary.unknownCourier} rows ka courier pehchana nahi gaya — tracking ID
-                    save hogi par "Track" button ka link nahi banega.
+                    ⚠️ {preview.summary.unknownCourier} rows have an unrecognised courier — the tracking ID
+                    will still be saved, but the &quot;Track&quot; button will have no link.
                     Supported: {preview.supportedCouriers.join(", ")}
                   </p>
                 )}
@@ -351,7 +351,7 @@ export default function AdminTrackingPage() {
                 {preview.notFound.length > 0 && (
                   <details className="mb-4">
                     <summary className="cursor-pointer text-sm font-semibold text-amber-700 mb-2">
-                      {preview.notFound.length} rows match nahi hui — dekhein
+                      {preview.notFound.length} rows did not match — view
                     </summary>
                     <div className="bg-amber-50 rounded-xl p-4 max-h-52 overflow-y-auto mt-2">
                       {preview.notFound.map((r) => (
@@ -367,7 +367,7 @@ export default function AdminTrackingPage() {
                 {preview.invalid.length > 0 && (
                   <details className="mb-4">
                     <summary className="cursor-pointer text-sm font-semibold text-red-700 mb-2">
-                      {preview.invalid.length} rows invalid — dekhein
+                      {preview.invalid.length} rows invalid — view
                     </summary>
                     <div className="bg-red-50 rounded-xl p-4 max-h-52 overflow-y-auto mt-2">
                       {preview.invalid.map((r) => (
@@ -383,7 +383,7 @@ export default function AdminTrackingPage() {
                 {preview.matched.length > 0 && (
                   <details className="mb-5" open>
                     <summary className="cursor-pointer text-sm font-semibold text-green-700 mb-2">
-                      {preview.matched.length} matched — dekhein
+                      {preview.matched.length} matched — view
                     </summary>
                     <div className="overflow-x-auto max-h-72 overflow-y-auto mt-2 border border-gray-100 rounded-xl">
                       <table className="w-full text-xs">
@@ -405,7 +405,7 @@ export default function AdminTrackingPage() {
                               <td className="p-2 text-gray-600">
                                 {m.courier || "—"}
                                 {!m.courierKnown && m.courier && (
-                                  <span className="text-amber-600" title="Link nahi banega"> ⚠</span>
+                                  <span className="text-amber-600" title="No tracking link for this courier"> ⚠</span>
                                 )}
                               </td>
                               <td className="p-2">
@@ -432,7 +432,7 @@ export default function AdminTrackingPage() {
                       onChange={(e) => setNotify(e.target.checked)}
                       className="w-4 h-4 accent-red-600"
                     />
-                    Har user ko dispatch email bhejein
+                    Send a dispatch email to each runner
                   </label>
 
                   <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
@@ -442,9 +442,9 @@ export default function AdminTrackingPage() {
                       onChange={(e) => setOverwrite(e.target.checked)}
                       className="w-4 h-4 accent-red-600"
                     />
-                    Purani tracking ID bhi replace karein
+                    Replace existing tracking IDs too
                     <span className="text-xs text-gray-400">
-                      ({preview.summary.overwrites} rows par asar)
+                      (affects {preview.summary.overwrites} rows)
                     </span>
                   </label>
                 </div>
@@ -455,7 +455,7 @@ export default function AdminTrackingPage() {
                     disabled={busy || preview.summary.matched === 0}
                     className="bg-green-600 disabled:bg-gray-300 text-white text-sm font-bold px-6 py-3 rounded-xl hover:bg-green-700 transition"
                   >
-                    {busy ? "Apply ho raha hai..." : "✓ Confirm & Apply"}
+                    {busy ? "Applying..." : "✓ Confirm & Apply"}
                   </button>
 
                   <button

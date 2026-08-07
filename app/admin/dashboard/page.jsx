@@ -106,7 +106,7 @@ export default function Dashboard() {
           status:    subStatus,
           search:    subSearch,
         });
-        if (!res.rows?.length) { alert('Is filter mein koi submission nahi'); return; }
+        if (!res.rows?.length) { alert('No submissions match this filter'); return; }
 
         const headers = ['Sr','Name','Email','Phone','Distance','Timing','Status','Admin Note','Date','Proof Image'];
         const data = res.rows.map(r => [
@@ -153,7 +153,7 @@ export default function Dashboard() {
         <div style={{ display:'flex', gap:8, alignItems:'center' }}>
           {view === 'detail' && (
             <button onClick={exportExcel}
-              title={activeTab === 'submissions' ? 'Submissions Excel download' : 'Registrations Excel download'}
+              title={activeTab === 'submissions' ? 'Download submissions as Excel' : 'Download registrations as Excel'}
               style={{ background:'rgba(255,255,255,0.2)', border:'none', borderRadius:8, padding:'6px 12px', color:'white', fontWeight:600, fontSize:12, cursor:'pointer' }}>
               ⬇ {activeTab === 'submissions' ? 'Subs' : 'Regs'} Excel
             </button>

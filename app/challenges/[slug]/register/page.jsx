@@ -345,7 +345,7 @@ export default function RegisterPage() {
       setOrder(null); // purana order ab galat amount ka hai
     } else {
       setApplied(null);
-      setCouponError(res.message || "Ye code valid nahi hai");
+      setCouponError(res.message || "This code is not valid");
     }
 
     setCouponBusy(false);
@@ -574,7 +574,7 @@ export default function RegisterPage() {
                   )}
                   {!couponError && (
                     <p className="text-gray-400 text-xs mt-2">
-                      Kisi dost ka referral code hai? Yahan lagayiye
+                      Got a friend&apos;s referral code? Apply it here
                     </p>
                   )}
                 </>

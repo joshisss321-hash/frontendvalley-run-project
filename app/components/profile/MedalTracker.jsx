@@ -128,7 +128,7 @@ export default function MedalTracker({ medal, compact = false }) {
 
       {medal.status === "pending" && (
         <p className="text-xs text-gray-500 bg-amber-50 border border-amber-100 rounded-lg px-4 py-3 mt-2">
-          Activity verify hone ke baad medal dispatch hota hai. Tracking ID yahin dikh jayegi.
+          Your medal ships once your activity is verified. The tracking ID will appear here.
         </p>
       )}
     </div>

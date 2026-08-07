@@ -55,7 +55,7 @@ export default function ProfilePage() {
       }
 
       if (res.success) setData(res);
-      else setError(res.message || "Profile load nahi ho payi");
+      else setError(res.message || "Could not load your profile");
 
       setLoading(false);
     })();
@@ -80,7 +80,7 @@ export default function ProfilePage() {
         <div className="flex-1 flex items-center justify-center py-24">
           <div className="text-center">
             <div className="w-10 h-10 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-gray-500">Aapki profile load ho rahi hai...</p>
+            <p className="text-gray-500">Loading your profile...</p>
           </div>
         </div>
       </main>
@@ -92,12 +92,12 @@ export default function ProfilePage() {
       <main className="bg-gray-50 min-h-screen flex flex-col">
         <div className="flex-1 flex items-center justify-center px-6 py-24">
           <div className="text-center max-w-sm">
-            <p className="text-red-600 font-semibold mb-4">{error || "Kuch gadbad ho gayi"}</p>
+            <p className="text-red-600 font-semibold mb-4">{error || "Something went wrong"}</p>
             <button
               onClick={() => window.location.reload()}
               className="bg-red-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-red-700 transition"
             >
-              Dobara try karein
+              Try again
             </button>
           </div>
         </div>
@@ -123,7 +123,7 @@ export default function ProfilePage() {
         <div className="bg-gradient-to-br from-red-600 to-red-800 rounded-3xl p-6 sm:p-8 text-white mb-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0">
-              <p className="text-white/70 text-sm">Namaste 👋</p>
+              <p className="text-white/70 text-sm">Welcome back 👋</p>
               <h1 className="text-2xl sm:text-3xl font-extrabold truncate">{user.name}</h1>
               <p className="text-white/70 text-sm mt-1 truncate">{user.email}</p>
               <p className="text-white/60 text-xs mt-2">
@@ -191,19 +191,19 @@ export default function ProfilePage() {
                 sub={`${stats.completedEvents} of ${stats.totalEvents} events`}
                 accent="text-green-600"
               />
-              <StatCard label="Total Time" value={stats.totalTimeLabel} sub="Saare approved runs" />
+              <StatCard label="Total Time" value={stats.totalTimeLabel} sub="Across all approved runs" />
               <StatCard
                 label="Pending Review"
                 value={stats.pendingReviews}
-                sub={stats.pendingReviews ? "Verify hona baaki" : "Sab clear"}
+                sub={stats.pendingReviews ? "Awaiting verification" : "All clear"}
                 accent={stats.pendingReviews ? "text-amber-600" : "text-gray-900"}
               />
               <StatCard
                 label="Referrals"
                 value={referral.count}
-                sub={referral.toNextReward
-                  ? `${referral.toNextReward} aur = ${referral.rewardPercent}% off`
-                  : "Reward ready!"}
+                sub={referral.currentPercent
+                  ? `Your coupon: ${referral.currentPercent}% off`
+                  : `${referral.perReferralPercent}% off on your first referral`}
                 accent="text-red-600"
               />
             </div>
@@ -215,7 +215,7 @@ export default function ProfilePage() {
                   : "bg-amber-50 border-amber-200"
               }`}>
                 <p className="font-bold text-gray-900 mb-1">
-                  {stats.improvement.improved ? "📈 Aap tez ho rahe hain!" : "📉 Thoda dheeme rahe"}
+                  {stats.improvement.improved ? "📈 You are getting faster!" : "📉 A little slower this time"}
                 </p>
                 <p className="text-sm text-gray-700">
                   {stats.improvement.from.paceLabel} → {stats.improvement.to.paceLabel}
@@ -226,12 +226,12 @@ export default function ProfilePage() {
 
             {events.length === 0 && (
               <div className="bg-white rounded-2xl border border-gray-200 p-10 text-center">
-                <p className="text-gray-500 mb-4">Abhi tak koi event join nahi kiya.</p>
+                <p className="text-gray-500 mb-4">You have not joined any events yet.</p>
                 <Link
                   href="/challenges"
                   className="inline-block bg-red-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-red-700 transition"
                 >
-                  Events dekhiye →
+                  Browse events →
                 </Link>
               </div>
             )}
@@ -242,7 +242,7 @@ export default function ProfilePage() {
         {tab === "events" && (
           <div className="space-y-4">
             {events.length === 0 && (
-              <p className="text-gray-500 text-center py-10">Koi registration nahi mili.</p>
+              <p className="text-gray-500 text-center py-10">No registrations found.</p>
             )}
 
             {events.map((ev) => (
@@ -276,7 +276,7 @@ export default function ProfilePage() {
                         </p>
                       </>
                     ) : (
-                      <p className="text-sm text-gray-400">Submit nahi kiya</p>
+                      <p className="text-sm text-gray-400">Not submitted</p>
                     )}
                   </div>
 
@@ -290,7 +290,7 @@ export default function ProfilePage() {
                         </p>
                       </>
                     ) : (
-                      <p className="text-sm text-gray-400">Approve hone par</p>
+                      <p className="text-sm text-gray-400">After approval</p>
                     )}
                   </div>
 
@@ -315,7 +315,7 @@ export default function ProfilePage() {
         {tab === "medals" && (
           <div className="grid md:grid-cols-2 gap-5">
             {events.length === 0 && (
-              <p className="text-gray-500 col-span-full text-center py-10">Koi medal nahi.</p>
+              <p className="text-gray-500 col-span-full text-center py-10">No medals yet.</p>
             )}
 
             {events.map((ev) => (
@@ -367,7 +367,7 @@ export default function ProfilePage() {
               <h3 className="font-bold text-gray-900 mb-4">🏆 Personal Bests</h3>
               {stats.personalBests.length === 0 ? (
                 <p className="text-sm text-gray-400">
-                  Timing ke saath activity submit kijiye — yahan PB dikhne lagenge.
+                  Submit an activity with a timing and your personal bests will show up here.
                 </p>
               ) : (
                 <div className="space-y-2">
@@ -392,11 +392,11 @@ export default function ProfilePage() {
               <div className="bg-white rounded-2xl border-2 border-red-200 p-6">
                 <h3 className="font-bold text-gray-900 mb-1">🎯 Next Target</h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Apne best se 3% tez — realistic agla goal
+                  3% faster than your best — a realistic next goal
                 </p>
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
-                    <p className="text-[11px] uppercase text-gray-500 font-semibold">Abhi</p>
+                    <p className="text-[11px] uppercase text-gray-500 font-semibold">Current</p>
                     <p className="text-lg font-bold text-gray-900">{stats.nextTarget.currentTiming}</p>
                     <p className="text-xs text-gray-500">{stats.nextTarget.currentPace}</p>
                   </div>
@@ -408,8 +408,8 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <p className="text-center text-sm text-gray-600 mt-4">
-                  {stats.nextTarget.distance} mein sirf{" "}
-                  <strong>{stats.nextTarget.secondsToSave} second</strong> bachane hain
+                  Just <strong>{stats.nextTarget.secondsToSave} seconds</strong> to shave off
+                  your {stats.nextTarget.distance}
                 </p>
               </div>
             )}
@@ -450,16 +450,16 @@ export default function ProfilePage() {
           <div className="space-y-6">
 
             <div className="bg-gradient-to-br from-red-600 to-red-800 rounded-2xl p-6 sm:p-8 text-white">
-              <h3 className="text-xl font-extrabold mb-2">Refer karo, discount pao 🎁</h3>
+              <h3 className="text-xl font-extrabold mb-2">Refer friends, grow your discount 🎁</h3>
               <p className="text-white/80 text-sm mb-6">
-                Aapke code se koi register kare to <strong>use {referral.welcomePercent}% off</strong> milta hai.
-                Har <strong>{referral.perReward} successful referrals</strong> par aapko{" "}
-                <strong>{referral.rewardPercent}% off ka coupon</strong> milta hai.
+                When someone registers with your code they get <strong>{referral.welcomePercent}% off</strong> —
+                and your own discount grows by <strong>{referral.perReferralPercent}%</strong>, all the way up
+                to <strong>{referral.maxPercent}%</strong>.
               </p>
 
               <div className="bg-white/15 backdrop-blur rounded-xl p-4 mb-4">
                 <p className="text-[11px] uppercase tracking-wide text-white/60 font-semibold mb-1">
-                  Aapka referral code
+                  Your referral code
                 </p>
                 <p className="text-2xl font-extrabold font-mono tracking-wider">{referral.code}</p>
               </div>
@@ -474,49 +474,64 @@ export default function ProfilePage() {
 
                 <a
                   href={`https://wa.me/?text=${encodeURIComponent(
-                    `Main Valley Run pe daudta hoon 🏃 Tum bhi join karo — mere code ${referral.code} se ${referral.welcomePercent}% off milega: ${referral.link}`
+                    `I run with Valley Run 🏃 Join me — use my code ${referral.code} for ${referral.welcomePercent}% off: ${referral.link}`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-green-500 text-white font-bold px-5 py-3 rounded-xl hover:bg-green-600 transition text-sm"
                 >
-                  WhatsApp par share
+                  Share on WhatsApp
                 </a>
               </div>
             </div>
 
             {/* Progress */}
             <div className="bg-white rounded-2xl border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="font-bold text-gray-900">Progress</h4>
+              <div className="flex items-center justify-between mb-1">
+                <h4 className="font-bold text-gray-900">Your current discount</h4>
                 <span className="text-sm text-gray-500">
                   {referral.count} referral{referral.count === 1 ? "" : "s"}
                 </span>
               </div>
 
+              <p className="text-4xl font-extrabold text-red-600 mb-4">
+                {referral.currentPercent}% off
+              </p>
+
               <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-2">
                 <div
                   className="h-full bg-red-600 rounded-full transition-all"
                   style={{
-                    width: `${((referral.count % referral.perReward) / referral.perReward) * 100}%`,
+                    width: `${Math.min(
+                      (referral.currentPercent / referral.maxPercent) * 100,
+                      100
+                    )}%`,
                   }}
                 />
               </div>
 
+              <div className="flex justify-between text-xs text-gray-400 mb-3">
+                <span>0%</span>
+                <span>{referral.maxPercent}% (max)</span>
+              </div>
+
               <p className="text-sm text-gray-600">
-                {referral.toNextReward > 0
-                  ? `${referral.toNextReward} aur referral = ${referral.rewardPercent}% discount coupon 🎉`
-                  : `Aapka ${referral.rewardPercent}% coupon ready hai!`}
+                {referral.atMax
+                  ? `You have reached the maximum ${referral.maxPercent}% — time to use it!`
+                  : referral.currentPercent > 0
+                    ? `One more referral takes you to ${referral.nextPercent}% off. Hold on to your coupon and let it grow.`
+                    : `Your first referral unlocks a ${referral.perReferralPercent}% coupon.`}
               </p>
             </div>
 
             {/* Coupons */}
             <div className="bg-white rounded-2xl border border-gray-200 p-6">
-              <h4 className="font-bold text-gray-900 mb-4">🎟️ Aapke Coupons</h4>
+              <h4 className="font-bold text-gray-900 mb-4">🎟️ Your Coupons</h4>
 
               {referral.coupons.length === 0 ? (
                 <p className="text-sm text-gray-400">
-                  Abhi koi coupon nahi. {referral.perReward} logon ko refer kijiye!
+                  No coupons yet. Just one person joining with your code unlocks a{" "}
+                  {referral.perReferralPercent}% coupon.
                 </p>
               ) : (
                 <div className="space-y-3">
