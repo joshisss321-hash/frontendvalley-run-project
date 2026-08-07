@@ -42,7 +42,7 @@ export default function AdminTrackingPage() {
   const [result, setResult]       = useState(null);
   const [error, setError]         = useState("");
 
-  const [notify, setNotify]       = useState(true);
+  const [notify, setNotify]       = useState(false);   // emails jaan-boojh kar bhejni hain, default nahi
   const [overwrite, setOverwrite] = useState(false);
 
   /* ── Auth + events ── */
@@ -119,8 +119,10 @@ export default function AdminTrackingPage() {
       : preview.summary.matched - preview.summary.overwrites;
 
     if (!confirm(
-      `${willUpdate} registrations will be marked as "dispatched"` +
-      (notify ? ` and ${willUpdate} emails will be sent.` : ".") +
+      `${willUpdate} registrations will be marked as "dispatched".\n\n` +
+      (notify
+        ? `📧 ${willUpdate} emails WILL be sent to runners.`
+        : `🔕 NO emails will be sent — runners see the tracking ID in their profile.`) +
       "\n\nContinue?"
     )) return;
 
@@ -425,6 +427,32 @@ export default function AdminTrackingPage() {
 
                 {/* Options */}
                 <div className="space-y-2 mb-5">
+                  {/* Email ka faisla — kabhi shak na rahe ki kya hoga */}
+                  <div
+                    className={`rounded-xl px-4 py-3 mb-3 text-sm border ${
+                      notify
+                        ? "bg-amber-50 border-amber-300 text-amber-900"
+                        : "bg-gray-50 border-gray-200 text-gray-600"
+                    }`}
+                  >
+                    {notify ? (
+                      <>
+                        📧 <strong>
+                          {overwrite
+                            ? preview.summary.matched
+                            : preview.summary.matched - preview.summary.overwrites} emails
+                        </strong>{" "}
+                        bhejji jayengi. Agar in logon ko pehle hi bata chuke hain,
+                        to neeche wala tick hata dijiye.
+                      </>
+                    ) : (
+                      <>
+                        🔕 <strong>Koi email nahi jayegi.</strong> Tracking ID save hogi
+                        aur runners ko unki profile mein turant dikh jayegi.
+                      </>
+                    )}
+                  </div>
+
                   <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
                     <input
                       type="checkbox"
@@ -433,6 +461,7 @@ export default function AdminTrackingPage() {
                       className="w-4 h-4 accent-red-600"
                     />
                     Send a dispatch email to each runner
+                    <span className="text-xs text-gray-400">(off by default)</span>
                   </label>
 
                   <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
