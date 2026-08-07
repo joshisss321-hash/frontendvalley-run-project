@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import MedalTracker from "../components/profile/MedalTracker";
+import SubmitActivity from "../components/profile/SubmitActivity";
 import { userAPI, clearUserSession, isLoggedIn } from "../../lib/userApi";
 
 /* ═══════════════ Small building blocks ═══════════════ */
@@ -39,27 +40,60 @@ export default function ProfilePage() {
   const [error,   setError]   = useState("");
   const [tab,     setTab]     = useState("overview");
   const [copied,  setCopied]  = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastSync,   setLastSync]   = useState(null);
+
+  /** Profile dobara load — spinner ke bina, taaki screen na jhatke */
+  const reload = useCallback(async ({ silent = false } = {}) => {
+    if (!silent) setRefreshing(true);
+
+    const res = await userAPI.getProfile();
+
+    if (res.status === 401) {
+      router.replace("/login");
+      return;
+    }
+
+    if (res.success) {
+      setData(res);
+      setError("");
+      setLastSync(new Date());
+    } else if (!silent) {
+      setError(res.message || "Could not load your profile");
+    }
+
+    setRefreshing(false);
+    setLoading(false);
+  }, [router]);
 
   useEffect(() => {
     if (!isLoggedIn()) {
       router.replace("/login");
       return;
     }
+    reload({ silent: true });
+  }, [router, reload]);
 
-    (async () => {
-      const res = await userAPI.getProfile();
+  /* ── Live tracking ──
+     Medal Tracking tab khula ho to har 60 second mein chupchap
+     refresh — admin tracking upload karte hi status apne aap badal
+     jaata hai, page reload nahi karna padta.
+     Tab background mein chala jaye to polling ruk jaati hai. */
+  useEffect(() => {
+    if (tab !== "medals") return;
 
-      if (res.status === 401) {
-        router.replace("/login");
-        return;
-      }
+    const tick = () => {
+      if (document.visibilityState === "visible") reload({ silent: true });
+    };
 
-      if (res.success) setData(res);
-      else setError(res.message || "Could not load your profile");
+    const id = setInterval(tick, 60000);
+    document.addEventListener("visibilitychange", tick);
 
-      setLoading(false);
-    })();
-  }, [router]);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", tick);
+    };
+  }, [tab, reload]);
 
   const logout = () => {
     clearUserSession();
@@ -275,8 +309,12 @@ export default function ProfilePage() {
                           {ev.submission.distance} · {ev.submission.timing || "no timing"}
                         </p>
                       </>
+                    ) : ev.submission_window?.open ? (
+                      <p className="text-sm font-semibold text-red-600">Ready to submit ↓</p>
                     ) : (
-                      <p className="text-sm text-gray-400">Not submitted</p>
+                      <p className="text-sm text-gray-400">
+                        {ev.submission_window?.reason || "Not submitted"}
+                      </p>
                     )}
                   </div>
 
@@ -305,6 +343,13 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
+                {/* Submit activity — sirf jab window khula ho aur submit na kiya ho */}
+                {ev.canSubmit && (
+                  <div className="mb-4">
+                    <SubmitActivity event={ev} onDone={() => reload({ silent: true })} />
+                  </div>
+                )}
+
                 <MedalTracker medal={ev.medal} compact />
               </div>
             ))}
@@ -313,7 +358,32 @@ export default function ProfilePage() {
 
         {/* ═══════════ MEDAL TRACKING ═══════════ */}
         {tab === "medals" && (
-          <div className="grid md:grid-cols-2 gap-5">
+          <>
+            {/* Live status bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 bg-white rounded-2xl border border-gray-200 px-5 py-3 mb-5">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
+                </span>
+                <span className="text-sm font-semibold text-gray-700">Live</span>
+                <span className="text-xs text-gray-400">
+                  {lastSync
+                    ? `updated ${lastSync.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}`
+                    : "checking..."}
+                </span>
+              </div>
+
+              <button
+                onClick={() => reload()}
+                disabled={refreshing}
+                className="text-xs font-bold px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 transition"
+              >
+                {refreshing ? "Refreshing..." : "↻ Refresh now"}
+              </button>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-5">
             {events.length === 0 && (
               <p className="text-gray-500 col-span-full text-center py-10">No medals yet.</p>
             )}
@@ -340,7 +410,8 @@ export default function ProfilePage() {
                 <MedalTracker medal={ev.medal} compact />
               </div>
             ))}
-          </div>
+            </div>
+          </>
         )}
 
         {/* ═══════════ STATS & COACH ═══════════ */}
