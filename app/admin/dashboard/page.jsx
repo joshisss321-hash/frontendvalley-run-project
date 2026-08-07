@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [subs, setSubs]                   = useState([]);
   const [subsLoading, setSubsLoading]     = useState(false);
   const [subStatus, setSubStatus]         = useState('pending');
+  const [subSearch, setSubSearch]         = useState('');
   const [subCounts, setSubCounts]         = useState({ pending:0, approved:0, rejected:0 });
   const [imageModal, setImageModal]       = useState(null);
   const [view, setView]                   = useState('events');
@@ -51,6 +52,8 @@ export default function Dashboard() {
     setSelectedEvent(ev);
     setActiveTab('registrations');
     setRegSearch('');
+    setSubSearch('');
+    setSubStatus('pending');
     setRegs([]);
     setSubs([]);
     loadRegs(ev, '');
@@ -66,11 +69,12 @@ export default function Dashboard() {
     setRegsLoading(false);
   };
 
-  const loadSubs = async (ev, status) => {
+  const loadSubs = async (ev, status, search = '') => {
     setSubsLoading(true);
     try {
       const params = { eventSlug: ev.slug };
       if (status) params.status = status;
+      if (search) params.search = search;
       const res = await adminAPI.getSubmissions(params);
       setSubs(res.submissions || []);
       setSubCounts(res.counts || { pending:0, approved:0, rejected:0 });
@@ -81,18 +85,43 @@ export default function Dashboard() {
   const switchTab = (tab) => {
     setActiveTab(tab);
     if (tab === 'registrations') loadRegs(selectedEvent, regSearch);
-    if (tab === 'submissions')   { setSubStatus('pending'); loadSubs(selectedEvent, 'pending'); }
+    if (tab === 'submissions')   { setSubStatus('pending'); loadSubs(selectedEvent, 'pending', subSearch); }
   };
 
-  const approve = async (id) => { await adminAPI.approveSubmission(id); loadSubs(selectedEvent, subStatus); };
-  const reject  = async (id) => { await adminAPI.rejectSubmission(id);  loadSubs(selectedEvent, subStatus); };
+  const approve = async (id) => { await adminAPI.approveSubmission(id); loadSubs(selectedEvent, subStatus, subSearch); };
+  const reject  = async (id) => { await adminAPI.rejectSubmission(id);  loadSubs(selectedEvent, subStatus, subSearch); };
 
+  /* Ek hi Excel button — jo tab khula hai uska data export karta hai.
+     Dono cases mein data server se aata hai, screen par dikhi rows se
+     nahi — isliye 100 se zyada records bhi poore aate hain. */
   const exportExcel = async () => {
     if (!selectedEvent) return;
+
     try {
+      const XLSX = await import('xlsx');
+
+      if (activeTab === 'submissions') {
+        const res = await adminAPI.exportSubmissions({
+          eventSlug: selectedEvent.slug,
+          status:    subStatus,
+          search:    subSearch,
+        });
+        if (!res.rows?.length) { alert('Is filter mein koi submission nahi'); return; }
+
+        const headers = ['Sr','Name','Email','Phone','Distance','Timing','Status','Admin Note','Date','Proof Image'];
+        const data = res.rows.map(r => [
+          r.sr, r.name, r.email, r.phone, r.distance,
+          r.timing, r.status, r.adminNote, r.date, r.imageUrl,
+        ]);
+        const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Submissions');
+        XLSX.writeFile(wb, `${selectedEvent.title}_submissions_${subStatus || 'all'}.xlsx`);
+        return;
+      }
+
       const res = await adminAPI.exportRegistrations(selectedEvent.slug);
       if (!res.rows?.length) { alert('No data'); return; }
-      const XLSX = await import('xlsx');
       const headers = ['Sr','Name','Email','Phone','Category','Address1','Address2','Landmark','City','State','Pincode','Amount','PaymentID','Medal Status','Date'];
       const data = res.rows.map(r => [r.sr,r.name,r.email,r.phone,r.category,r.address1,r.address2,r.landmark,r.city,r.state,r.pincode,r.amount,r.paymentId,r.medalStatus,r.date]);
       const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
@@ -124,8 +153,9 @@ export default function Dashboard() {
         <div style={{ display:'flex', gap:8, alignItems:'center' }}>
           {view === 'detail' && (
             <button onClick={exportExcel}
+              title={activeTab === 'submissions' ? 'Submissions Excel download' : 'Registrations Excel download'}
               style={{ background:'rgba(255,255,255,0.2)', border:'none', borderRadius:8, padding:'6px 12px', color:'white', fontWeight:600, fontSize:12, cursor:'pointer' }}>
-              ⬇ Excel
+              ⬇ {activeTab === 'submissions' ? 'Subs' : 'Regs'} Excel
             </button>
           )}
           <button onClick={()=>{localStorage.removeItem('adminToken');router.push('/admin/login');}}
@@ -301,6 +331,11 @@ export default function Dashboard() {
           {/* SUBMISSIONS TAB */}
           {activeTab === 'submissions' && (
             <div>
+              <input value={subSearch}
+                onChange={e=>{setSubSearch(e.target.value);loadSubs(selectedEvent,subStatus,e.target.value);}}
+                placeholder="🔍 Search name, phone, email..."
+                style={{ width:'100%', border:'1.5px solid #e5e7eb', borderRadius:12, padding:'12px 14px', fontSize:14, outline:'none', marginBottom:12, boxSizing:'border-box', background:'white' }}/>
+
               <div style={{ display:'flex', gap:6, marginBottom:14, flexWrap:'wrap' }}>
                 {[
                   { v:'pending',  l:`⏳ Pending (${subCounts.pending})` },
@@ -308,7 +343,7 @@ export default function Dashboard() {
                   { v:'rejected', l:`❌ Rejected (${subCounts.rejected})` },
                   { v:'',         l:'All' },
                 ].map(t => (
-                  <button key={t.v} onClick={()=>{setSubStatus(t.v);loadSubs(selectedEvent,t.v);}}
+                  <button key={t.v} onClick={()=>{setSubStatus(t.v);loadSubs(selectedEvent,t.v,subSearch);}}
                     style={{ padding:'8px 14px', borderRadius:20, border:'none', fontWeight:600, fontSize:12, cursor:'pointer',
                       background:subStatus===t.v?'#dc2626':'white',
                       color:subStatus===t.v?'white':'#374151',
@@ -414,6 +449,7 @@ export default function Dashboard() {
           { label:'New Event', icon:'➕', action:()=>router.push('/admin/events/create'), active:false },
           { label:'All Subs', icon:'📸', action:()=>router.push('/admin/submissions'), active:false },
           { label:'Edit Events', icon:'✏️', action:()=>router.push('/admin/events'), active:false },
+          { label:'Tracking', icon:'📦', action:()=>router.push('/admin/tracking'), active:false },
           { label:'Reviews', icon:'⭐', action:()=>router.push('/admin/reviews'), active:false },
         ].map(item => (
           <button key={item.label} onClick={item.action}

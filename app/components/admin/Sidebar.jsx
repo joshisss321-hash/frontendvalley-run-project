@@ -11,6 +11,8 @@ export default function Sidebar() {
     { name: "Events", href: "/admin/events" },
     { name: "Leaderboard", href: "/admin/leaderboard" },
     { name: "Submissions", href: "/admin/submissions" },
+    { name: "Registrations", href: "/admin/registrations" },
+    { name: "Medal Tracking", href: "/admin/tracking" },
   ];
 
   // 🔥 LOGOUT FUNCTION

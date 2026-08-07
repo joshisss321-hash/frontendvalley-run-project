@@ -268,6 +268,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Navbar from "../../../components/Navbar";
 import PaymentBox from "../../../components/PaymentBox";
+import { getSavedReferral } from "../../../components/ReferralCapture";
+import { userAPI } from "../../../../lib/userApi";
 
 export default function RegisterPage() {
   const { slug }  = useParams();
@@ -276,6 +278,11 @@ export default function RegisterPage() {
   const [order, setOrder]         = useState(null);
   const [loading, setLoading]     = useState(false);
   const [eventPrice, setEventPrice] = useState(349);
+
+  /* ── Coupon / referral ── */
+  const [applied, setApplied]         = useState(null);  // { code, discount, finalAmount, message }
+  const [couponError, setCouponError] = useState("");
+  const [couponBusy, setCouponBusy]   = useState(false);
 
   const [form, setForm] = useState({
     name:     "",
@@ -308,10 +315,50 @@ export default function RegisterPage() {
     fetchEvent();
   }, [slug, router]);
 
+  /* Referral link se aaye hain to code apne aap bhar do */
+  useEffect(() => {
+    const saved = getSavedReferral();
+    if (saved) setForm((prev) => ({ ...prev, coupon: saved }));
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
   };
+
+  /* ── Coupon apply ── */
+  const applyCoupon = async () => {
+    const code = (form.coupon || "").trim();
+    if (!code || couponBusy) return;
+
+    setCouponBusy(true);
+    setCouponError("");
+
+    const res = await userAPI.validateCoupon({
+      code,
+      eventSlug: slug,
+      email:     form.email,
+    });
+
+    if (res.success) {
+      setApplied(res);
+      setOrder(null); // purana order ab galat amount ka hai
+    } else {
+      setApplied(null);
+      setCouponError(res.message || "Ye code valid nahi hai");
+    }
+
+    setCouponBusy(false);
+  };
+
+  const removeCoupon = () => {
+    setApplied(null);
+    setCouponError("");
+    setForm(prev => ({ ...prev, coupon: "" }));
+    setOrder(null);
+  };
+
+  const payable = applied ? applied.finalAmount : eventPrice;
 
   const isFormValid =
     form.name &&
@@ -354,6 +401,8 @@ export default function RegisterPage() {
             pincode:   form.pincode,
             category:  form.category,
             source:    form.source,
+            // Server khud dobara verify karta hai — yahan sirf code jaata hai
+            couponCode: applied ? applied.code : "",
           }),
         }
       );
@@ -477,9 +526,80 @@ export default function RegisterPage() {
               <li>✔ Leaderboard Recognition</li>
             </ul>
 
-            <div className="border-t pt-4 flex justify-between font-bold text-xl mb-6">
-              <span>Total</span>
-              <span className="text-red-600">₹{eventPrice}</span>
+            {/* ── Coupon / referral code ── */}
+            <div className="border-t pt-4 mb-4">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Coupon / Referral code
+              </label>
+
+              {applied ? (
+                <div className="bg-green-50 border border-green-200 rounded-xl p-3 flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-mono font-bold text-green-800 text-sm">{applied.code}</p>
+                    <p className="text-xs text-green-700">{applied.message}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={removeCoupon}
+                    className="shrink-0 text-xs font-semibold text-gray-500 hover:text-red-600"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="flex gap-2">
+                    <input
+                      name="coupon"
+                      value={form.coupon}
+                      onChange={(e) => {
+                        setCouponError("");
+                        setForm(prev => ({ ...prev, coupon: e.target.value.toUpperCase() }));
+                      }}
+                      placeholder="CODE"
+                      className="input flex-1 uppercase"
+                    />
+                    <button
+                      type="button"
+                      onClick={applyCoupon}
+                      disabled={!form.coupon.trim() || couponBusy}
+                      className="shrink-0 bg-gray-900 disabled:bg-gray-300 text-white text-sm font-bold px-5 rounded-2xl hover:bg-gray-800 transition"
+                    >
+                      {couponBusy ? "..." : "Apply"}
+                    </button>
+                  </div>
+
+                  {couponError && (
+                    <p className="text-red-600 text-xs mt-2">{couponError}</p>
+                  )}
+                  {!couponError && (
+                    <p className="text-gray-400 text-xs mt-2">
+                      Kisi dost ka referral code hai? Yahan lagayiye
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+
+            {/* ── Totals ── */}
+            <div className="border-t pt-4 mb-6 space-y-2">
+              {applied && (
+                <>
+                  <div className="flex justify-between text-gray-600 text-sm">
+                    <span>Subtotal</span>
+                    <span>₹{applied.originalAmount}</span>
+                  </div>
+                  <div className="flex justify-between text-green-600 text-sm font-semibold">
+                    <span>Discount</span>
+                    <span>− ₹{applied.discount}</span>
+                  </div>
+                </>
+              )}
+
+              <div className="flex justify-between font-bold text-xl pt-2">
+                <span>Total</span>
+                <span className="text-red-600">₹{payable}</span>
+              </div>
             </div>
 
             {!order ? (
@@ -494,7 +614,7 @@ export default function RegisterPage() {
                       : "bg-gray-300 cursor-not-allowed"
                     }`}
                 >
-                  {loading ? "Processing..." : `Pay ₹${eventPrice} →`}
+                  {loading ? "Processing..." : `Pay ₹${payable} →`}
                 </button>
                 {!isFormValid && (
                   <p className="text-gray-400 text-xs text-center mt-3">

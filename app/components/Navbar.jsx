@@ -130,6 +130,7 @@ export default function Navbar() {
     { name: "Gallery", href: "/gallery" },
   { name: "Leaderboard", href: "/leaderboard" },
     { name: "About", href: "/about" },
+    { name: "My Profile", href: "/profile" },
     // { name: "Premium Registration", href: "/premium-registration" },
   ];
 

@@ -66,6 +66,9 @@ export default function PaymentBox({ eventSlug, form, order, router }) {
                   pincode: form.pincode,
                   category: form.category,
                   source: form.source,
+                  // Fallback: normally coupon Razorpay order ke notes se
+                  // padha jaata hai, ye sirf tab kaam aata hai jab wo fail ho
+                  couponCode: form.coupon || "",
                 }),
               }
             );

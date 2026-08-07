@@ -82,6 +82,29 @@ export default function AdminSubmissions() {
     a.click();
   };
 
+  // Excel — data server se aata hai, isliye screen ki 100-row limit lagu nahi hoti
+  const exportExcel = async () => {
+    try {
+      const res = await adminAPI.exportSubmissions({ eventSlug, status, distance, search });
+      if (!res.rows?.length) { alert("Is filter mein koi submission nahi"); return; }
+
+      const XLSX = await import("xlsx");
+      const headers = ["Sr","Name","Email","Phone","Event","Distance","Timing","Status","Admin Note","Date","Proof Image"];
+      const data = res.rows.map((r) => [
+        r.sr, r.name, r.email, r.phone, r.eventSlug,
+        r.distance, r.timing, r.status, r.adminNote, r.date, r.imageUrl,
+      ]);
+
+      const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
+      ws["!cols"] = [{wch:5},{wch:22},{wch:28},{wch:14},{wch:20},{wch:12},{wch:10},{wch:10},{wch:24},{wch:12},{wch:45}];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Submissions");
+      XLSX.writeFile(wb, `submissions-${eventSlug || "all"}-${status || "all"}.xlsx`);
+    } catch {
+      alert("Export failed");
+    }
+  };
+
   const statusBadge = (s) => ({
     pending:  "bg-yellow-100 text-yellow-700 border border-yellow-200",
     approved: "bg-green-100 text-green-700 border border-green-200",
@@ -104,8 +127,12 @@ export default function AdminSubmissions() {
             </button>
           )}
           <button onClick={exportCSV}
-            className="bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-blue-700">
-            ⬇ CSV
+            className="border border-gray-300 text-gray-700 text-sm font-semibold px-4 py-2 rounded-xl hover:bg-gray-50">
+            CSV
+          </button>
+          <button onClick={exportExcel}
+            className="bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-green-700">
+            ⬇ Excel (.xlsx)
           </button>
         </div>
       </div>
