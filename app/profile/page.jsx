@@ -350,7 +350,12 @@ export default function ProfilePage() {
                   </div>
                 )}
 
-                <MedalTracker medal={ev.medal} compact />
+                <MedalTracker
+                  medal={ev.medal}
+                  registrationId={ev.registrationId}
+                  onDelivered={() => reload({ silent: true })}
+                  compact
+                />
               </div>
             ))}
           </div>
@@ -407,7 +412,12 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <MedalTracker medal={ev.medal} compact />
+                <MedalTracker
+                  medal={ev.medal}
+                  registrationId={ev.registrationId}
+                  onDelivered={() => reload({ silent: true })}
+                  compact
+                />
               </div>
             ))}
             </div>
