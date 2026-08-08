@@ -221,29 +221,9 @@ export default function ActivitySubmission() {
               )}
             </div>
 
-            {/* Past Events */}
-            {pastEvents.length > 0 && (
-              <div>
-                <label className="block text-sm font-bold text-gray-500 mb-3 mt-2">
-                  🔒 Previous Events (Closed)
-                </label>
-                <div className="space-y-2">
-                  {pastEvents.map(ev => <EventCard key={ev._id} ev={ev} isPast={true}/>)}
-                </div>
-              </div>
-            )}
 
-            {/* Closed warning */}
-            {submissionClosed && eventSlug && (
-              <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-center">
-                <div className="text-2xl mb-1">🔒</div>
-                <div className="text-red-600 font-bold text-sm">
-                  Submissions are closed for this event
-                </div>
-              </div>
-            )}
 
-            {/* Phone/email search */}
+             {/* Phone/email search */}
             {eventSlug && !submissionClosed && (
               <>
                 <div>
@@ -271,6 +251,57 @@ export default function ActivitySubmission() {
                 </button>
               </>
             )}
+
+            {/* Past Events */}
+            {pastEvents.length > 0 && (
+              <div>
+                <label className="block text-sm font-bold text-gray-500 mb-3 mt-2">
+                  🔒 Previous Events (Closed)
+                </label>
+                <div className="space-y-2">
+                  {pastEvents.map(ev => <EventCard key={ev._id} ev={ev} isPast={true}/>)}
+                </div>
+              </div>
+            )}
+
+            {/* Closed warning */}
+            {submissionClosed && eventSlug && (
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-center">
+                <div className="text-2xl mb-1">🔒</div>
+                <div className="text-red-600 font-bold text-sm">
+                  Submissions are closed for this event
+                </div>
+              </div>
+            )}
+
+            {/* Phone/email search
+            {eventSlug && !submissionClosed && (
+              <>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Registered Phone or Email *
+                  </label>
+                  <input
+                    value={query}
+                    onChange={e => setQuery(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && searchRunner()}
+                    placeholder="9876543210 or you@email.com"
+                    className="w-full border-2 border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-red-500 transition-colors"
+                  />
+                </div>
+                <button
+                  onClick={searchRunner}
+                  disabled={!query.trim()}
+                  className={`w-full font-bold py-4 rounded-2xl text-white transition-all text-base ${
+                    query.trim()
+                      ? "bg-red-600 hover:bg-red-700 hover:scale-[1.02]"
+                      : "bg-gray-300 cursor-not-allowed"
+                  }`}
+                >
+                  Find My Registration →
+                </button>
+              </>
+            )} */}
           </div>
         )}
 
