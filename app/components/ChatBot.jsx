@@ -7,16 +7,16 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 /* Pehli baar khulne par yehi dikhta hai — logon ko shuru karna aasan ho */
 const SUGGESTIONS = [
-  "Activity kaise submit karu?",
-  "Mera medal kab aayega?",
-  "Kaun se events chal rahe hain?",
-  "Referral se kitna discount milta hai?",
+  "How do I submit my activity?",
+  "When will my medal arrive?",
+  "Which events are open right now?",
+  "How much discount do referrals give?",
 ];
 
 const GREETING =
-  "Namaste! 👋 Main Valley Run ka assistant hoon.\n\n" +
-  "Registration, activity submission, medal tracking, leaderboard — kuch bhi poochiye. " +
-  "Login kiya hua ho to aapki apni details bhi bata dunga.";
+  "Hi! 👋 I'm the Valley Run assistant.\n\n" +
+  "Ask me anything about registration, activity submission, medal tracking or the leaderboard. " +
+  "If you're logged in, I can look up your own details too.";
 
 export default function ChatBot() {
   const [open, setOpen]       = useState(false);
@@ -70,7 +70,7 @@ export default function ChatBot() {
           role: "assistant",
           content:
             data.reply ||
-            "Kuch gadbad ho gayi. Thodi der baad try kijiye, ya WhatsApp par 8171794766 pe message kar dijiye.",
+            "Something went wrong. Please try again in a moment, or message us on WhatsApp at 8171794766.",
         },
       ]);
 
@@ -81,7 +81,7 @@ export default function ChatBot() {
         {
           role: "assistant",
           content:
-            "Connection nahi ban paya. Internet check kijiye, ya WhatsApp par 8171794766 pe message kar dijiye.",
+            "Couldn't connect. Please check your internet, or message us on WhatsApp at 8171794766.",
         },
       ]);
     }
@@ -185,7 +185,7 @@ export default function ChatBot() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") send(); }}
-                placeholder="Apna sawaal likhiye..."
+                placeholder="Type your question..."
                 disabled={busy}
                 className="flex-1 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 disabled:bg-gray-50"
               />
@@ -199,7 +199,7 @@ export default function ChatBot() {
             </div>
 
             <p className="text-[10px] text-gray-400 text-center mt-2">
-              Refund ya payment ki baat ho to seedhe 8171794766 par sampark kijiye
+              For refund or payment issues, please contact us directly on 8171794766
             </p>
           </div>
         </div>
