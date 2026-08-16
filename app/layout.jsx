@@ -11,6 +11,9 @@ import "react-toastify/dist/ReactToastify.css";
 // ?ref=CODE ko yaad rakhta hai taaki checkout par apne aap lag jaye
 import ReferralCapture from "./components/ReferralCapture";
 
+// Har page par support chatbot
+import ChatBot from "./components/ChatBot";
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -26,6 +29,8 @@ export default function RootLayout({ children }) {
         </main>
 
         <Footer />
+
+        <ChatBot />
 
         {/* 🔥 IMPORTANT (Toast UI) */}
         <ToastContainer
