@@ -13,7 +13,7 @@ export default function EditEventPage() {
 
   const [formData, setFormData] = useState({
     title: '', slug: '', description: '', dates: '',
-    price: '', registrationDeadline: '',
+    price: '', mrp: '', registrationDeadline: '',
     submissionDeadline: '',   // ✅ NEW
     heroImage: '', coverImage: '', medalImage: '', medalImageBack: '',
     gallery: [],
@@ -35,6 +35,7 @@ export default function EditEventPage() {
           description:         ev.description         || '',
           dates:               ev.dates               || '',
           price:               ev.price               || '',
+          mrp:                 ev.mrp                 || '',
           registrationDeadline: ev.registrationDeadline ? ev.registrationDeadline.split('T')[0] : '',
           submissionDeadline:  ev.submissionDeadline  ? ev.submissionDeadline.split('T')[0] : '',
           heroImage:           ev.heroImage           || '',
@@ -81,6 +82,8 @@ export default function EditEventPage() {
       const result = await adminAPI.updateEvent(params.id, {
         ...formData,
         price: Number(formData.price),
+        // Khaali chhoda to null — tabhi pricing page par kata hua daam nahi dikhega
+        mrp: formData.mrp === '' ? null : Number(formData.mrp),
       });
       if (result.success) router.push('/admin/events');
       else alert(result.message || 'Failed to update');
@@ -136,6 +139,15 @@ export default function EditEventPage() {
               <label className="form-label">Registration Deadline</label>
               <input type="date" name="registrationDeadline" className="form-input" value={formData.registrationDeadline} onChange={handleChange}/>
             </div>
+          </div>
+
+          {/* MRP — pricing page par kata hua daam. Khaali chhodo to kuch nahi dikhega. */}
+          <div className="form-group">
+            <label className="form-label">MRP / Original Price (₹) — optional</label>
+            <input type="number" name="mrp" className="form-input" value={formData.mrp} onChange={handleChange} placeholder="e.g. 449"/>
+            <small style={{ color: '#666' }}>
+              Pricing page par kata hua daam. Price se zyada hoga tabhi dikhega — warna kuch nahi.
+            </small>
           </div>
 
           {/* ✅ Submission Deadline */}
