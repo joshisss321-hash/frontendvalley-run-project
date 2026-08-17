@@ -23,8 +23,8 @@ export default function PricingSidebar({ event }) {
       <ul className="list-disc ml-5 text-gray-300">
         <li>Premium Medal</li>
         <li>Certificate of Completion</li>
-        <li>Access to Leaderboard</li>
-        <li>Top performers on the leaderboard will receive exciting gift hampers.</li>
+        <li>Name and timing on the leaderboard</li>
+        <li>Tracking ID appears in your profile</li>
       </ul>
 
       <button

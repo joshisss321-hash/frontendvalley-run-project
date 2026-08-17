@@ -7,20 +7,20 @@ import Link from "next/link";
 /* ── Package mein kya-kya milta hai ──
    Har cheez wahi hai jo sach mein di jaati hai. Kuch naya wada mat jodna. */
 const INCLUDED = [
-  { icon: "🏅", title: "Premium Metal Medal",   note: "3-inch zinc alloy, ghar tak courier" },
-  { icon: "📜", title: "Digital E-Certificate", note: "Aapke naam ke saath" },
-  { icon: "🏆", title: "Finishers List",        note: "Website par naam publish" },
-  { icon: "📸", title: "Community Gallery",     note: "Apni photo feature karwaiye" },
-  { icon: "🚚", title: "Free Shipping",         note: "Poore India mein, koi extra charge nahi" },
-  { icon: "🎁", title: "Top Performer Hampers", note: "Leaderboard ke top runners ke liye" },
+  { icon: "🏅", title: "Premium Metal Medal",   note: "3-inch zinc alloy, couriered to your home" },
+  { icon: "📜", title: "Digital E-Certificate", note: "Emailed to you, with your name and finish time" },
+  { icon: "🏆", title: "Leaderboard Listing",   note: "Your name and timing published on the site" },
+  { icon: "📦", title: "Live Medal Tracking",   note: "Tracking ID appears in your profile" },
+  { icon: "📸", title: "Community Gallery",     note: "Get your run featured" },
+  { icon: "🚚", title: "Free Shipping",         note: "Anywhere in India, no extra charge" },
 ];
 
 /* Chaar kadam — user ko pata rahe ki paise dene ke baad hota kya hai */
 const STEPS = [
-  { n: "1", title: "Register",         desc: "Form bharke payment kijiye. Do minute ka kaam." },
-  { n: "2", title: "Apni Speed Se Run", desc: "Event ki dates mein kabhi bhi, kahin bhi — road, park ya treadmill." },
-  { n: "3", title: "Activity Submit",   desc: "GPS app ka screenshot upload kijiye. Team 24 ghante mein verify karti hai." },
-  { n: "4", title: "Medal Aapke Ghar",  desc: "Verify hote hi dispatch. Tracking aapki profile mein dikhegi." },
+  { n: "1", title: "Register",          desc: "Fill the form and pay. Takes about two minutes." },
+  { n: "2", title: "Run at Your Pace",  desc: "Any day within the event dates — road, park or treadmill." },
+  { n: "3", title: "Submit Activity",   desc: "Upload your GPS screenshot. The team verifies within 24 hours." },
+  { n: "4", title: "Medal Ships Out",   desc: "Dispatched once verified. Tracking ID appears in your profile." },
 ];
 
 const FAQS = [
@@ -39,6 +39,10 @@ const FAQS = [
   {
     q: "Where do I submit my activity?",
     a: "Submission opens after registration for the event closes — that is by design. Once it opens, you can submit from your profile under My Events, or from the Activity Submission page on the website.",
+  },
+  {
+    q: "How do I get my certificate?",
+    a: "Your e-certificate is emailed to you once your activity is approved. It carries your name and your finish time. There is nothing to download from the site — just keep an eye on the inbox of the email address you registered with.",
   },
   {
     q: "I'm a complete beginner. Can I still join?",
