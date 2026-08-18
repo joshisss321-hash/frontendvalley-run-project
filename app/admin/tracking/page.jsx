@@ -11,16 +11,28 @@ const GUESS = {
   phone:      ["phone", "mobile", "contact", "phone no", "mobile no", "customer phone"],
   trackingId: ["tracking", "awb", "consignment", "waybill", "docket", "tracking id", "awb no"],
   courier:    ["courier", "partner", "carrier", "courier name", "logistics"],
+  // "tracking link" ko "tracking" se pehle mat pakadna — isliye poore
+  // naam pehle likhe hain, guessColumn exact match pehle dekhta hai.
+  trackingUrl: ["tracking link", "tracking url", "track link", "link", "url", "tracking website"],
 };
+
+/* "Tracking Link" mein bhi "tracking" hai — usse Tracking ID samajh lene
+   ka khatra tha. ID dhoondhte waqt link-jaise headers chhod dete hain. */
+const LOOKS_LIKE_LINK = /\b(link|url|website|http)\b/;
 
 const guessColumn = (headers, kind) => {
   const lower = headers.map((h) => String(h || "").toLowerCase().trim());
+
+  const allowed = (h) => (kind === "trackingId" ? !LOOKS_LIKE_LINK.test(h) : true);
+
+  // Pehle poora naam milta ho to wahi
   for (const needle of GUESS[kind]) {
-    const i = lower.findIndex((h) => h === needle);
+    const i = lower.findIndex((h) => h === needle && allowed(h));
     if (i !== -1) return headers[i];
   }
+  // Warna jisme wo shabd aata ho
   for (const needle of GUESS[kind]) {
-    const i = lower.findIndex((h) => h.includes(needle));
+    const i = lower.findIndex((h) => h.includes(needle) && allowed(h));
     if (i !== -1) return headers[i];
   }
   return "";
@@ -35,7 +47,7 @@ export default function AdminTrackingPage() {
   const [fileName, setFileName]   = useState("");
   const [headers, setHeaders]     = useState([]);
   const [rawRows, setRawRows]     = useState([]);
-  const [map, setMap]             = useState({ phone: "", trackingId: "", courier: "" });
+  const [map, setMap]             = useState({ phone: "", trackingId: "", courier: "", trackingUrl: "" });
 
   const [preview, setPreview]     = useState(null);
   const [busy, setBusy]           = useState(false);
@@ -81,6 +93,7 @@ export default function AdminTrackingPage() {
         phone:      guessColumn(hdrs, "phone"),
         trackingId: guessColumn(hdrs, "trackingId"),
         courier:    guessColumn(hdrs, "courier"),
+        trackingUrl: guessColumn(hdrs, "trackingUrl"),
       });
     } catch (err) {
       setError("Could not read the file: " + err.message);
@@ -93,6 +106,7 @@ export default function AdminTrackingPage() {
       phone:      map.phone      ? r[map.phone]      : "",
       trackingId: map.trackingId ? r[map.trackingId] : "",
       courier:    map.courier    ? r[map.courier]    : "",
+      trackingUrl: map.trackingUrl ? r[map.trackingUrl] : "",
     }));
 
   const canPreview = eventSlug && map.phone && map.trackingId && rawRows.length > 0;
@@ -140,7 +154,7 @@ export default function AdminTrackingPage() {
 
   const reset = () => {
     setFileName(""); setHeaders([]); setRawRows([]);
-    setMap({ phone: "", trackingId: "", courier: "" });
+    setMap({ phone: "", trackingId: "", courier: "", trackingUrl: "" });
     setPreview(null); setResult(null); setError("");
   };
 
@@ -222,7 +236,8 @@ export default function AdminTrackingPage() {
                 <span className="text-red-600">2.</span> Upload the sheet
               </h2>
               <p className="text-xs text-gray-500 mb-4">
-                .xlsx, .xls or .csv — phone and tracking ID columns are required
+                .xlsx, .xls or .csv — phone and tracking ID are required.
+                Add a <strong>Tracking Link</strong> column so runners get a working Track button.
               </p>
 
               <label className="block border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-red-400 hover:bg-red-50/30 transition">
@@ -257,6 +272,7 @@ export default function AdminTrackingPage() {
                     { key: "phone",      label: "Phone *",       required: true },
                     { key: "trackingId", label: "Tracking ID *", required: true },
                     { key: "courier",    label: "Courier",       required: false },
+                    { key: "trackingUrl", label: "Tracking Link", required: false },
                   ].map((f) => (
                     <div key={f.key}>
                       <label className="block text-xs font-semibold text-gray-600 mb-1.5">
@@ -341,11 +357,28 @@ export default function AdminTrackingPage() {
                   ))}
                 </div>
 
+                {preview.summary.linkFromSheet > 0 && (
+                  <p className="text-xs bg-green-50 border border-green-200 text-green-800 rounded-lg px-4 py-3 mb-3">
+                    🔗 {preview.summary.linkFromSheet} rows have a tracking link from your sheet —
+                    runners will get a working &quot;Track&quot; button for these.
+                  </p>
+                )}
+
+                {preview.summary.badLinks > 0 && (
+                  <p className="text-xs bg-red-50 border border-red-200 text-red-800 rounded-lg px-4 py-3 mb-3">
+                    ⚠️ {preview.summary.badLinks} rows have a link that isn&apos;t a valid web address —
+                    those were ignored. Check the Tracking Link column for typos.
+                  </p>
+                )}
+
                 {preview.summary.unknownCourier > 0 && (
                   <p className="text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-4 py-3 mb-4">
-                    ⚠️ {preview.summary.unknownCourier} rows have an unrecognised courier — the tracking ID
-                    will still be saved, but the &quot;Track&quot; button will have no link.
-                    Supported: {preview.supportedCouriers.join(", ")}
+                    ⚠️ {preview.summary.unknownCourier} rows will have <strong>no Track button</strong> —
+                    the courier isn&apos;t one we know, and no link was given in the sheet.
+                    The tracking ID still saves, but runners won&apos;t know where to track.
+                    <br />
+                    Fix it by adding a <strong>Tracking Link</strong> column to your sheet, or use one of:{" "}
+                    {preview.supportedCouriers.join(", ")}
                   </p>
                 )}
 
@@ -395,6 +428,7 @@ export default function AdminTrackingPage() {
                             <th className="p-2 font-semibold">Phone</th>
                             <th className="p-2 font-semibold">Tracking</th>
                             <th className="p-2 font-semibold">Courier</th>
+                            <th className="p-2 font-semibold">Link</th>
                             <th className="p-2 font-semibold">Now</th>
                           </tr>
                         </thead>
@@ -404,10 +438,24 @@ export default function AdminTrackingPage() {
                               <td className="p-2 text-gray-900">{m.name}</td>
                               <td className="p-2 font-mono text-gray-600">{m.phone}</td>
                               <td className="p-2 font-mono text-gray-900">{m.trackingId}</td>
-                              <td className="p-2 text-gray-600">
-                                {m.courier || "—"}
-                                {!m.courierKnown && m.courier && (
-                                  <span className="text-amber-600" title="No tracking link for this courier"> ⚠</span>
+                              <td className="p-2 text-gray-600">{m.courier || "—"}</td>
+
+                              {/* Link kahan se aaya — admin ko commit se pehle saaf dikhe */}
+                              <td className="p-2">
+                                {m.trackingUrl ? (
+                                  <a
+                                    href={m.trackingUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:underline font-semibold"
+                                    title={m.trackingUrl}
+                                  >
+                                    {m.linkSource === "sheet" ? "🔗 sheet" : "auto"}
+                                  </a>
+                                ) : (
+                                  <span className="text-amber-600 font-semibold" title="Runner ko sirf number dikhega">
+                                    ⚠ none
+                                  </span>
                                 )}
                               </td>
                               <td className="p-2">
