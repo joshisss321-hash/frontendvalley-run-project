@@ -1373,6 +1373,19 @@ export default function HomePage() {
   );
 }
 
+/* ─── SITE KE NUMBERS ───
+   Ye ginti homepage par kai jagah dikhti hai — hero ki chips, chalta
+   hua marquee, aur neeche ka stats box. Pehle har jagah alag likhi thi,
+   isliye ek badalne par baaki purani reh jaati thi.
+
+   Ab sirf yahan badaliye, poore page par apne aap badal jayegi. */
+const SITE_STATS = {
+  runners:      6500,        // ginti; "+" apne aap lagta hai
+  runnersLabel: "6500+",
+  events:       "9",
+  rating:       "4.9★",
+};
+
 /* ─── HERO ─── */
 function Hero({ router }) {
   // ✅ Countdown 1 → 2000
@@ -1383,7 +1396,7 @@ function Hero({ router }) {
     let c = 1;
     const t = setInterval(() => {
       c += 28;
-      if (c >= 4000) { setCount(4000); setDone(true); clearInterval(t); }
+      if (c >= SITE_STATS.runners) { setCount(SITE_STATS.runners); setDone(true); clearInterval(t); }
       else setCount(c);
     }, 16);
     return () => clearInterval(t);
@@ -1402,7 +1415,7 @@ function Hero({ router }) {
         {/* ✅ Badge with countdown */}
         <div style={{ display:"inline-flex", alignItems:"center", gap:10, marginBottom:32, padding:"8px 20px 8px 10px", borderRadius:100, border:"1px solid rgba(255,255,255,.12)", background:"rgba(255,255,255,.05)" }}>
           <span style={{ background:"#c0392b", color:"#fff", fontSize:10, fontWeight:800, padding:"4px 12px", borderRadius:100, letterSpacing:1.5, textTransform:"uppercase", minWidth:40, textAlign:"center" }}>
-            {done ? "4000+" : count}
+            {done ? SITE_STATS.runnersLabel : count}
           </span>
           <span style={{ fontSize:13, color:"rgba(255,255,255,.6)", fontWeight:500 }}>
             Runners completed across India
@@ -1433,8 +1446,8 @@ function Hero({ router }) {
         {/* Floating stats */}
         <div style={{ display:"flex", gap:12, flexWrap:"wrap" }} className="mob-center">
           {[
-            { n:"4000+", l:"Runners", e:"🏃" },
-            { n:"6", l:"Events Done", e:"🏆" },
+            { n:SITE_STATS.runnersLabel, l:"Runners", e:"🏃" },
+            { n:SITE_STATS.events, l:"Events Done", e:"🏆" },
             { n:"Free", l:"Delivery", e:"📦" },
             { n:"24hr", l:"Verify", e:"⚡" },
           ].map((s,i) => (
@@ -1459,7 +1472,7 @@ function Hero({ router }) {
 
 /* ─── MARQUEE ─── */
 function Marquee() {
-  const items = ["Real Zinc Alloy Medals","Free Pan-India Shipping","GPS App Proof Accepted","Verified in 24 Hours","4000+ Happy Runners","Razorpay Secured","Digital Certificate","Leaderboard Rankings","Run Anywhere in India"];
+  const items = ["Real Zinc Alloy Medals","Free Pan-India Shipping","GPS App Proof Accepted","Verified in 24 Hours",`${SITE_STATS.runnersLabel} Happy Runners`,"Razorpay Secured","Digital Certificate","Leaderboard Rankings","Run Anywhere in India"];
   return (
     <div style={{ background:"#fff", borderTop:"1px solid #f0f0f0", borderBottom:"1px solid #f0f0f0", padding:"14px 0", overflow:"hidden" }}>
       <div style={{ display:"flex", gap:64, width:"max-content", animation:"marquee 30s linear infinite" }}>
@@ -1480,10 +1493,10 @@ function Stats() {
       <div style={{ maxWidth:1200, margin:"0 auto" }}>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", border:"1px solid #f0f0f0", borderRadius:20 }} className="mob-grid2">
           {[
-            { n:"4000+", l:"Finishers", d:"Runners who completed & earned" },
-            { n:"6", l:"Events Hosted", d:"Pan-India virtual challenges" },
+            { n:SITE_STATS.runnersLabel, l:"Finishers", d:"Runners who completed & earned" },
+            { n:SITE_STATS.events, l:"Events Hosted", d:"Pan-India virtual challenges" },
             { n:"24hr", l:"Avg Verify", d:"Fastest proof verification" },
-            { n:"4.9★", l:"Avg Rating", d:"From 4000+ verified finishers" },
+            { n:SITE_STATS.rating, l:"Avg Rating", d:`From ${SITE_STATS.runnersLabel} verified finishers` },
           ].map((s,i) => (
             <div key={i} style={{ padding:"40px 32px", borderRight:i<3?"1px solid #f0f0f0":"none", position:"relative" }}>
               {i===0 && <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:"#c0392b", borderRadius:"20px 0 0 0" }} />}
