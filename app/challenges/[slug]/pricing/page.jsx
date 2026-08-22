@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
+import { CATEGORY_GROUPS, distanceOf } from "../../../../lib/categories";
+
 /* ── Package mein kya-kya milta hai ──
    Har cheez wahi hai jo sach mein di jaati hai. Kuch naya wada mat jodna. */
 const INCLUDED = [
@@ -27,6 +29,10 @@ const FAQS = [
   {
     q: "Do I have to run on one fixed day?",
     a: "No. Complete your distance on any day within the event dates — early morning, late night, whatever suits you. Only activities done within the event dates count.",
+  },
+  {
+    q: "Can I walk or cycle instead of running?",
+    a: "Yes. Running, walking and cycling are all offered, and you pick one at registration — the medal, the certificate and the price are exactly the same for all three. Choose the one you'll actually enjoy finishing.",
   },
   {
     q: "Which app should I track with?",
@@ -264,24 +270,40 @@ export default function PricingPage() {
                 </div>
               )}
 
-              {/* Distance options */}
-              {event.categories?.length > 0 && (
-                <div className="mb-6">
-                  <p className="text-sm font-semibold text-gray-700 mb-2">
-                    Choose your distance at registration
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {event.categories.map((c) => (
-                      <span
-                        key={c}
-                        className="bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1.5 rounded-full uppercase"
-                      >
-                        {c}
+              {/* Categories — bilkul wahi jo registration form mein milenge */}
+              <div className="mb-6">
+                <p className="text-sm font-semibold text-gray-700 mb-1">
+                  Pick any one at registration
+                </p>
+                <p className="text-xs text-gray-500 mb-3">
+                  Run, walk or cycle — same medal, same price.
+                </p>
+
+                <div className="space-y-2.5">
+                  {CATEGORY_GROUPS.map((group) => (
+                    <div key={group.key} className="flex items-start gap-2.5">
+                      <span className="text-base leading-6 shrink-0" aria-hidden="true">
+                        {group.icon}
                       </span>
-                    ))}
-                  </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-gray-700 uppercase tracking-wide">
+                          {group.label}
+                        </p>
+                        <div className="flex flex-wrap gap-1.5 mt-1">
+                          {group.options.map((opt) => (
+                            <span
+                              key={opt}
+                              className="bg-gray-100 text-gray-700 text-xs font-semibold px-2.5 py-1 rounded-full"
+                            >
+                              {distanceOf(opt)}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              )}
+              </div>
 
               {/* Kya-kya milega */}
               <ul className="space-y-3.5 mb-8">

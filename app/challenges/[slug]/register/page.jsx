@@ -270,6 +270,7 @@ import Navbar from "../../../components/Navbar";
 import PaymentBox from "../../../components/PaymentBox";
 import { getSavedReferral } from "../../../components/ReferralCapture";
 import { userAPI } from "../../../../lib/userApi";
+import { CATEGORY_GROUPS } from "../../../../lib/categories";
 
 export default function RegisterPage() {
   const { slug }  = useParams();
@@ -476,27 +477,14 @@ export default function RegisterPage() {
                 className="input"
               >
                 <option value="">-- Select Category --</option>
-                <optgroup label="Running">
-                  <option>Running 1600mtr</option>
-                  <option>Running 3.2Km</option>
-                  <option>Running 5Km</option>
-                  <option>Running 10Km</option>
-                  <option>Running 21Km</option>
-                </optgroup>
-
-
-                <optgroup label="Walking">
-  <option>Walking 2Km</option>
-  <option>Walking 5Km</option>
-  <option>Walking 10Km</option>
-  <option>Walking 21Km</option>
-</optgroup>
-                <optgroup label="Cycling">
-                  <option>Cycling 10Km</option>
-                  <option>Cycling 25Km</option>
-                  <option>Cycling 50Km</option>
-                  <option>Cycling 100Km</option>
-                </optgroup>
+                {/* Options lib/categories.js se — pricing page bhi wahi dikhata hai */}
+                {CATEGORY_GROUPS.map((group) => (
+                  <optgroup key={group.key} label={group.label}>
+                    {group.options.map((opt) => (
+                      <option key={opt}>{opt}</option>
+                    ))}
+                  </optgroup>
+                ))}
               </select>
             </div>
 
