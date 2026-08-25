@@ -272,6 +272,29 @@ import { getSavedReferral } from "../../../components/ReferralCapture";
 import { userAPI } from "../../../../lib/userApi";
 import { CATEGORY_GROUPS } from "../../../../lib/categories";
 
+/* Sabse aam email typo — inhi ki wajah se OTP aur certificate wapas
+   aa jaate hain. Rokte nahi, sirf tokte hain; ho sakta hai pata sach
+   mein aisa ho. */
+const TYPOS = {
+  "gmial.com": "gmail.com",  "gmai.com": "gmail.com",   "gmail.con": "gmail.com",
+  "gmail.co": "gmail.com",   "gmail.cm": "gmail.com",   "gnail.com": "gmail.com",
+  "gmaill.com": "gmail.com", "gamil.com": "gmail.com",  "gmail.comm": "gmail.com",
+  "yahooo.com": "yahoo.com", "yaho.com": "yahoo.com",   "yahoo.con": "yahoo.com",
+  "hotmial.com": "hotmail.com", "outlok.com": "outlook.com",
+  "rediffmail.co": "rediffmail.com",
+};
+
+/** Shak ho to sahi pata lautao, warna null */
+const suggestEmail = (raw) => {
+  const email  = String(raw || "").trim().toLowerCase();
+  const at     = email.lastIndexOf("@");
+  if (at < 1) return null;
+
+  const domain = email.slice(at + 1);
+  const fix    = TYPOS[domain];
+  return fix ? email.slice(0, at + 1) + fix : null;
+};
+
 export default function RegisterPage() {
   const { slug }  = useParams();
   const router    = useRouter();
@@ -288,6 +311,7 @@ export default function RegisterPage() {
   const [form, setForm] = useState({
     name:     "",
     email:    "",
+    email2:   "",
     phone:    "",
     phone2:   "",
     address1: "",
@@ -338,7 +362,7 @@ export default function RegisterPage() {
     const res = await userAPI.validateCoupon({
       code,
       eventSlug: slug,
-      email:     form.email,
+      email:     String(form.email || "").trim().toLowerCase(),
     });
 
     if (res.success) {
@@ -361,9 +385,17 @@ export default function RegisterPage() {
 
   const payable = applied ? applied.finalAmount : eventPrice;
 
+  /* Email milane se pehle safai — "Abc@Gmail.com " aur "abc@gmail.com"
+     ek hi hain, inhe alag batana bekaar ki pareshani hogi. */
+  const tidy = (e) => String(e || "").trim().toLowerCase();
+
+  const emailLooksReal = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(tidy(form.email));
+  const emailsMatch    = tidy(form.email) === tidy(form.email2);
+
   const isFormValid =
     form.name &&
-    form.email.includes("@") &&
+    emailLooksReal &&
+    emailsMatch &&
     form.phone &&
     form.phone === form.phone2 &&
     form.address1 &&
@@ -392,7 +424,8 @@ export default function RegisterPage() {
             amount:    Number(eventPrice),
             eventSlug: slug,
             name:      form.name,
-            email:     form.email,
+            // Saaf karke bhejo — "  Abc@Gmail.com " se alag account na ban jaye
+            email:     tidy(form.email),
             phone:     form.phone,
             address1:  form.address1,
             address2:  form.address2,
@@ -447,13 +480,49 @@ export default function RegisterPage() {
 
             <h2 className="text-2xl font-bold">Personal Details</h2>
 
+            {/* Sabse zyada shikayat isi ki aati hai — pehle hi bata do */}
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 -mt-2">
+              <p className="text-sm font-bold text-amber-900 mb-1">
+                Please double-check these two
+              </p>
+              <ul className="text-sm text-amber-800 space-y-1">
+                <li>
+                  📧 <strong>Email must be correct</strong> — your login code,
+                  registration confirmation and e-certificate all go here.
+                  A wrong email means you get none of them.
+                </li>
+                <li>
+                  📱 <strong>Use your WhatsApp number</strong> — the team contacts you
+                  here about your medal delivery.
+                </li>
+              </ul>
+            </div>
+
             <Input name="name"     placeholder="Full Name *"        onChange={handleChange}/>
+
             <Input name="email"    placeholder="Email *"            onChange={handleChange} type="email"/>
-            <Input name="phone"    placeholder="Phone *"            onChange={handleChange} type="tel"/>
-            <Input name="phone2"   placeholder="Re-enter Phone *"   onChange={handleChange} type="tel"/>
+            <Input name="email2"   placeholder="Re-enter Email *"   onChange={handleChange} type="email"/>
+
+            {/* Domain mein typo laga — rokte nahi, sirf tokte hain */}
+            {suggestEmail(form.email) && (
+              <p className="text-amber-700 text-sm -mt-2">
+                🤔 Did you mean <strong>{suggestEmail(form.email)}</strong>?
+              </p>
+            )}
+
+            {form.email && form.email2 && !emailsMatch && (
+              <p className="text-red-500 text-sm -mt-2">⚠️ Email addresses do not match</p>
+            )}
+
+            {form.email && form.email2 && emailsMatch && emailLooksReal && (
+              <p className="text-green-600 text-sm -mt-2">✓ Email confirmed</p>
+            )}
+
+            <Input name="phone"    placeholder="WhatsApp Number *"     onChange={handleChange} type="tel"/>
+            <Input name="phone2"   placeholder="Re-enter WhatsApp Number *" onChange={handleChange} type="tel"/>
 
             {form.phone && form.phone2 && form.phone !== form.phone2 && (
-              <p className="text-red-500 text-sm">⚠️ Phone numbers do not match</p>
+              <p className="text-red-500 text-sm -mt-2">⚠️ Phone numbers do not match</p>
             )}
 
             <h2 className="text-2xl font-bold pt-4">Address Details</h2>
