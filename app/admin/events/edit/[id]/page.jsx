@@ -13,7 +13,7 @@ export default function EditEventPage() {
 
   const [formData, setFormData] = useState({
     title: '', slug: '', description: '', dates: '',
-    price: '', mrp: '', registrationDeadline: '',
+    price: '', mrp: '', whatsappLink: '', registrationDeadline: '',
     submissionDeadline: '',   // ✅ NEW
     heroImage: '', coverImage: '', medalImage: '', medalImageBack: '',
     gallery: [],
@@ -36,6 +36,7 @@ export default function EditEventPage() {
           dates:               ev.dates               || '',
           price:               ev.price               || '',
           mrp:                 ev.mrp                 || '',
+          whatsappLink:        ev.whatsappLink        || '',
           registrationDeadline: ev.registrationDeadline ? ev.registrationDeadline.split('T')[0] : '',
           submissionDeadline:  ev.submissionDeadline  ? ev.submissionDeadline.split('T')[0] : '',
           heroImage:           ev.heroImage           || '',
@@ -139,6 +140,23 @@ export default function EditEventPage() {
               <label className="form-label">Registration Deadline</label>
               <input type="date" name="registrationDeadline" className="form-input" value={formData.registrationDeadline} onChange={handleChange}/>
             </div>
+          </div>
+
+          {/* Is event ka WhatsApp group — email aur success page dono par lagta hai */}
+          <div className="form-group">
+            <label className="form-label">WhatsApp Group Link — optional</label>
+            <input
+              type="text"
+              name="whatsappLink"
+              className="form-input"
+              value={formData.whatsappLink}
+              onChange={handleChange}
+              placeholder="https://chat.whatsapp.com/XXXXXXXXXXXX"
+            />
+            <small style={{ color: '#666' }}>
+              Registration confirmation email aur success page dono par &quot;Join Group&quot;
+              ka button lag jayega. Khaali chhodenge to kahin kuch nahi dikhega.
+            </small>
           </div>
 
           {/* MRP — pricing page par kata hua daam. Khaali chhodo to kuch nahi dikhega. */}

@@ -294,6 +294,20 @@ export default function SuccessClient() {
     fetchEvent();
   }, [slug]);
 
+  /* Is event ka WhatsApp group. Link seedha page par clickable jaata hai,
+     isliye sirf http/https manzoor — galat ho to button dikhta hi nahi. */
+  const groupLink = (() => {
+    const raw = String(eventData?.whatsappLink || "").trim();
+    if (!raw) return "";
+    const withScheme = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    try {
+      const u = new URL(withScheme);
+      return u.hostname.includes(".") ? u.toString() : "";
+    } catch {
+      return "";
+    }
+  })();
+
   // 🔥 Smart date formatter
   const getEventDates = () => {
     if (!eventData?.dates) return "Check your email";
@@ -388,6 +402,26 @@ export default function SuccessClient() {
               Join WhatsApp Channel to stay updated.
             </a>
           </div>
+
+          {/* Is event ka apna group — admin ne link bhara ho tabhi dikhta hai */}
+          {groupLink && (
+            <div className="mt-5 bg-green-50 border border-green-200 rounded-2xl p-6 text-center">
+              <p className="font-bold text-green-900 mb-1">
+                Join the {eventData?.title} WhatsApp group
+              </p>
+              <p className="text-sm text-green-800 mb-4">
+                Event updates, reminders and help — all in one place with the other runners.
+              </p>
+              <a
+                href={groupLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-green-700 hover:bg-green-800 text-white px-8 py-3 rounded-full font-semibold shadow transition hover:scale-105"
+              >
+                Join Group
+              </a>
+            </div>
+          )}
         </div>
 
         {/* Motivation */}
