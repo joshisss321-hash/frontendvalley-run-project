@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminAPI } from '@/lib/api';
+import { endOfDayIST } from '@/lib/deadline';
 import ImageUpload from "../../../components/admin/ImageUpload";
 export default function CreateEventPage() {
   const router = useRouter();
@@ -61,6 +62,8 @@ export default function CreateEventPage() {
     try {
       const result = await adminAPI.createEvent({
         ...formData,
+        // Chuni hui tareekh = us din raat 11:59 PM IST tak
+        registrationDeadline: endOfDayIST(formData.registrationDeadline),
         price: Number(formData.price)
       });
 

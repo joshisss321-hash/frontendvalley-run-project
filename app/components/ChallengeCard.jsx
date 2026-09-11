@@ -558,6 +558,10 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import {
+  UrgencyBadge, UrgencyCountdown,
+  useTimeLeft, urgencyLevel, ctaLabel,
+} from "./RegistrationUrgency";
 
 function safeDate(val) {
   if (!val) return null;
@@ -636,6 +640,9 @@ export default function ChallengeCard({ event }) {
   const [mounted, setMounted] = useState(false);
   const [hover, setHover] = useState(false);
   useEffect(() => { setMounted(true); }, []);
+
+  // Button ka text aakhri ghanton mein badal jata hai
+  const level = urgencyLevel(useTimeLeft(event.registrationDeadline));
 
   const regClosed = mounted
     ? (isClosed(event.registrationDeadline) || event.isRegistrationOpen === false)
@@ -790,16 +797,9 @@ export default function ChallengeCard({ event }) {
           )}
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,.25) 0%, transparent 40%)" }} />
 
-          {/* Live badge */}
+          {/* Live badge — aakhri 24 ghante mein "LAST DAY" ban jata hai */}
           <div style={{ position: "absolute", top: 14, left: 14 }}>
-            <span style={{
-              display: "inline-flex", alignItems: "center", gap: 7,
-              background: "#c0392b", color: "#fff", fontSize: 11, fontWeight: 700,
-              padding: "6px 14px", borderRadius: 30, letterSpacing: .5
-            }}>
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", display: "inline-block", animation: "pulse 1.5s infinite" }} />
-              Live Now
-            </span>
+            <UrgencyBadge deadline={event.registrationDeadline} />
           </div>
         </div>
 
@@ -836,21 +836,21 @@ export default function ChallengeCard({ event }) {
             ))}
           </div>
 
-          {/* Countdown */}
-          {event.registrationDeadline && <MiniCountdown deadline={event.registrationDeadline} />}
+          {/* Countdown — aakhri din bada aur laal */}
+          {event.registrationDeadline && <UrgencyCountdown deadline={event.registrationDeadline} />}
 
           {/* CTA Button */}
           <button style={{
             width: "100%",
-            background: "#c0392b",
+            background: level ? "#dc2626" : "#c0392b",
             color: "#fff", border: "none",
-            padding: "14px 0", borderRadius: 14, fontSize: 15, fontWeight: 700,
+            padding: "14px 0", borderRadius: 14, fontSize: 15, fontWeight: level ? 800 : 700,
             cursor: "pointer", transition: "all .2s",
-            boxShadow: "0 4px 18px rgba(192,57,43,.3)"
+            boxShadow: level ? "0 6px 22px rgba(220,38,38,.45)" : "0 4px 18px rgba(192,57,43,.3)"
           }}
             onMouseEnter={e => { e.currentTarget.style.opacity = ".88"; }}
             onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}>
-            View &amp; register
+            {ctaLabel(level)}
           </button>
         </div>
 

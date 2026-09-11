@@ -1638,9 +1638,13 @@ function Stats() {
 // }
 
 import Link from "next/link";
+import {
+  UrgencyBadge, UrgencyCountdown,
+  useTimeLeft, urgencyLevel, ctaLabel,
+} from "./components/RegistrationUrgency";
 
 /* ─── EVENTS SECTION — homepage ─── */
-function Events({ events, router }) {
+function Events({ events, router }) { 
   return (
     <section id="events-section" style={{ padding: "80px 60px", background: "#fafafa" }} className="mob-pad">
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
@@ -1725,6 +1729,9 @@ function HomeEventCard({ event, router }) {
 
   useEffect(() => { setMounted(true); }, []);
 
+  // Button ka text aakhri ghanton mein badal jata hai
+  const level = urgencyLevel(useTimeLeft(event.registrationDeadline));
+
   const now = new Date();
   const regClosed = mounted && (
     event.isRegistrationOpen === false ||
@@ -1786,14 +1793,8 @@ function HomeEventCard({ event, router }) {
               Event Running
             </span>
           ) : (
-            <span style={{
-              display: "inline-flex", alignItems: "center", gap: 7,
-              background: "#c0392b", color: "#fff", fontSize: 11, fontWeight: 700,
-              padding: "6px 14px", borderRadius: 30, letterSpacing: .5,
-            }}>
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", display: "inline-block", animation: "pulse 1.5s infinite" }} />
-              Live Now
-            </span>
+            // Aakhri 24 ghante mein "LAST DAY" ban jata hai
+            <UrgencyBadge deadline={event.registrationDeadline} />
           )}
         </div>
       </div>
@@ -1818,11 +1819,10 @@ function HomeEventCard({ event, router }) {
           </p>
         )}
 
-        {/* Feature icons */}
-        {/* Countdown */}
-{!regClosed && event.registrationDeadline && (
-  <MiniCountdown deadline={event.registrationDeadline} />
-)}
+        {/* Countdown — aakhri din bada aur laal */}
+        {!regClosed && event.registrationDeadline && (
+          <UrgencyCountdown deadline={event.registrationDeadline} />
+        )}
 
         <div style={{ display: "flex", gap: 20, marginBottom: 18 }}>
           {[
@@ -1852,13 +1852,14 @@ function HomeEventCard({ event, router }) {
         ) : (
           <button style={{
             width: "100%",
-            background: "#c0392b",
+            background: level ? "#dc2626" : "#c0392b",
             color: "#fff", border: "none",
-            padding: "14px 0", borderRadius: 14, fontSize: 15, fontWeight: 700,
-            cursor: "pointer", boxShadow: "0 4px 18px rgba(192,57,43,.3)",
+            padding: "14px 0", borderRadius: 14, fontSize: 15, fontWeight: level ? 800 : 700,
+            cursor: "pointer",
+            boxShadow: level ? "0 6px 22px rgba(220,38,38,.45)" : "0 4px 18px rgba(192,57,43,.3)",
             fontFamily: "inherit",
           }}>
-            View &amp; register
+            {ctaLabel(level)}
           </button>
         )}
       </div>

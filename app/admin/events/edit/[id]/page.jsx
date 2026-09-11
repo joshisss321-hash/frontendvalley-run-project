@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { adminAPI } from '@/lib/api';
+import { endOfDayIST, toDateInputIST } from '@/lib/deadline';
 import ImageUpload from '@/app/components/admin/ImageUpload';
 
 export default function EditEventPage() {
@@ -37,8 +38,9 @@ export default function EditEventPage() {
           price:               ev.price               || '',
           mrp:                 ev.mrp                 || '',
           whatsappLink:        ev.whatsappLink        || '',
-          registrationDeadline: ev.registrationDeadline ? ev.registrationDeadline.split('T')[0] : '',
-          submissionDeadline:  ev.submissionDeadline  ? ev.submissionDeadline.split('T')[0] : '',
+          // India ke hisaab se tareekh — UTC se kaatne par din khisak jaata tha
+          registrationDeadline: toDateInputIST(ev.registrationDeadline),
+          submissionDeadline:  toDateInputIST(ev.submissionDeadline),
           heroImage:           ev.heroImage           || '',
           coverImage:          ev.coverImage          || '',
           medalImage:          ev.medalImage          || '',
@@ -85,6 +87,9 @@ export default function EditEventPage() {
         price: Number(formData.price),
         // Khaali chhoda to null — tabhi pricing page par kata hua daam nahi dikhega
         mrp: formData.mrp === '' ? null : Number(formData.mrp),
+        // Chuni hui tareekh = us din raat 11:59 PM IST tak (pehle subah 5:30 ho jaata tha)
+        registrationDeadline: endOfDayIST(formData.registrationDeadline),
+        submissionDeadline:   endOfDayIST(formData.submissionDeadline),
       });
       if (result.success) router.push('/admin/events');
       else alert(result.message || 'Failed to update');
@@ -137,7 +142,7 @@ export default function EditEventPage() {
               <input type="number" name="price" className="form-input" value={formData.price} onChange={handleChange}/>
             </div>
             <div className="form-group">
-              <label className="form-label">Registration Deadline</label>
+              <label className="form-label">Registration Deadline (closes 11:59 PM IST)</label>
               <input type="date" name="registrationDeadline" className="form-input" value={formData.registrationDeadline} onChange={handleChange}/>
             </div>
           </div>
