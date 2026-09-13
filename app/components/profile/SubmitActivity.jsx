@@ -58,6 +58,17 @@ export default function SubmitActivity({ event, onDone }) {
 
   const submit = async () => {
     if (!distance) { setError("Please select your distance"); return; }
+
+    // Finish time ab zaroori hai — iske bina leaderboard par naam nahi aata
+    if (!m || !s) {
+      setError("Please enter your finish time — minutes and seconds are required");
+      return;
+    }
+    if (Number(h || 0) === 0 && Number(m) === 0 && Number(s) === 0) {
+      setError("Finish time cannot be 00:00. Please enter your actual time.");
+      return;
+    }
+
     if (!file)     { setError("Please attach your activity screenshot"); return; }
 
     setBusy(true);
@@ -141,7 +152,7 @@ export default function SubmitActivity({ event, onDone }) {
       {/* Timing */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-          Your timing <span className="font-normal text-gray-400">(optional, but needed for the leaderboard)</span>
+          Your finish time * <span className="font-normal text-gray-400">(this puts you on the leaderboard)</span>
         </label>
         <div className="flex items-center gap-2">
           {[
@@ -204,7 +215,7 @@ export default function SubmitActivity({ event, onDone }) {
 
       <button
         onClick={submit}
-        disabled={busy || !distance || !file}
+        disabled={busy || !distance || !m || !s || !file}
         className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition"
       >
         {busy ? "Uploading..." : "Submit Activity"}

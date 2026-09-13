@@ -458,7 +458,7 @@ export default function ActivitySubmission() {
             {/* Submit button */}
             <button
               onClick={submitRun}
-              disabled={loading || !distance || !file}
+              disabled={loading || !distance || !timingH || !timingM || !file}
               className={`w-full font-bold py-4 rounded-2xl text-white text-base transition-all ${
                 !loading && distance && timingH && timingM && file
                   ? "bg-green-600 hover:bg-green-700 hover:scale-[1.02]"
