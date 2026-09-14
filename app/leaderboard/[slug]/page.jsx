@@ -772,9 +772,6 @@ export default function LeaderboardPage() {
                   }}>
                   <span>{tabGroup(d)}</span>
                   <span>{d.toUpperCase()}</span>
-                  <span style={{ fontSize: 10, opacity: 0.7 }}>
-                    ({allEntries.filter(e => getNearestCategory(e.distance) === d).length})
-                  </span>
                 </button>
               );
             })}
