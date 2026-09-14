@@ -1948,44 +1948,120 @@ function Reviews() {
   );
 }
 
-/* ─── MEDAL — bada size ─── */
+/* ─── MEDAL SHOWCASE ───
+   Pehle medal 300x300 ke GOL dabbe mein "cover" hokar aata tha — yaani
+   lamba medal upar-neeche se kat jaata tha (aadha dikhta tha).
+   Ab poora medal dikhta hai: gol crop hata, "contain" laga, aur peeche
+   gehra backdrop + spotlight + parchhai — taaki dhaatu chamke. */
+
+const MedalStyles = () => (
+  <style>{`
+    @keyframes vr-shine {
+      0%   { transform: translateX(-120%) rotate(18deg); opacity: 0; }
+      35%  { opacity: .55; }
+      100% { transform: translateX(220%) rotate(18deg); opacity: 0; }
+    }
+    @keyframes vr-hover { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-10px) } }
+    @media (prefers-reduced-motion: reduce) {
+      .vr-shine, .vr-hover { animation: none !important; }
+    }
+  `}</style>
+);
+
 function Medal3D({ event }) {
-  const rotY=useRef(0),rotX=useRef(-8),drag=useRef({active:false,lastX:0,lastY:0}),auto=useRef(true),raf=useRef(null),timer=useRef(null),inner=useRef(null);
-  const apply=()=>{if(inner.current)inner.current.style.transform=`rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)`;};
-  useEffect(()=>{const tick=()=>{if(auto.current){rotY.current+=.35;apply();}raf.current=requestAnimationFrame(tick);};raf.current=requestAnimationFrame(tick);return()=>cancelAnimationFrame(raf.current);},[]);
-  const pause=()=>{auto.current=false;clearTimeout(timer.current);timer.current=setTimeout(()=>{auto.current=true;},3000);};
-  const onD=(x,y)=>{drag.current={active:true,lastX:x,lastY:y};pause();};
-  const onM=(x,y)=>{if(!drag.current.active)return;rotY.current+=(x-drag.current.lastX)*.65;rotX.current=Math.max(-30,Math.min(30,rotX.current-(y-drag.current.lastY)*.4));drag.current.lastX=x;drag.current.lastY=y;apply();};
-  const onU=()=>{drag.current.active=false;};
-  const face=(e={})=>({position:"absolute",top:0,left:0,right:0,bottom:0,borderRadius:"50%",WebkitBackfaceVisibility:"hidden",backfaceVisibility:"hidden",...e});
+  const rotY = useRef(0), rotX = useRef(-6);
+  const drag = useRef({ active:false, lastX:0, lastY:0 });
+  const auto = useRef(true), raf = useRef(null), timer = useRef(null), inner = useRef(null);
+
+  const apply = () => {
+    if (inner.current) inner.current.style.transform = `rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)`;
+  };
+
+  useEffect(() => {
+    const slow = typeof window !== "undefined"
+      && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (slow) { apply(); return; }
+    const tick = () => { if (auto.current) { rotY.current += .3; apply(); } raf.current = requestAnimationFrame(tick); };
+    raf.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf.current);
+  }, []);
+
+  const pause = () => { auto.current = false; clearTimeout(timer.current); timer.current = setTimeout(() => { auto.current = true; }, 3500); };
+  const onD = (x, y) => { drag.current = { active:true, lastX:x, lastY:y }; pause(); };
+  const onM = (x, y) => {
+    if (!drag.current.active) return;
+    rotY.current += (x - drag.current.lastX) * .65;
+    rotX.current  = Math.max(-28, Math.min(28, rotX.current - (y - drag.current.lastY) * .4));
+    drag.current.lastX = x; drag.current.lastY = y;
+    apply();
+  };
+  const onU = () => { drag.current.active = false; };
+
+  /* Dono taraf ka chehra — koi gol crop nahi, poora medal dikhta hai */
+  const face = (extra = {}) => ({
+    position: "absolute", inset: 0,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    WebkitBackfaceVisibility: "hidden", backfaceVisibility: "hidden",
+    ...extra,
+  });
+  const img = { width:"100%", height:"100%", objectFit:"contain", pointerEvents:"none",
+                filter:"drop-shadow(0 22px 34px rgba(0,0,0,.55))" };
+
+  const back = event.medalImageBack || event.medalImage;
 
   return (
-    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:16 }}>
-      {/* ✅ Bada size — 300x300 */}
-      <div style={{ width:300, height:300, perspective:"1000px", cursor:"grab", userSelect:"none", position:"relative" }}
-        onMouseDown={e=>{e.preventDefault();onD(e.clientX,e.clientY);}} onMouseMove={e=>onM(e.clientX,e.clientY)} onMouseUp={onU} onMouseLeave={onU}
-        onTouchStart={e=>{e.preventDefault();onD(e.touches[0].clientX,e.touches[0].clientY);}} onTouchMove={e=>{e.preventDefault();onM(e.touches[0].clientX,e.touches[0].clientY);}} onTouchEnd={onU}>
+    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:14 }}>
+      <div
+        className="vr-hover"
+        style={{ width:290, height:330, perspective:"1100px", cursor:"grab", userSelect:"none",
+                 position:"relative", animation:"vr-hover 6s ease-in-out infinite", touchAction:"none" }}
+        onMouseDown={e => { e.preventDefault(); onD(e.clientX, e.clientY); }}
+        onMouseMove={e => onM(e.clientX, e.clientY)}
+        onMouseUp={onU} onMouseLeave={onU}
+        onTouchStart={e => onD(e.touches[0].clientX, e.touches[0].clientY)}
+        onTouchMove={e => { e.preventDefault(); onM(e.touches[0].clientX, e.touches[0].clientY); }}
+        onTouchEnd={onU}
+      >
+        {/* Peeche ki roshni — dhaatu isi se chamakti hai */}
+        <div style={{ position:"absolute", inset:"-18%", borderRadius:"50%", pointerEvents:"none",
+          background:"radial-gradient(circle at 50% 42%, rgba(214,158,63,.38) 0%, rgba(192,57,43,.14) 38%, transparent 68%)",
+          filter:"blur(18px)" }} />
+
         <div ref={inner} style={{ width:"100%", height:"100%", position:"relative", transformStyle:"preserve-3d" }}>
-          <div style={face({ boxShadow:"0 30px 80px rgba(0,0,0,.3),0 0 0 1px rgba(255,255,255,.1)" })}>
-            {event.medalImage&&<img src={event.medalImage} alt="medal" draggable={false} style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",pointerEvents:"none"}}/>}
-            <div style={{position:"absolute",inset:0,borderRadius:"50%",background:"linear-gradient(135deg,rgba(255,255,255,.3) 0%,transparent 50%)",pointerEvents:"none"}}/>
+          {/* Aage */}
+          <div style={face()}>
+            {event.medalImage && <img src={event.medalImage} alt={`${event.title} finisher medal`} draggable={false} style={img} />}
+            {/* Chamak — dhaatu par phisalti hui roshni */}
+            <div style={{ position:"absolute", inset:0, overflow:"hidden", pointerEvents:"none" }}>
+              <div className="vr-shine" style={{ position:"absolute", top:"-30%", left:0, width:"45%", height:"160%",
+                background:"linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent)",
+                animation:"vr-shine 5.5s ease-in-out infinite" }} />
+            </div>
           </div>
-          <div style={face({ transform:"rotateY(180deg)", background: event.medalImageBack ? "#111" : "#f0ece6" })}>
-  {event.medalImageBack
-    ? <img src={event.medalImageBack} alt="back" draggable={false}
-        style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%",pointerEvents:"none"}}/>
-    : <div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:52,borderRadius:"50%"}}>🇮🇳</div>
-  }
-            <div style={{position:"absolute",inset:0,borderRadius:"50%",background:"linear-gradient(135deg,rgba(255,255,255,.2) 0%,transparent 55%)",pointerEvents:"none"}}/>
+
+          {/* Peeche */}
+          <div style={face({ transform:"rotateY(180deg)" })}>
+            {back
+              ? <img src={back} alt="" draggable={false} style={img} />
+              : <div style={{ fontSize:56 }}>🏅</div>}
           </div>
-          <div style={{position:"absolute",inset:0,borderRadius:"50%",transform:"translateZ(-8px)",background:"radial-gradient(ellipse,#9a7320,#5a4010)",WebkitBackfaceVisibility:"hidden",backfaceVisibility:"hidden"}}/>
         </div>
-        <div style={{position:"absolute",bottom:-14,left:"50%",transform:"translateX(-50%)",width:160,height:16,background:"radial-gradient(ellipse,rgba(0,0,0,.2),transparent)",filter:"blur(6px)",pointerEvents:"none"}}/>
+
+        {/* Farsh par parchhai */}
+        <div style={{ position:"absolute", bottom:-18, left:"50%", transform:"translateX(-50%)",
+          width:190, height:22, pointerEvents:"none", filter:"blur(11px)",
+          background:"radial-gradient(ellipse, rgba(0,0,0,.62), transparent 72%)" }} />
       </div>
-      <p style={{ fontSize:10, color:"#ccc", letterSpacing:2, textTransform:"uppercase", fontWeight:600 }}>Drag to Rotate</p>
+
+      <p style={{ fontSize:10, color:"rgba(255,255,255,.42)", letterSpacing:2.5, textTransform:"uppercase", fontWeight:700 }}>
+        Drag to rotate
+      </p>
+
       <div style={{ textAlign:"center" }}>
-        <p style={{ fontSize:15, fontWeight:700, color:"#111", marginBottom:2 }}>{event.title}</p>
-        <p style={{ fontSize:12, color:"#bbb" }}>Premium Finisher Medal</p>
+        <p style={{ fontSize:15, fontWeight:800, color:"#fff", marginBottom:3 }}>{event.title}</p>
+        <p style={{ fontSize:11, color:"rgba(255,255,255,.42)", letterSpacing:1.5, textTransform:"uppercase", fontWeight:700 }}>
+          Premium Finisher Medal
+        </p>
       </div>
     </div>
   );
@@ -1993,34 +2069,65 @@ function Medal3D({ event }) {
 
 function Medal({ events }) {
   return (
-    <section style={{ padding:"80px 60px", background:"#fafafa" }} className="mob-pad">
-      <div style={{ maxWidth:1200, margin:"0 auto" }}>
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:80, alignItems:"center" }} className="mob-grid1">
+    <section className="mob-pad" style={{ padding:"96px 60px", background:"#0c0c0e", position:"relative", overflow:"hidden" }}>
+      <MedalStyles />
+
+      {/* Halki warm roshni aur baareek grid — gehre background ko jaan deti hai */}
+      <div style={{ position:"absolute", inset:0, pointerEvents:"none",
+        background:"radial-gradient(ellipse at 72% 42%, rgba(214,158,63,.13) 0%, transparent 58%), radial-gradient(ellipse at 12% 85%, rgba(192,57,43,.10) 0%, transparent 52%)" }} />
+      <div style={{ position:"absolute", inset:0, pointerEvents:"none", opacity:.35,
+        backgroundImage:"linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px)",
+        backgroundSize:"90px 90px" }} />
+
+      <div style={{ maxWidth:1200, margin:"0 auto", position:"relative", zIndex:2 }}>
+        <div className="mob-grid1" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:72, alignItems:"center" }}>
+
           <div>
-            <span className="vr-tag">Your Reward</span>
-            <h2 className="mob-h2" style={{ fontSize:48, fontWeight:900, letterSpacing:"-2px", lineHeight:1.05, marginBottom:20 }}>
+            <span style={{ display:"inline-block", fontSize:10, fontWeight:800, letterSpacing:2.5,
+              textTransform:"uppercase", color:"#d69e3f", border:"1px solid rgba(214,158,63,.35)",
+              background:"rgba(214,158,63,.08)", padding:"6px 14px", borderRadius:100, marginBottom:22 }}>
+              Your Reward
+            </span>
+
+            <h2 className="mob-h2" style={{ fontSize:48, fontWeight:900, letterSpacing:"-2px", lineHeight:1.05, marginBottom:20, color:"#fff" }}>
               A Real Medal.<br />
-              <span style={{ color:"#c0392b", fontStyle:"italic" }}>Earned.</span> Not Bought.
+              <span style={{
+                fontStyle:"italic",
+                background:"linear-gradient(100deg,#f0c46a,#d69e3f 45%,#b9822c)",
+                WebkitBackgroundClip:"text", backgroundClip:"text",
+                WebkitTextFillColor:"transparent", color:"#d69e3f",
+              }}>Earned.</span> Not Bought.
             </h2>
-            <p style={{ fontSize:16, color:"#888", lineHeight:1.85, marginBottom:36 }}>
-              Every finisher receives a premium zinc-alloy medal delivered to their home — completely free. Heavy, detailed, and built to last a lifetime.
+
+            <p style={{ fontSize:16, color:"rgba(255,255,255,.55)", lineHeight:1.85, marginBottom:34, maxWidth:460 }}>
+              Every finisher receives a premium zinc-alloy medal, couriered to their door at no extra cost.
+              Heavy in the hand, sharp in detail, and built to outlast the run itself.
             </p>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16, marginBottom:36 }}>
-              {[["📦","Free Shipping","Pan-India, always"],["⚡","7–10 Days","Fast delivery"],["⭐","Zinc Alloy","Premium metal"],["🔒","Guaranteed","Or full refund"]].map(([e,t,s])=>(
-                <div key={t} style={{ display:"flex", gap:12, alignItems:"flex-start" }}>
-                  <span style={{ fontSize:22, marginTop:2 }}>{e}</span>
+
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+              {[
+                ["📦", "Free Shipping", "Pan-India, always"],
+                ["⚡", "7–10 Days",     "After dispatch"],
+                ["⭐", "Zinc Alloy",     "Premium metal"],
+                ["🏅", "Earned Only",   "Verified finishers"],
+              ].map(([icon, title, sub]) => (
+                <div key={title} style={{ display:"flex", gap:12, alignItems:"flex-start",
+                  background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.07)",
+                  borderRadius:14, padding:"14px 16px" }}>
+                  <span style={{ fontSize:20, lineHeight:1.2 }}>{icon}</span>
                   <div>
-                    <div style={{ fontSize:14, fontWeight:700, color:"#111" }}>{t}</div>
-                    <div style={{ fontSize:12, color:"#bbb", marginTop:2 }}>{s}</div>
+                    <div style={{ fontSize:13.5, fontWeight:800, color:"#fff" }}>{title}</div>
+                    <div style={{ fontSize:11.5, color:"rgba(255,255,255,.42)", marginTop:2 }}>{sub}</div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          {/* ✅ Bade medals side by side */}
-          <div style={{ display:"flex", justifyContent:"center", gap:48, flexWrap:"wrap" }}>
-            {events.slice(0,2).map(ev=><Medal3D key={ev._id} event={ev}/>)}
+
+          <div style={{ display:"flex", justifyContent:"center", gap:44, flexWrap:"wrap" }}>
+            {events.slice(0, 2).map(ev => <Medal3D key={ev._id} event={ev} />)}
           </div>
+
         </div>
       </div>
     </section>
