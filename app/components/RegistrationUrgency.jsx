@@ -99,6 +99,83 @@ export function UrgencyBadge({ deadline }) {
   );
 }
 
+/**
+ * Daam badhne wala hai — card par sabse upar wali cheez.
+ *
+ * Sirf tab dikhta hai jab event mein sach mein badhna tay ho aur waqt
+ * abhi baaki ho. Waqt khatam hote hi apne aap gayab, aur poori site par
+ * naya daam — kyunki daam ka hisaab server par hota hai.
+ */
+export function PriceRise({ event }) {
+  const ms = useTimeLeft(event?.priceIncreaseAt);
+
+  const price = Number(event?.price) || 0;
+  const next  = Number(event?.priceAfter) || 0;
+
+  if (ms == null || ms <= 0 || next <= price) return null;
+
+  const days  = Math.floor(ms / 86400000);
+  const hours = Math.floor((ms / HOUR) % 24);
+  const mins  = Math.floor((ms / 60000) % 60);
+  const secs  = Math.floor((ms / 1000) % 60);
+
+  // Aakhri din — aur tez, aur laal
+  const hot = ms < 24 * HOUR;
+
+  const boxes = hot
+    ? [[hours, "h"], [mins, "m"], [secs, "s"]]
+    : [[days, "d"], [hours, "h"], [mins, "m"]];
+
+  return (
+    <div style={{
+      borderRadius: 14, overflow: "hidden", marginBottom: 12,
+      border: `1.5px solid ${hot ? "#dc2626" : "#f59e0b"}`,
+      boxShadow: `0 4px 14px ${hot ? "rgba(220,38,38,.22)" : "rgba(245,158,11,.20)"}`,
+    }}>
+      <Styles />
+
+      <div style={{
+        background: hot
+          ? "linear-gradient(90deg,#dc2626,#b91c1c)"
+          : "linear-gradient(90deg,#f59e0b,#ea580c)",
+        padding: "6px 10px", display: "flex", alignItems: "center", gap: 6,
+      }}>
+        <span className="vr-blink" style={{ fontSize: 12, animation: "vr-blink 1s steps(2) infinite" }}>⏫</span>
+        <span style={{ color: "#fff", fontSize: 10, fontWeight: 900, letterSpacing: .8, textTransform: "uppercase" }}>
+          Price goes up to ₹{next}
+        </span>
+      </div>
+
+      <div style={{
+        background: hot ? "#fef2f2" : "#fffbeb",
+        padding: "9px 10px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8,
+      }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+          <span style={{ fontSize: 19, fontWeight: 900, color: hot ? "#991b1b" : "#92400e" }}>
+            ₹{price}
+          </span>
+          <span style={{ fontSize: 12, color: "#9ca3af", textDecoration: "line-through" }}>
+            ₹{next}
+          </span>
+        </div>
+
+        <div style={{ display: "flex", gap: 3 }}>
+          {boxes.map(([v, l]) => (
+            <span key={l} style={{
+              background: "#fff", borderRadius: 6, padding: "3px 6px",
+              border: `1px solid ${hot ? "#fecaca" : "#fde68a"}`,
+              fontSize: 11, fontWeight: 900, fontVariantNumeric: "tabular-nums",
+              color: hot ? "#991b1b" : "#92400e",
+            }}>
+              {String(v).padStart(2, "0")}{l}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /** Countdown — aakhri din laal, bada aur dhadakta hua */
 export function UrgencyCountdown({ deadline }) {
   const ms = useTimeLeft(deadline);

@@ -14,7 +14,8 @@ export default function EditEventPage() {
 
   const [formData, setFormData] = useState({
     title: '', slug: '', description: '', dates: '',
-    price: '', mrp: '', whatsappLink: '', registrationDeadline: '',
+    price: '', mrp: '', priceIncreaseAt: '', priceAfter: '',
+    whatsappLink: '', registrationDeadline: '',
     submissionDeadline: '',   // ✅ NEW
     heroImage: '', coverImage: '', medalImage: '', medalImageBack: '',
     gallery: [],
@@ -37,6 +38,8 @@ export default function EditEventPage() {
           dates:               ev.dates               || '',
           price:               ev.price               || '',
           mrp:                 ev.mrp                 || '',
+          priceIncreaseAt:     toDateInputIST(ev.priceIncreaseAt),
+          priceAfter:          ev.priceAfter          || '',
           whatsappLink:        ev.whatsappLink        || '',
           // India ke hisaab se tareekh — UTC se kaatne par din khisak jaata tha
           registrationDeadline: toDateInputIST(ev.registrationDeadline),
@@ -87,6 +90,9 @@ export default function EditEventPage() {
         price: Number(formData.price),
         // Khaali chhoda to null — tabhi pricing page par kata hua daam nahi dikhega
         mrp: formData.mrp === '' ? null : Number(formData.mrp),
+        // Early bird us din raat 11:59 PM IST tak — uske baad naya daam
+        priceIncreaseAt: endOfDayIST(formData.priceIncreaseAt),
+        priceAfter: formData.priceAfter === '' ? null : Number(formData.priceAfter),
         // Chuni hui tareekh = us din raat 11:59 PM IST tak (pehle subah 5:30 ho jaata tha)
         registrationDeadline: endOfDayIST(formData.registrationDeadline),
         submissionDeadline:   endOfDayIST(formData.submissionDeadline),
@@ -144,6 +150,30 @@ export default function EditEventPage() {
             <div className="form-group">
               <label className="form-label">Registration Deadline (closes 11:59 PM IST)</label>
               <input type="date" name="registrationDeadline" className="form-input" value={formData.registrationDeadline} onChange={handleChange}/>
+            </div>
+          </div>
+
+          {/* Early bird — daam apne aap badhega */}
+          <div style={{ border: '1px solid #e9ecef', borderRadius: 8, padding: 16, marginBottom: 24 }}>
+            <div style={{ fontWeight: 700, marginBottom: 4 }}>⏫ Early Bird — price apne aap badhega</div>
+            <small style={{ color: '#666', display: 'block', marginBottom: 14 }}>
+              Dono khaane bharenge tabhi chalega. Tareekh tak purana daam, uske baad naya —
+              site par countdown apne aap dikhne lagega aur charge bhi naya hi hoga.
+              Khaali chhod denge to daam kabhi nahi badlega.
+            </small>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+              <div className="form-group">
+                <label className="form-label">Early bird valid till (11:59 PM IST)</label>
+                <input type="date" name="priceIncreaseAt" className="form-input"
+                  value={formData.priceIncreaseAt} onChange={handleChange}/>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Price after that (₹)</label>
+                <input type="number" name="priceAfter" className="form-input"
+                  value={formData.priceAfter} onChange={handleChange} placeholder="e.g. 449"/>
+                <small style={{ color: '#666' }}>Abhi ke daam se zyada hona chahiye</small>
+              </div>
             </div>
           </div>
 

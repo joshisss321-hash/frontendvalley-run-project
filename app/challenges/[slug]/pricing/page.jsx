@@ -79,6 +79,7 @@ export default function PricingPage() {
 
   const [event, setEvent]   = useState(null);
   const [left,  setLeft]    = useState(null);
+  const [priceLeft, setPriceLeft] = useState(null);   // daam badhne mein kitna waqt
   const [face,  setFace]    = useState("front");   // medal ka aage/peeche
   const [openFaq, setOpenFaq] = useState(null);
 
@@ -104,6 +105,15 @@ export default function PricingPage() {
     return () => clearInterval(id);
   }, [event]);
 
+  /* Early bird ka countdown — daam badhne tak */
+  useEffect(() => {
+    if (!event?.priceIncreaseAt) return;
+    const tick = () => setPriceLeft(timeLeft(event.priceIncreaseAt));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [event]);
+
   if (!event) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center text-gray-500">
@@ -112,7 +122,15 @@ export default function PricingPage() {
     );
   }
 
+  /* Server pehle hi abhi wala daam bhejta hai — early bird khatam ho gaya
+     to yahan nayi keemat aayegi. Yahan koi alag hisaab nahi. */
   const price = event.price;
+
+  /* Daam badhne wala hai? (sirf tab jab waqt abhi baaki ho) */
+  const nextPrice = Number(event.priceAfter) || 0;
+  const raisesSoon = Boolean(event.priceIncreaseAt) && nextPrice > price && priceLeft;
+  const willRise   = raisesSoon ? nextPrice - price : 0;
+
   /* Kata hua daam sirf tab jab asli purana daam ho aur wo zyada ho */
   const mrp     = Number(event.mrp) > price ? Number(event.mrp) : null;
   const savings = mrp ? mrp - price : 0;
@@ -241,6 +259,48 @@ export default function PricingPage() {
                   One-time payment · No subscription · Includes delivery
                 </p>
               </div>
+
+              {/* ── Daam badhne wala hai ── */}
+              {!closed && raisesSoon && (
+                <div className="mb-6 rounded-2xl overflow-hidden border-2 border-amber-400 shadow-lg shadow-amber-500/20">
+                  <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2.5 flex items-center gap-2">
+                    <span className="animate-pulse text-lg leading-none">⏫</span>
+                    <p className="text-white font-extrabold text-sm tracking-wide uppercase">
+                      Price increases to ₹{nextPrice}
+                    </p>
+                  </div>
+
+                  <div className="bg-amber-50 px-4 py-4">
+                    <p className="text-[11px] font-bold text-amber-800 uppercase tracking-wider mb-2.5">
+                      Early bird ends in
+                    </p>
+
+                    <div className="flex gap-2">
+                      {[
+                        ["Days", priceLeft.days],
+                        ["Hrs",  priceLeft.hours],
+                        ["Min",  priceLeft.mins],
+                        ["Sec",  priceLeft.secs],
+                      ].map(([label, value]) => (
+                        <div key={label} className="flex-1 text-center">
+                          <div className="bg-white rounded-xl py-2 shadow-sm border border-amber-200">
+                            <span className="text-2xl font-extrabold text-amber-900 tabular-nums">
+                              {String(value).padStart(2, "0")}
+                            </span>
+                          </div>
+                          <span className="text-[10px] text-amber-700 font-bold mt-1 block uppercase">
+                            {label}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <p className="text-sm text-amber-900 font-semibold mt-3 text-center">
+                      Register now and save ₹{willRise}
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Countdown — sirf jab registration khuli ho aur deadline set ho */}
               {!closed && left && (

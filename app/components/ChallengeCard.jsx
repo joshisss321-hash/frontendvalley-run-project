@@ -559,7 +559,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
-  UrgencyBadge, UrgencyCountdown,
+  UrgencyBadge, UrgencyCountdown, PriceRise,
   useTimeLeft, urgencyLevel, ctaLabel,
 } from "./RegistrationUrgency";
 
@@ -835,6 +835,9 @@ export default function ChallengeCard({ event }) {
               </div>
             ))}
           </div>
+
+          {/* Daam badhne wala ho to sabse upar */}
+          <PriceRise event={event} />
 
           {/* Countdown — aakhri din bada aur laal */}
           {event.registrationDeadline && <UrgencyCountdown deadline={event.registrationDeadline} />}

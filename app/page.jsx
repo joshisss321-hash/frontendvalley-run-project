@@ -1639,7 +1639,7 @@ function Stats() {
 
 import Link from "next/link";
 import {
-  UrgencyBadge, UrgencyCountdown,
+  UrgencyBadge, UrgencyCountdown, PriceRise,
   useTimeLeft, urgencyLevel, ctaLabel,
 } from "./components/RegistrationUrgency";
 
@@ -1818,6 +1818,9 @@ function HomeEventCard({ event, router }) {
             {event.description}
           </p>
         )}
+
+        {/* Daam badhne wala ho to sabse upar */}
+        {!regClosed && <PriceRise event={event} />}
 
         {/* Countdown — aakhri din bada aur laal */}
         {!regClosed && event.registrationDeadline && (
