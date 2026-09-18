@@ -85,7 +85,7 @@ export default function EditEventPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      const result = await adminAPI.updateEvent(params.id, {
+      const payload = {
         ...formData,
         price: Number(formData.price),
         // Khaali chhoda to null — tabhi pricing page par kata hua daam nahi dikhega
@@ -96,9 +96,32 @@ export default function EditEventPage() {
         // Chuni hui tareekh = us din raat 11:59 PM IST tak (pehle subah 5:30 ho jaata tha)
         registrationDeadline: endOfDayIST(formData.registrationDeadline),
         submissionDeadline:   endOfDayIST(formData.submissionDeadline),
-      });
-      if (result.success) router.push('/admin/events');
-      else alert(result.message || 'Failed to update');
+      };
+
+      const result = await adminAPI.updateEvent(params.id, payload);
+
+      if (!result.success) {
+        alert(result.message || 'Failed to update');
+        return;
+      }
+
+      /* Server ne jo lautaya usse milao.
+         Agar backend purana chal raha ho to Mongoose anjaan fields
+         CHUPCHAAP gira deta hai — "saved" dikhta hai par kuch bachta nahi.
+         Pehle yahi hua tha, isliye ab saaf bata dete hain. */
+      const dropped = ['priceIncreaseAt', 'priceAfter', 'mrp', 'whatsappLink']
+        .filter((k) => payload[k] !== null && payload[k] !== '' && result.event?.[k] == null);
+
+      if (dropped.length) {
+        alert(
+          '⚠️ Ye fields server par save NAHI hue:\n\n  ' + dropped.join(', ') +
+          '\n\nSabse aam wajah: backend ka purana version chal raha hai.' +
+          '\nRender par deploy "Live" hai ya nahi, wo check kijiye — fir dobara save kijiye.'
+        );
+        return;
+      }
+
+      router.push('/admin/events');
     } catch (err) {
       console.error(err);
       alert('Failed to update event');
