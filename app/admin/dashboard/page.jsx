@@ -29,21 +29,31 @@ export default function Dashboard() {
 
   // ✅ Auth check — bina login ke nahi khulega
   useEffect(() => {
-    const token = localStorage.getItem('adminToken');
-    if (!token) {
-      router.replace('/admin/login');
-      return;
-    }
-    adminAPI.verifyToken().then(res => {
-      if (!res.success) {
-        localStorage.removeItem('adminToken');
+    const check = () => {
+      const token = localStorage.getItem('adminToken');
+      if (!token) {
         router.replace('/admin/login');
+        return;
       }
-    }).catch(() => {
-      router.replace('/admin/login');
-    });
+      adminAPI.verifyToken().then(res => {
+        if (!res.success) {
+          localStorage.removeItem('adminToken');
+          router.replace('/admin/login?expired=1');
+        }
+      }).catch(() => {
+        router.replace('/admin/login');
+      });
+    };
 
+    check();
     loadAll();
+
+    /* Token 7 din mein expire hota hai. Tab mahino tak khula reh sakta hai —
+       tab purana data dikhta rehta tha aur har nayi call chupchaap fail hoti
+       thi. Ab wapas tab par aate hi dobara jaanchte hain. */
+    const onFocus = () => { if (document.visibilityState === 'visible') check(); };
+    document.addEventListener('visibilitychange', onFocus);
+    return () => document.removeEventListener('visibilitychange', onFocus);
   }, []);
 
   const loadAll = async () => {

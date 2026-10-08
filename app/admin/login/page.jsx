@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminAPI } from '@/lib/api';
 
@@ -14,6 +14,15 @@ export default function AdminLogin() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [expired, setExpired] = useState(false);
+
+  /* ?expired=1 ka matlab: token khatam hone par yahan bheja gaya hai.
+     Bina wajah bataye login page dikhana confusing lagta hai. */
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.search.includes('expired=1')) {
+      setExpired(true);
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,6 +64,12 @@ export default function AdminLogin() {
           <h1 className="login-title">🔥 Admin Panel</h1>
           <p className="login-subtitle">Sign in to continue</p>
         </div>
+
+        {expired && !error && (
+          <div className="notice-message">
+            Session 7 din baad khatam ho gaya tha — dobara sign in kijiye.
+          </div>
+        )}
 
         {error && <div className="error-message">{error}</div>}
 
@@ -151,6 +166,16 @@ export default function AdminLogin() {
 
         button:hover {
           background: #00cc6a;
+        }
+
+        .notice-message {
+          background: rgba(245,158,11,0.12);
+          color: #fbbf24;
+          padding: 10px;
+          margin-bottom: 15px;
+          border-radius: 8px;
+          text-align: center;
+          font-size: 14px;
         }
 
         .error-message {
