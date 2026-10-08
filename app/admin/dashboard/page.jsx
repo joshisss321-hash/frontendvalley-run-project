@@ -125,7 +125,8 @@ export default function Dashboard() {
           status:    subStatus,
           search:    subSearch,
         });
-        if (!res.rows?.length) { alert('No submissions match this filter'); return; }
+        if (res?.success === false) { alert('Download nahi hua — ' + res.message); return; }
+        if (!res?.rows?.length) { alert('Is filter mein koi submission nahi mili'); return; }
 
         const headers = ['Sr','Name','Email','Phone','Distance','Timing','Status','Admin Note','Date','Proof Image'];
         const data = res.rows.map(r => [
@@ -140,14 +141,24 @@ export default function Dashboard() {
       }
 
       const res = await adminAPI.exportRegistrations(selectedEvent.slug);
-      if (!res.rows?.length) { alert('No data'); return; }
+
+      if (res?.success === false) { alert('Download nahi hua — ' + res.message); return; }
+      if (!res?.rows?.length) {
+        alert(`"${selectedEvent.title}" mein abhi koi registration nahi hai`);
+        return;
+      }
+
       const headers = ['Sr','Name','Email','Phone','Category','Address1','Address2','Landmark','City','State','Pincode','Amount','PaymentID','Medal Status','Date'];
       const data = res.rows.map(r => [r.sr,r.name,r.email,r.phone,r.category,r.address1,r.address2,r.landmark,r.city,r.state,r.pincode,r.amount,r.paymentId,r.medalStatus,r.date]);
       const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Registrations');
       XLSX.writeFile(wb, `${selectedEvent.title}_registrations.xlsx`);
-    } catch { alert('Export failed'); }
+    } catch (err) {
+      // Pehle yahan sirf "Export failed" aata tha — wajah kabhi pata nahi chalti thi
+      console.error('Excel export fail:', err);
+      alert('Download nahi hua — ' + (err?.message || err));
+    }
   };
 
   const totalRegs    = events.reduce((s,e) => s+(e.registrationCount||0), 0);
