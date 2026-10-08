@@ -18,6 +18,12 @@ export default function Dashboard() {
   const [subStatus, setSubStatus]         = useState('pending');
   const [subSearch, setSubSearch]         = useState('');
   const [subCounts, setSubCounts]         = useState({ pending:0, approved:0, rejected:0 });
+
+  /* Server ek baar mein 100 hi bhejta hai. Pehle yahan pagination thi
+     nahi, isliye 100 se aage wali submissions kabhi dikhti hi nahi thin. */
+  const [subPage, setSubPage]             = useState(1);
+  const [subPageInfo, setSubPageInfo]     = useState({ page:1, totalPages:1 });
+  const [subTotal, setSubTotal]           = useState(0);
   const [imageModal, setImageModal]       = useState(null);
   const [view, setView]                   = useState('events');
 
@@ -69,15 +75,27 @@ export default function Dashboard() {
     setRegsLoading(false);
   };
 
-  const loadSubs = async (ev, status, search = '') => {
+  const loadSubs = async (ev, status, search = '', page = 1) => {
     setSubsLoading(true);
+    setSubPage(page);
     try {
-      const params = { eventSlug: ev.slug };
+      const params = { eventSlug: ev.slug, page };
       if (status) params.status = status;
       if (search) params.search = search;
+
       const res = await adminAPI.getSubmissions(params);
+      const pg  = res.pagination || { page:1, totalPages:1 };
+
+      /* Approve karte-karte aakhri page khaali ho gaya? Wapas le aao,
+         warna "No submissions" dikhta hai aur lagta hai data gayab ho gaya. */
+      if (pg.totalPages > 0 && pg.page > pg.totalPages) {
+        return loadSubs(ev, status, search, pg.totalPages);
+      }
+
       setSubs(res.submissions || []);
       setSubCounts(res.counts || { pending:0, approved:0, rejected:0 });
+      setSubPageInfo(pg);
+      setSubTotal(res.total || 0);
     } catch {}
     setSubsLoading(false);
   };
@@ -88,8 +106,9 @@ export default function Dashboard() {
     if (tab === 'submissions')   { setSubStatus('pending'); loadSubs(selectedEvent, 'pending', subSearch); }
   };
 
-  const approve = async (id) => { await adminAPI.approveSubmission(id); loadSubs(selectedEvent, subStatus, subSearch); };
-  const reject  = async (id) => { await adminAPI.rejectSubmission(id);  loadSubs(selectedEvent, subStatus, subSearch); };
+  /* Approve/reject ke baad usi page par rukna hai, page 1 par nahi jaana */
+  const approve = async (id) => { await adminAPI.approveSubmission(id); loadSubs(selectedEvent, subStatus, subSearch, subPage); };
+  const reject  = async (id) => { await adminAPI.rejectSubmission(id);  loadSubs(selectedEvent, subStatus, subSearch, subPage); };
 
   /* Ek hi Excel button — jo tab khula hai uska data export karta hai.
      Dono cases mein data server se aata hai, screen par dikhi rows se
@@ -421,6 +440,38 @@ export default function Dashboard() {
                       )}
                     </div>
                   ))}
+                </div>
+              )}
+
+              {/* Pagination — 100 se aage wali submissions ab chhupti nahi */}
+              {!subsLoading && subPageInfo.totalPages > 1 && (
+                <div style={{ marginTop:14, background:'white', borderRadius:14, padding:'12px 16px',
+                  display:'flex', flexWrap:'wrap', alignItems:'center', justifyContent:'space-between', gap:10,
+                  boxShadow:'0 2px 8px rgba(0,0,0,0.06)' }}>
+                  <span style={{ fontSize:12, color:'#6b7280' }}>
+                    Page <strong style={{ color:'#1f2937' }}>{subPageInfo.page}</strong> of{' '}
+                    <strong style={{ color:'#1f2937' }}>{subPageInfo.totalPages}</strong>
+                    {' · '}{subTotal} submissions
+                  </span>
+                  <div style={{ display:'flex', gap:8 }}>
+                    <button
+                      disabled={subPage <= 1}
+                      onClick={() => loadSubs(selectedEvent, subStatus, subSearch, subPage - 1)}
+                      style={{ border:'1px solid #e5e7eb', background:'white', borderRadius:10, padding:'8px 16px',
+                        fontWeight:700, fontSize:12, cursor: subPage <= 1 ? 'not-allowed' : 'pointer',
+                        opacity: subPage <= 1 ? 0.4 : 1, color:'#374151' }}>
+                      ← Prev
+                    </button>
+                    <button
+                      disabled={subPage >= subPageInfo.totalPages}
+                      onClick={() => loadSubs(selectedEvent, subStatus, subSearch, subPage + 1)}
+                      style={{ border:'1px solid #e5e7eb', background:'white', borderRadius:10, padding:'8px 16px',
+                        fontWeight:700, fontSize:12,
+                        cursor: subPage >= subPageInfo.totalPages ? 'not-allowed' : 'pointer',
+                        opacity: subPage >= subPageInfo.totalPages ? 0.4 : 1, color:'#374151' }}>
+                      Next →
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
