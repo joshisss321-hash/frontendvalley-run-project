@@ -9,7 +9,7 @@ import { CATEGORY_GROUPS, distanceOf } from "../../../../lib/categories";
 /* ── Package mein kya-kya milta hai ──
    Har cheez wahi hai jo sach mein di jaati hai. Kuch naya wada mat jodna. */
 const INCLUDED = [
-  { icon: "🏅", title: "Premium Metal Medal",   note: "3-inch zinc alloy, couriered to your home" },
+  { icon: "🏅", title: "Premium Metal Medal",   note: "4-inch zinc alloy, couriered to your home" },
   { icon: "📜", title: "Digital E-Certificate", note: "Emailed to you, with your name and finish time" },
   { icon: "🏆", title: "Leaderboard Listing",   note: "Your name and timing published on the site" },
   { icon: "📦", title: "Live Medal Tracking",   note: "Tracking ID appears in your profile" },
