@@ -16,12 +16,17 @@ export default function AdminSubmissions() {
   const [selected, setSelected] = useState([]);
   const [modal, setModal]     = useState(null);
 
+  /* Server ek baar mein 100 hi bhejta hai. Pehle yahan pagination thi hi
+     nahi, isliye 100 se aage ki submissions kabhi dikhti hi nahi thin. */
+  const [page, setPage]         = useState(1);
+  const [pageInfo, setPageInfo] = useState({ page: 1, totalPages: 1 });
+
   useEffect(() => {
     adminAPI.getEvents().then((r) => setEvents(r.events || []));
     const p = new URLSearchParams(window.location.search);
     const ev = p.get("event") || "";
     setEventSlug(ev);
-    load({ eventSlug: ev, status: "pending" });
+    load({ eventSlug: ev, status: "pending", page: 1 });
   }, []);
 
   const load = async (params) => {
@@ -29,15 +34,30 @@ export default function AdminSubmissions() {
     setSelected([]);
     try {
       const res = await adminAPI.getSubmissions(params);
+      const pg  = res.pagination || { page: 1, totalPages: 1 };
+
+      /* Approve karte-karte aakhri page khaali ho gaya? Wapas le aao,
+         warna khaali screen dikhti hai aur lagta hai data gayab ho gaya. */
+      if (pg.totalPages > 0 && pg.page > pg.totalPages) {
+        setPage(pg.totalPages);
+        return load({ ...params, page: pg.totalPages });
+      }
+
       setSubs(res.submissions || []);
       setTotal(res.total || 0);
       setCounts(res.counts || { pending: 0, approved: 0, rejected: 0 });
+      setPageInfo(pg);
     } catch {}
     setLoading(false);
   };
 
+  /* Filter badla to pehle page par — warna page 3 par khade reh kar
+     khaali screen dikhti. Pagination ke buttons page saaf bhejte hain. */
   const applyFilter = (overrides = {}) => {
-    const params = { eventSlug, status, distance, search, ...overrides };
+    const nextPage = overrides.page ?? 1;
+    setPage(nextPage);
+
+    const params = { eventSlug, status, distance, search, ...overrides, page: nextPage };
     // ✅ FIX: distance lowercase karo — case mismatch nahi hoga
     if (params.distance) params.distance = params.distance.toLowerCase();
     // clean empty values
@@ -45,23 +65,26 @@ export default function AdminSubmissions() {
     load(params);
   };
 
+  /* Approve/reject ke baad usi page par rukna hai, page 1 par nahi jaana */
+  const stay = () => applyFilter({ page });
+
   const approve = async (id) => {
     await adminAPI.approveSubmission(id);
-    applyFilter();
+    stay();
   };
   const reject = async (id) => {
     await adminAPI.rejectSubmission(id);
-    applyFilter();
+    stay();
   };
   const del = async (id) => {
     if (!confirm("Delete this submission?")) return;
     await adminAPI.deleteSubmission(id);
-    applyFilter();
+    stay();
   };
   const bulkApprove = async () => {
     if (!selected.length || !confirm(`Approve ${selected.length} submissions?`)) return;
     await adminAPI.bulkApprove(selected);
-    applyFilter();
+    stay();
   };
 
   const toggle = (id) =>
@@ -265,6 +288,34 @@ export default function AdminSubmissions() {
           </div>
         )}
       </div>
+
+      {/* Pagination — 100 se aage wali submissions ab chhupti nahi */}
+      {!loading && pageInfo.totalPages > 1 && (
+        <div className="mt-4 bg-white rounded-2xl border border-gray-100 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+          <span className="text-xs text-gray-500">
+            Page <strong className="text-gray-800">{pageInfo.page}</strong> of{" "}
+            <strong className="text-gray-800">{pageInfo.totalPages}</strong>
+            {" · "}{total} submissions in this filter
+          </span>
+
+          <div className="flex gap-2">
+            <button
+              disabled={page <= 1}
+              onClick={() => applyFilter({ page: page - 1 })}
+              className="border border-gray-200 text-gray-700 text-xs font-bold px-4 py-2 rounded-xl hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              ← Prev
+            </button>
+            <button
+              disabled={page >= pageInfo.totalPages}
+              onClick={() => applyFilter({ page: page + 1 })}
+              className="border border-gray-200 text-gray-700 text-xs font-bold px-4 py-2 rounded-xl hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Next →
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Image modal */}
       {modal && (
