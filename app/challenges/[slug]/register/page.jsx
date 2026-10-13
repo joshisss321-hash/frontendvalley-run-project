@@ -480,6 +480,28 @@ export default function RegisterPage() {
 
             <h2 className="text-2xl font-bold">Personal Details</h2>
 
+            {/* Registration par {user, event} ka unique index hai aur user email se
+                pehchana jaata hai. Isliye same email par doosri entry banti hi nahi.
+                Log ye jaane bina do baar bhar dete the — isliye sabse upar, laal mein. */}
+            <div className="border-2 border-red-500 bg-red-50 rounded-xl p-4 -mt-2">
+              <p className="text-base font-extrabold text-red-700 mb-2 flex items-center gap-2">
+                <span aria-hidden="true">⚠️</span>
+                One registration per email and mobile number
+              </p>
+              <p className="text-sm text-red-900 leading-relaxed">
+                Each email address and mobile number can be used for{' '}
+                <strong className="font-bold">one registration only</strong>. If you enter
+                details that have already been used for this event, a second entry will
+                <strong className="font-bold"> not</strong> be created.
+              </p>
+              <p className="text-sm text-red-900 leading-relaxed mt-2">
+                Registering for a family member or friend? Please fill a{' '}
+                <strong className="font-bold">separate form with their own email address
+                and mobile number</strong> — this keeps every runner&apos;s BIB, medal
+                delivery and certificate correctly linked to them.
+              </p>
+            </div>
+
             {/* Sabse zyada shikayat isi ki aati hai — pehle hi bata do */}
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 -mt-2">
               <p className="text-sm font-bold text-amber-900 mb-1">
