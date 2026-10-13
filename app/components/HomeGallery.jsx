@@ -15,8 +15,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 const IG_HANDLE = "valleyrunofficial";
 const IG_URL    = `https://www.instagram.com/${IG_HANDLE}/`;
 
-const FIRST_BATCH = 12;
-const STEP        = 12;
+const STEP = 12;
 
 /* Event ka poora naam chip par bahut lamba lagta hai —
    "National Unity Day Virtual Run 2026 – Run for Unity" ko chhota karo. */
@@ -27,9 +26,17 @@ const shortName = (title = "") =>
     .replace(/Virtual\s+/i, "")
     .trim() || title;
 
-export default function HomeGallery({ events = [] }) {
+/* Homepage ek section ke taur par use karta hai (apna heading ke saath),
+   aur /gallery page poore page ke taur par — jahan upar apna hero pehle se
+   hai, isliye wahan heading band aur zyada photos ek saath. */
+export default function HomeGallery({
+  events = [],
+  showHeading = true,
+  initial = 12,
+  padded = true,
+}) {
   const [filter, setFilter] = useState("all");
-  const [limit, setLimit]   = useState(FIRST_BATCH);
+  const [limit, setLimit]   = useState(initial);
   const [lb, setLb]         = useState(null);
 
   /* Purane ImageKit account wali kaafi photos ab 403 deti hain. Unka
@@ -68,7 +75,7 @@ export default function HomeGallery({ events = [] }) {
   const shown = visible.slice(0, limit);
 
   // Filter badla to wapas pehle batch par
-  useEffect(() => { setLimit(FIRST_BATCH); }, [filter]);
+  useEffect(() => { setLimit(initial); }, [filter, initial]);
 
   /* ── Lightbox ke keyboard controls ── */
   useEffect(() => {
@@ -103,7 +110,7 @@ export default function HomeGallery({ events = [] }) {
   if (!shots.length) return null;
 
   return (
-    <section className="vrg" style={{ padding: "88px 60px", background: "#0a0a0a", position: "relative", overflow: "hidden" }}>
+    <section className="vrg" style={{ padding: padded ? "88px 60px" : "0 60px 72px", background: "#0a0a0a", position: "relative", overflow: "hidden" }}>
       {/* Halki laal roshni — flat kaala sapaat lagta hai */}
       <div aria-hidden="true" style={{
         position: "absolute", top: "-20%", left: "50%", transform: "translateX(-50%)",
@@ -116,13 +123,17 @@ export default function HomeGallery({ events = [] }) {
         {/* ── Header ── */}
         <div className="vrg-head" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 20, marginBottom: 28, flexWrap: "wrap" }}>
           <div>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: "#c0392b" }}>
-              Gallery
-            </span>
-            <h2 className="vrg-h2" style={{ fontSize: 48, fontWeight: 900, letterSpacing: "-2px", lineHeight: 1.05, color: "#fff", marginTop: 6 }}>
-              Moments of Glory
-            </h2>
-            <p style={{ fontSize: 14, color: "rgba(255,255,255,.45)", marginTop: 10 }}>
+            {showHeading && (
+              <>
+                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: "#c0392b" }}>
+                  Gallery
+                </span>
+                <h2 className="vrg-h2" style={{ fontSize: 48, fontWeight: 900, letterSpacing: "-2px", lineHeight: 1.05, color: "#fff", marginTop: 6 }}>
+                  Moments of Glory
+                </h2>
+              </>
+            )}
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,.45)", marginTop: showHeading ? 10 : 0 }}>
               {shots.length} photos from {tabs.length} challenges — real runners, real medals.
             </p>
           </div>
