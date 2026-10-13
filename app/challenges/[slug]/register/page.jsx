@@ -308,6 +308,10 @@ export default function RegisterPage() {
   const [couponError, setCouponError] = useState("");
   const [couponBusy, setCouponBusy]   = useState(false);
 
+  /* Is event ke liye ye email/number pehle se registered hai.
+     Alert se batana theek nahi tha — band karte hi gaayab ho jaata tha. */
+  const [blocked, setBlocked] = useState(null); // { field, message }
+
   const [form, setForm] = useState({
     name:     "",
     email:    "",
@@ -349,6 +353,11 @@ export default function RegisterPage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
+
+    // Jo cheez ruki thi wahi badal rahe hain? To purana error hata do.
+    if (blocked && (name.startsWith("email") || name.startsWith("phone"))) {
+      setBlocked(null);
+    }
   };
 
   /* ── Coupon apply ── */
@@ -411,6 +420,7 @@ export default function RegisterPage() {
   const createOrder = async () => {
     if (!isFormValid || loading) return;
     setLoading(true);
+    setBlocked(null);
 
     try {
       const res = await fetch(
@@ -445,6 +455,10 @@ export default function RegisterPage() {
 
       if (data.success) {
         setOrder(data.order);
+      } else if (data.code === "ALREADY_REGISTERED") {
+        /* Razorpay kholna hi nahi hai — entry ban hi nahi sakti,
+           paisa kat jaata aur refund admin ko karna padta. */
+        setBlocked({ field: data.field, message: data.message });
       } else {
         alert(data.message || "Order creation failed. Try again.");
       }
@@ -680,6 +694,21 @@ export default function RegisterPage() {
                 <span className="text-red-600">₹{payable}</span>
               </div>
             </div>
+
+            {blocked && (
+              <div className="border-2 border-red-500 bg-red-50 rounded-xl p-4 mb-4">
+                <p className="text-base font-extrabold text-red-700 mb-2 flex items-center gap-2">
+                  <span aria-hidden="true">⛔</span>
+                  Already registered
+                </p>
+                <p className="text-sm text-red-900 leading-relaxed">{blocked.message}</p>
+                <p className="text-sm text-red-900 leading-relaxed mt-2">
+                  Already registered yourself? Your BIB number, medal status and
+                  certificate are all in{' '}
+                  <a href="/profile" className="font-bold underline">My Profile</a>.
+                </p>
+              </div>
+            )}
 
             {!order ? (
               <>
