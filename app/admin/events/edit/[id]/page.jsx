@@ -325,6 +325,25 @@ export default function EditEventPage() {
             )})
           </h3>
 
+          {/* Public API sirf active events lautati hai. Event band ho to uski
+              photos kahin nahi dikhtin — aur admin ko lagta hai upload fail
+              ho gaya. Isliye yahin, photos ke paas hi, saaf bata do. */}
+          {!formData.active && formData.gallery.length > 0 && (
+            <div style={{ background: 'rgba(255,170,0,.12)', border: '1px solid #ffaa00',
+              borderRadius: 8, padding: '12px 14px', marginBottom: 16 }}>
+              <div style={{ color: '#ffcc55', fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
+                ⚠️ Ye photos website par nahi dikhengi
+              </div>
+              <div style={{ color: '#ffddaa', fontSize: 13, lineHeight: 1.6 }}>
+                Is event ka <strong>Active</strong> tick hata hua hai, isliye poora event
+                website se chhupa hua hai — gallery ki photos bhi. Dikhani hain to upar{' '}
+                <strong>Active</strong> tick kijiye. (Purana event hai to{' '}
+                <strong>Past Event</strong> ka tick lagaa rehne dijiye — wo Previous
+                Challenges mein chala jayega, live events mein nahi.)
+              </div>
+            </div>
+          )}
+
           {/* Purane ImageKit account ki photos ab 403 deti hain. Yahan laal
               nishaan lag jayega taaki pata chale kaunsi dobara daalni hai. */}
           {brokenList.length > 0 && (
