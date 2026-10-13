@@ -1294,6 +1294,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "./components/Navbar";
+import HomeGallery from "./components/HomeGallery";
 
 const WHATSAPP_URL = "https://whatsapp.com/channel/0029VbCM5KOBVJl3FdMMHI3M";
 
@@ -1322,7 +1323,6 @@ export default function HomePage() {
   const liveEvents  = events.filter(e => e.active && !e.isPrevious);
   const pastEvents  = events.filter(e => e.isPrevious);
   const medalEvents = events.filter(e => e.medalImage);
-  const gallery     = events.flatMap(e => e.gallery || []);
 
   return (
     <div style={{ background:"#fff", color:"#0a0a0a", fontFamily:"'Inter',-apple-system,BlinkMacSystemFont,sans-serif", overflowX:"hidden" }}>
@@ -1366,7 +1366,7 @@ export default function HomePage() {
       <Reviews />
       {medalEvents.length > 0 && <Medal events={medalEvents} />}
       <HowItWorks />
-      {gallery.length > 0 && <Gallery images={gallery} />}
+      <HomeGallery events={events} />
       {pastEvents.length > 0 && <Past events={pastEvents} router={router} />}
       <CTA router={router} />
     </div>
@@ -2169,54 +2169,6 @@ function HowItWorks() {
 }
 
 /* ─── GALLERY ─── */
-function Gallery({ images }) {
-  const [lb, setLb] = useState(null);
-  const shown = images.slice(0, 8);
-  useEffect(()=>{const h=e=>{if(e.key==="Escape")setLb(null);};window.addEventListener("keydown",h);return()=>window.removeEventListener("keydown",h);},[]);
-  const sizes = [
-    { gridColumn:"span 2", gridRow:"span 2" },
-    { gridColumn:"span 1", gridRow:"span 1" },
-    { gridColumn:"span 1", gridRow:"span 1" },
-    { gridColumn:"span 1", gridRow:"span 2" },
-    { gridColumn:"span 1", gridRow:"span 1" },
-    { gridColumn:"span 1", gridRow:"span 1" },
-    { gridColumn:"span 1", gridRow:"span 1" },
-    { gridColumn:"span 1", gridRow:"span 1" },
-  ];
-  return (
-    <section style={{ padding:"80px 60px", background:"#0a0a0a" }} className="mob-pad">
-      <div style={{ maxWidth:1200, margin:"0 auto" }}>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:48, flexWrap:"wrap", gap:16 }}>
-          <div>
-            <span style={{ fontSize:11, fontWeight:700, letterSpacing:2, textTransform:"uppercase", color:"#c0392b" }}>Gallery</span>
-            <h2 className="mob-h2" style={{ fontSize:48, fontWeight:900, letterSpacing:"-2px", lineHeight:1.05, color:"#fff" }}>Moments of Glory</h2>
-          </div>
-          <p style={{ fontSize:14, color:"rgba(255,255,255,.3)", textAlign:"right" }}>Real runners. Real medals.</p>
-        </div>
-        <div className="gallery-grid" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gridAutoRows:"160px", gap:12 }}>
-          {shown.map((img,i)=>(
-            <div key={i} onClick={()=>setLb(i)} style={{ ...sizes[i]||{}, borderRadius:16, overflow:"hidden", cursor:"zoom-in", position:"relative" }}
-              onMouseEnter={e=>{e.currentTarget.querySelector("img").style.transform="scale(1.06)";e.currentTarget.querySelector(".go").style.opacity="1";}}
-              onMouseLeave={e=>{e.currentTarget.querySelector("img").style.transform="scale(1)";e.currentTarget.querySelector(".go").style.opacity="0";}}>
-              <img src={img} alt="" style={{width:"100%",height:"100%",objectFit:"cover",transition:"transform .4s ease"}}/>
-              <div className="go" style={{position:"absolute",inset:0,background:"rgba(192,57,43,.15)",border:"2px solid rgba(192,57,43,.4)",borderRadius:16,opacity:0,transition:"opacity .3s",pointerEvents:"none"}}/>
-            </div>
-          ))}
-        </div>
-      </div>
-      {lb!==null&&(
-        <div onClick={()=>setLb(null)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.94)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:20,backdropFilter:"blur(10px)"}}>
-          <button onClick={()=>setLb(null)} style={{position:"absolute",top:20,right:20,background:"rgba(255,255,255,.1)",border:"1px solid rgba(255,255,255,.15)",color:"#fff",width:44,height:44,borderRadius:"50%",fontSize:20,cursor:"pointer"}}>×</button>
-          <button onClick={e=>{e.stopPropagation();setLb(p=>(p-1+shown.length)%shown.length);}} style={{position:"absolute",left:20,background:"rgba(255,255,255,.1)",border:"none",color:"#fff",width:52,height:52,borderRadius:"50%",fontSize:26,cursor:"pointer"}}>‹</button>
-          <img src={shown[lb]} alt="" onClick={e=>e.stopPropagation()} style={{maxHeight:"88vh",maxWidth:"88vw",objectFit:"contain",borderRadius:12}}/>
-          <button onClick={e=>{e.stopPropagation();setLb(p=>(p+1)%shown.length);}} style={{position:"absolute",right:20,background:"rgba(255,255,255,.1)",border:"none",color:"#fff",width:52,height:52,borderRadius:"50%",fontSize:26,cursor:"pointer"}}>›</button>
-          <div style={{position:"absolute",bottom:20,color:"rgba(255,255,255,.3)",fontSize:13}}>{lb+1}/{shown.length}</div>
-        </div>
-      )}
-    </section>
-  );
-}
-
 /* ─── PAST ─── */
 function Past({ events, router }) {
   return (
