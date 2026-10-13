@@ -81,6 +81,24 @@ export default function EditEventPage() {
     setFormData(prev => ({ ...prev, gallery: prev.gallery.filter((_, i) => i !== index) }));
   };
 
+  /* Jo photo browser mein khulti hi nahi, use yaad rakho — purane image
+     account wali kaafi photos 403 deti hain aur website par khaali
+     dikhti hain. Admin ko pata hona chahiye ki kaunsi dobara daalni hai. */
+  const [broken, setBroken] = useState(() => new Set());
+  const markBroken = (url) =>
+    setBroken(prev => (prev.has(url) ? prev : new Set(prev).add(url)));
+
+  const brokenList = formData.gallery.filter(u => broken.has(u));
+
+  const removeBrokenImages = () => {
+    if (!brokenList.length) return;
+    if (!confirm(
+      `${brokenList.length} tooti hui photo list se hat jayengi.\n\n` +
+      `Yaad rakhiye: pakka tab hoga jab aap niche "Update Event" dabayenge.`
+    )) return;
+    setFormData(prev => ({ ...prev, gallery: prev.gallery.filter(u => !broken.has(u)) }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -300,19 +318,62 @@ export default function EditEventPage() {
 
         {/* ── Gallery ── */}
         <div className="card" style={{ marginBottom: '24px' }}>
-          <h3 style={{ color: '#00ff88', marginTop: 0 }}>Gallery ({formData.gallery.length} photos)</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px', marginBottom: '20px' }}>
-            {formData.gallery.map((img, index) => (
-              <div key={index} style={{ position: 'relative' }}>
-                <img src={img} alt={`Gallery ${index + 1}`}
-                  style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '8px' }}/>
-                <button type="button" onClick={() => removeGalleryImage(index)}
-                  style={{ position: 'absolute', top: '6px', right: '6px', background: '#ff4444',
-                    color: 'white', border: 'none', borderRadius: '50%', width: '28px', height: '28px', cursor: 'pointer' }}>
-                  ✕
-                </button>
+          <h3 style={{ color: '#00ff88', marginTop: 0 }}>
+            Gallery ({formData.gallery.length} photos
+            {brokenList.length > 0 && (
+              <span style={{ color: '#ff4444' }}> — {brokenList.length} TOOTI HUI</span>
+            )})
+          </h3>
+
+          {/* Purane ImageKit account ki photos ab 403 deti hain. Yahan laal
+              nishaan lag jayega taaki pata chale kaunsi dobara daalni hai. */}
+          {brokenList.length > 0 && (
+            <div style={{ background: 'rgba(255,68,68,.12)', border: '1px solid #ff4444',
+              borderRadius: 8, padding: '12px 14px', marginBottom: 16 }}>
+              <div style={{ color: '#ff8888', fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
+                ⚠️ {brokenList.length} photo khul nahi rahi
               </div>
-            ))}
+              <div style={{ color: '#ffaaaa', fontSize: 13, lineHeight: 1.6 }}>
+                Ye purane image account par padi hain, isliye website par khaali dikhti hain.
+                Inhe hata kar nayi photo upload kijiye.
+              </div>
+              <button
+                type="button"
+                onClick={removeBrokenImages}
+                style={{ marginTop: 10, background: '#ff4444', color: '#fff', border: 'none',
+                  borderRadius: 6, padding: '8px 16px', fontWeight: 700, cursor: 'pointer' }}
+              >
+                Tooti hui {brokenList.length} photo hatao
+              </button>
+            </div>
+          )}
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px', marginBottom: '20px' }}>
+            {formData.gallery.map((img, index) => {
+              const isBroken = broken.has(img);
+              return (
+                <div key={img || index} style={{ position: 'relative' }}>
+                  <img src={img} alt={`Gallery ${index + 1}`}
+                    onError={() => markBroken(img)}
+                    style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '8px',
+                      border: isBroken ? '2px solid #ff4444' : '2px solid transparent',
+                      background: '#1a1a1a' }}/>
+                  {isBroken && (
+                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
+                      justifyContent: 'center', background: 'rgba(0,0,0,.6)', borderRadius: 8,
+                      color: '#ff6b6b', fontWeight: 700, fontSize: 12, textAlign: 'center', padding: 8,
+                      pointerEvents: 'none' }}>
+                      ❌ Khul nahi rahi
+                    </div>
+                  )}
+                  <button type="button" onClick={() => removeGalleryImage(index)}
+                    style={{ position: 'absolute', top: '6px', right: '6px', background: '#ff4444',
+                      color: 'white', border: 'none', borderRadius: '50%', width: '28px', height: '28px', cursor: 'pointer' }}>
+                    ✕
+                  </button>
+                </div>
+              );
+            })}
           </div>
           <ImageUpload label="Add Gallery Photo" onUpload={handleGalleryUpload}/>
         </div>
