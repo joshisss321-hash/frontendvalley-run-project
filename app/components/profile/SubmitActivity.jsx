@@ -2,22 +2,14 @@
 
 import { useState } from "react";
 import { userAPI } from "../../../lib/userApi";
+import { CATEGORY_GROUPS } from "../../../lib/categories";
 
-/* Wahi list jo /activity-submission page par hai — dono jagah ek jaisa */
-const DISTANCE_GROUPS = [
-  {
-    label: "🏃 Running",
-    options: ["Running 1600Mtr", "Running 3.2Km", "Running 5Km", "Running 10Km", "Running 21Km"],
-  },
-  {
-    label: "🚶 Walking",
-    options: ["Walking 2Km", "Walking 5Km", "Walking 10Km", "Walking 21Km"],
-  },
-  {
-    label: "🚴 Cycling",
-    options: ["Cycling 10Km", "Cycling 25Km", "Cycling 50Km", "Cycling 100Km"],
-  },
-];
+/* List lib/categories.js se — registration, pricing, /activity-submission
+   aur ye profile wala form, chaaron jagah bilkul ek jaisi rahe. */
+const DISTANCE_GROUPS = CATEGORY_GROUPS.map((g) => ({
+  label: `${g.icon} ${g.label}`,
+  options: g.options,
+}));
 
 const two = (n) => String(n).padStart(2, "0");
 

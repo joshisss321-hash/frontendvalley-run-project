@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Navbar from "../components/Navbar";
+import { CATEGORY_GROUPS } from "../../lib/categories";
 
 export default function ActivitySubmission() {
   const [events, setEvents]         = useState([]);
@@ -22,21 +23,13 @@ export default function ActivitySubmission() {
 
   const API = process.env.NEXT_PUBLIC_API_URL;
 
-  // ✅ Fixed distances — no custom input
-  const DISTANCE_GROUPS = [
-    {
-      label: "🏃 Running",
-      options: ["Running 1600Mtr", "Running 3.2Km", "Running 5Km", "Running 10Km", "Running 21Km"],
-    },
-    {
-      label: "🚶 Walking",
-      options: ["Walking 2Km", "Walking 5Km", "Walking 10Km", "Walking 21Km"],
-    },
-    {
-      label: "🚴 Cycling",
-      options: ["Cycling 10Km", "Cycling 25Km", "Cycling 50Km", "Cycling 100Km"],
-    },
-  ];
+  /* ✅ Fixed distances — no custom input.
+     List lib/categories.js se aati hai. Pehle yahan apni alag copy thi, aur
+     naya option jodne par ye page purani list dikhata reh jaata tha. */
+  const DISTANCE_GROUPS = CATEGORY_GROUPS.map((g) => ({
+    label: `${g.icon} ${g.label}`,
+    options: g.options,
+  }));
 
   useEffect(() => {
     fetch(`${API}/api/events`)
