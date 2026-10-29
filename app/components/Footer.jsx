@@ -1,8 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const path = usePathname();
+
+  /* Valley Store ka apna footer hai — usme store ki policies aur kanooni
+     jaankari (FSSAI, GST) jaati hai, jo khane ke saamaan ke liye zaroori
+     hai. Dono footer ek saath dikhte to page ke neeche do baar wahi cheez
+     aati. Isliye store ke andar ye wala chhup jaata hai. */
+  if (path?.startsWith("/store")) return null;
+
   return (
     <footer className="bg-white border-t mt-20">
       <div className="max-w-7xl mx-auto px-6 py-14 grid md:grid-cols-4 gap-10 text-sm text-gray-700">
