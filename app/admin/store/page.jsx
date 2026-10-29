@@ -30,6 +30,7 @@ export default function StoreAdminHome() {
   const tiles = [
     { title: 'Products', desc: 'Add products, photos, price aur stock', href: '/admin/store/products', ready: true },
     { title: 'Categories', desc: 'Ghee, Atta, Honey — groups banayiye', href: '/admin/store/categories', ready: true },
+    { title: 'Settings', desc: 'Shipping charge, COD, policies, homepage', href: '/admin/store/settings', ready: true },
     { title: 'Orders', desc: 'Checkout banne ke baad', href: null, ready: false },
     { title: 'Coupons', desc: 'Checkout banne ke baad', href: null, ready: false },
   ];
