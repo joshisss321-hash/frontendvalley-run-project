@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import MedalTracker from "../components/profile/MedalTracker";
 import SubmitActivity from "../components/profile/SubmitActivity";
-import { userAPI, clearUserSession, isLoggedIn } from "../../lib/userApi";
+import StreakCard from "../components/profile/StreakCard";
+import { userAPI, clearUserSession, isLoggedIn, getUserToken } from "../../lib/userApi";
 
 /* ═══════════════ Small building blocks ═══════════════ */
 
@@ -140,9 +141,21 @@ export default function ProfilePage() {
   }
 
   const { user, stats, coachTip, events, referral } = data;
+  const streaks = data.streaks || [];
+  const strava  = data.strava  || { connected: false };
+
+  /* Strava par bhejo. Wapas aakar profile khulegi, isliye kahan se gaye
+     the wo yaad rakhna zaroori nahi. */
+  const connectStrava = () => {
+    const token = getUserToken();
+    if (!token) { alert("Please log in again to connect Strava"); return; }
+    window.location.href =
+      `${process.env.NEXT_PUBLIC_API_URL}/api/strava/connect?token=${encodeURIComponent(token)}`;
+  };
 
   const TABS = [
     { key: "overview",  label: "Overview" },
+    ...(streaks.length ? [{ key: "streaks", label: `Streaks (${streaks.length})` }] : []),
     { key: "events",    label: `My Events (${events.length})` },
     { key: "medals",    label: "Medal Tracking" },
     { key: "stats",     label: "Stats & Coach" },
@@ -205,9 +218,34 @@ export default function ProfilePage() {
           ))}
         </div>
 
+        {/* ═══════════ STREAKS ═══════════ */}
+        {tab === "streaks" && (
+          <div>
+            {streaks.length === 0 ? (
+              <div className="bg-white rounded-2xl p-10 text-center">
+                <div className="text-4xl mb-3">🔥</div>
+                <p className="font-bold text-lg mb-2">No streak challenge yet</p>
+                <p className="text-gray-500 text-sm">
+                  Streak challenges ask you to move on a set number of days — not to run far.
+                  Join one and your days show up here.
+                </p>
+              </div>
+            ) : (
+              streaks.map((s) => (
+                <StreakCard key={s._id} s={s} strava={strava} onConnectStrava={connectStrava} />
+              ))
+            )}
+          </div>
+        )}
+
         {/* ═══════════ OVERVIEW ═══════════ */}
         {tab === "overview" && (
           <div className="space-y-6">
+
+            {/* Chalu streak sabse upar — roz yahi dekhna hai */}
+            {streaks.filter((s) => s.status === "active" || s.status === "upcoming").map((s) => (
+              <StreakCard key={s._id} s={s} strava={strava} onConnectStrava={connectStrava} />
+            ))}
 
             {coachTip && (
               <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 text-white">
