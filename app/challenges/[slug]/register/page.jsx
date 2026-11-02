@@ -339,6 +339,14 @@ export default function RegisterPage() {
         if (!data.success) { router.replace("/challenges"); return; }
         if (data.event?.price) setEventPrice(data.event.price);
         setEvent(data.event || null);
+
+        /* Challenge page se "Choose 21" dabakar aaye hain to wahi window
+           pehle se chuni hui mile — dobara chunwana bekaar ki rukawat hai. */
+        if (typeof window !== "undefined") {
+          const picked = new URLSearchParams(window.location.search).get("window");
+          const valid = (data.event?.streakOptions || []).some((o) => o.label === picked);
+          if (valid) setForm((p) => ({ ...p, category: picked }));
+        }
       } catch {
         router.replace("/challenges");
       }

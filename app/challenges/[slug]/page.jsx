@@ -144,6 +144,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
+import StreakChallengePage from "./StreakChallengePage";
 
 export default function ChallengeDetailPage() {
   const { slug }  = useParams();
@@ -163,6 +164,16 @@ export default function ChallengeDetailPage() {
         <div className="pt-40 text-center text-gray-500">Loading...</div>
       </>
     );
+  }
+
+  /* Streak challenge ka apna page hai — doori wale page se uski baat
+     bilkul alag hai, isliye wahan ghusane ki koshish nahi ki. */
+  if (event.challengeType === "streak") {
+    /* Navbar yahan dobara nahi — root layout pehle se deta hai.
+       Purana distance page dono render karta hai (fixed hone ki wajah se
+       ek ke upar ek chipak jaate hain), par naye page mein wo galti
+       dohrane ki zaroorat nahi. */
+    return <StreakChallengePage event={event} />;
   }
 
   const now = new Date();
