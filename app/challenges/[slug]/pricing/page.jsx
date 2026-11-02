@@ -125,6 +125,7 @@ export default function PricingPage() {
   /* Server pehle hi abhi wala daam bhejta hai — early bird khatam ho gaya
      to yahan nayi keemat aayegi. Yahan koi alag hisaab nahi. */
   const price = event.price;
+  const isStreak = event.challengeType === "streak";
 
   /* Daam badhne wala hai? (sirf tab jab waqt abhi baaki ho) */
   const nextPrice = Number(event.priceAfter) || 0;
@@ -333,12 +334,33 @@ export default function PricingPage() {
               {/* Categories — bilkul wahi jo registration form mein milenge */}
               <div className="mb-6">
                 <p className="text-sm font-semibold text-gray-700 mb-1">
-                  Pick any one at registration
+                  {isStreak ? "Choose your window at registration" : "Pick any one at registration"}
                 </p>
                 <p className="text-xs text-gray-500 mb-3">
-                  Run, walk or cycle — same medal, same price.
+                  {isStreak
+                    ? `One activity of ${event?.streakMinMinutes || 30}+ minutes locks a day. Rest days are built in.`
+                    : "Run, walk or cycle — same medal, same price."}
                 </p>
 
+                {/* Streak event: doori ki jagah window ke options */}
+                {isStreak ? (
+                  <div className="space-y-2">
+                    {(event?.streakOptions || []).map((o) => {
+                      const misses = Math.max(0, o.windowDays - o.goalDays);
+                      return (
+                        <div key={o.label} className="flex items-baseline justify-between gap-3 bg-gray-50 rounded-xl px-3.5 py-2.5">
+                          <span className="font-extrabold text-gray-900">
+                            {o.goalDays} <span className="font-semibold text-gray-600 text-sm">active days</span>
+                          </span>
+                          <span className="text-xs text-gray-500 text-right">
+                            in {o.windowDays} days
+                            {misses > 0 && <><br/>{misses} rest {misses === 1 ? "day" : "days"}</>}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
                 <div className="space-y-2.5">
                   {CATEGORY_GROUPS.map((group) => (
                     <div key={group.key} className="flex items-start gap-2.5">
@@ -363,6 +385,7 @@ export default function PricingPage() {
                     </div>
                   ))}
                 </div>
+                )}
               </div>
 
               {/* Kya-kya milega */}

@@ -302,6 +302,7 @@ export default function RegisterPage() {
   const [order, setOrder]         = useState(null);
   const [loading, setLoading]     = useState(false);
   const [eventPrice, setEventPrice] = useState(349);
+  const [event, setEvent] = useState(null);
 
   /* ── Coupon / referral ── */
   const [applied, setApplied]         = useState(null);  // { code, discount, finalAmount, message }
@@ -337,6 +338,7 @@ export default function RegisterPage() {
         const data = await res.json();
         if (!data.success) { router.replace("/challenges"); return; }
         if (data.event?.price) setEventPrice(data.event.price);
+        setEvent(data.event || null);
       } catch {
         router.replace("/challenges");
       }
@@ -393,6 +395,7 @@ export default function RegisterPage() {
   };
 
   const payable = applied ? applied.finalAmount : eventPrice;
+  const isStreak = event?.challengeType === "streak";
 
   /* Email milane se pehle safai — "Abc@Gmail.com " aur "abc@gmail.com"
      ek hi hain, inhe alag batana bekaar ki pareshani hogi. */
@@ -573,24 +576,70 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Select Challenge Category *
+                {isStreak ? "Choose Your Window *" : "Select Challenge Category *"}
               </label>
-              <select
-                name="category"
-                value={form.category}
-                onChange={handleChange}
-                className="input"
-              >
-                <option value="">-- Select Category --</option>
-                {/* Options lib/categories.js se — pricing page bhi wahi dikhata hai */}
-                {CATEGORY_GROUPS.map((group) => (
-                  <optgroup key={group.key} label={group.label}>
-                    {group.options.map((opt) => (
-                      <option key={opt}>{opt}</option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
+
+              {isStreak ? (
+                /* Streak challenge: doori nahi, window chunna hai.
+                   Dropdown ki jagah card — kyunki yahan "7 of 9" ka matlab
+                   samjhana zaroori hai, warna log andaza lagate rehte hain. */
+                <div className="space-y-2">
+                  {(event?.streakOptions || []).map((o) => {
+                    const on = form.category === o.label;
+                    const misses = Math.max(0, o.windowDays - o.goalDays);
+                    return (
+                      <button
+                        key={o.label}
+                        type="button"
+                        onClick={() => setForm((p) => ({ ...p, category: o.label }))}
+                        className={`w-full text-left rounded-2xl p-4 border-2 transition ${
+                          on ? "border-red-600 bg-red-50" : "border-gray-200 hover:border-gray-300"
+                        }`}
+                      >
+                        <div className="flex items-baseline justify-between gap-3 flex-wrap">
+                          <span className="font-extrabold text-lg">
+                            {o.goalDays} active days
+                          </span>
+                          <span className="text-sm text-gray-500">
+                            in {o.windowDays} days
+                          </span>
+                        </div>
+                        <div className="text-[13px] text-gray-600 mt-1">
+                          {misses > 0
+                            ? `${misses} rest ${misses === 1 ? "day" : "days"} built in`
+                            : "No rest days — every day counts"}
+                        </div>
+                      </button>
+                    );
+                  })}
+
+                  {event?.streakMinMinutes > 0 && (
+                    <p className="text-[12px] text-gray-500 pt-1 leading-relaxed">
+                      A day counts when you log one activity of{" "}
+                      <strong>{event.streakMinMinutes}+ minutes</strong>
+                      {event.streakOutdoorOnly ? ", outdoors with GPS" : ""}. Your window starts
+                      the day after you register.
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <select
+                  name="category"
+                  value={form.category}
+                  onChange={handleChange}
+                  className="input"
+                >
+                  <option value="">-- Select Category --</option>
+                  {/* Options lib/categories.js se — pricing page bhi wahi dikhata hai */}
+                  {CATEGORY_GROUPS.map((group) => (
+                    <optgroup key={group.key} label={group.label}>
+                      {group.options.map((opt) => (
+                        <option key={opt}>{opt}</option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+              )}
             </div>
 
             <div>

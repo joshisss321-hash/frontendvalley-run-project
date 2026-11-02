@@ -22,6 +22,14 @@ export default function EditEventPage() {
     active: true,             // ✅ correct field name
     isPrevious: false,        // ✅ NEW
     isRegistrationOpen: true, // ✅ NEW
+
+    // Streak challenge — purane events "distance" hi rahenge
+    challengeType: 'distance',
+    streakOptions: [],
+    streakMinMinutes: 30,
+    streakSports: ['Run', 'Walk', 'Ride', 'Hike'],
+    streakOutdoorOnly: true,
+    streakSource: 'both',
   });
 
   useEffect(() => { loadEvent(); }, [params.id]);
@@ -52,6 +60,13 @@ export default function EditEventPage() {
           active:              ev.active              ?? true,
           isPrevious:          ev.isPrevious          ?? false,
           isRegistrationOpen:  ev.isRegistrationOpen  ?? true,
+
+          challengeType:     ev.challengeType     || 'distance',
+          streakOptions:     ev.streakOptions     || [],
+          streakMinMinutes:  ev.streakMinMinutes  ?? 30,
+          streakSports:      ev.streakSports?.length ? ev.streakSports : ['Run', 'Walk', 'Ride', 'Hike'],
+          streakOutdoorOnly: ev.streakOutdoorOnly ?? true,
+          streakSource:      ev.streakSource      || 'both',
         });
       } else {
         alert('Event not found');
@@ -80,6 +95,28 @@ export default function EditEventPage() {
   const removeGalleryImage = (index) => {
     setFormData(prev => ({ ...prev, gallery: prev.gallery.filter((_, i) => i !== index) }));
   };
+
+  /* ── Streak ke window options ── */
+  const addStreakOption = () =>
+    setFormData(p => ({
+      ...p,
+      streakOptions: [...(p.streakOptions || []), { label: '', goalDays: 21, windowDays: 24 }],
+    }));
+
+  const setStreakOption = (i, key, value) =>
+    setFormData(p => ({
+      ...p,
+      streakOptions: p.streakOptions.map((o, j) => {
+        if (j !== i) return o;
+        const next = { ...o, [key]: value };
+        // Label khali ho to khud bana do — "21 of 24"
+        if (key !== 'label' && !o.label) next.label = `${next.goalDays} of ${next.windowDays}`;
+        return next;
+      }),
+    }));
+
+  const removeStreakOption = (i) =>
+    setFormData(p => ({ ...p, streakOptions: p.streakOptions.filter((_, j) => j !== i) }));
 
   /* Jo photo browser mein khulti hi nahi, use yaad rakho — purane image
      account wali kaafi photos 403 deti hain aur website par khaali
@@ -114,7 +151,28 @@ export default function EditEventPage() {
         // Chuni hui tareekh = us din raat 11:59 PM IST tak (pehle subah 5:30 ho jaata tha)
         registrationDeadline: endOfDayIST(formData.registrationDeadline),
         submissionDeadline:   endOfDayIST(formData.submissionDeadline),
+
+        /* Streak event mein window options hi "categories" ban jaate hain.
+           Isse registration, payment aur admin — sab purane raaste par
+           chalte rehte hain, kuch alag karne ki zaroorat nahi. */
+        ...(formData.challengeType === 'streak'
+          ? { categories: (formData.streakOptions || []).map((o) => o.label).filter(Boolean) }
+          : {}),
       };
+
+      if (formData.challengeType === 'streak') {
+        const opts = formData.streakOptions || [];
+        if (!opts.length) { alert('Kam se kam ek window option daliye'); setSaving(false); return; }
+
+        const bad = opts.findIndex(
+          (o) => !String(o.label).trim() || o.goalDays < 1 || o.windowDays < o.goalDays
+        );
+        if (bad >= 0) {
+          alert(`Option #${bad + 1} theek nahi hai.\n\nLabel chahiye, aur window days goal days se kam nahi ho sakte.`);
+          setSaving(false);
+          return;
+        }
+      }
 
       const result = await adminAPI.updateEvent(params.id, payload);
 
@@ -256,6 +314,137 @@ export default function EditEventPage() {
               Is date ke baad activity submission automatically band ho jaayegi
             </p>
           </div>
+        </div>
+
+        {/* ── Challenge ka type ── */}
+        <div className="card" style={{ marginBottom: '24px' }}>
+          <h3 style={{ color: '#00ff88', marginTop: 0 }}>Challenge Type</h3>
+
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+            {[
+              ['distance', '🏃 Distance', 'Ek baar doori poori karo, proof bhejo'],
+              ['streak',   '🔥 Streak',   'Window mein itne din activity karo'],
+            ].map(([val, label, desc]) => {
+              const on = (formData.challengeType || 'distance') === val;
+              return (
+                <button key={val} type="button"
+                  onClick={() => setFormData(p => ({ ...p, challengeType: val }))}
+                  style={{
+                    flex: 1, minWidth: 190, textAlign: 'left', cursor: 'pointer',
+                    padding: '14px 16px', borderRadius: 10, fontFamily: 'inherit',
+                    background: on ? 'rgba(0,255,136,.12)' : 'transparent',
+                    border: `2px solid ${on ? '#00ff88' : '#333'}`,
+                    color: on ? '#00ff88' : '#aaa',
+                  }}>
+                  <div style={{ fontWeight: 800, fontSize: 14 }}>{label}</div>
+                  <div style={{ fontSize: 11.5, marginTop: 4, opacity: .8, lineHeight: 1.5 }}>{desc}</div>
+                </button>
+              );
+            })}
+          </div>
+
+          {formData.challengeType === 'streak' && (
+            <div style={{ borderTop: '1px solid #333', paddingTop: 18 }}>
+
+              {/* Window options — user inme se ek chunega */}
+              <label style={lbl}>Window options</label>
+              <p style={hint}>
+                User registration ke waqt inme se ek chunega. Window uske agle din se shuru hota hai.
+              </p>
+
+              {(formData.streakOptions || []).map((o, i) => (
+                <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-end', marginBottom: 10, flexWrap: 'wrap' }}>
+                  <div style={{ flex: 1, minWidth: 110 }}>
+                    <label style={{ ...lbl, fontSize: 11 }}>Label</label>
+                    <input className="input" placeholder="21 of 24" value={o.label}
+                      onChange={(e) => setStreakOption(i, 'label', e.target.value)} />
+                  </div>
+                  <div style={{ width: 110 }}>
+                    <label style={{ ...lbl, fontSize: 11 }}>Goal days</label>
+                    <input className="input" type="number" value={o.goalDays}
+                      onChange={(e) => setStreakOption(i, 'goalDays', Number(e.target.value) || 0)} />
+                  </div>
+                  <div style={{ width: 110 }}>
+                    <label style={{ ...lbl, fontSize: 11 }}>Window days</label>
+                    <input className="input" type="number" value={o.windowDays}
+                      onChange={(e) => setStreakOption(i, 'windowDays', Number(e.target.value) || 0)} />
+                  </div>
+                  <div style={{ fontSize: 11.5, color: '#888', paddingBottom: 10, minWidth: 90 }}>
+                    {o.windowDays > o.goalDays
+                      ? `${o.windowDays - o.goalDays} miss allowed`
+                      : o.windowDays === o.goalDays ? 'koi miss nahi' : '⚠️ window chhota hai'}
+                  </div>
+                  <button type="button" onClick={() => removeStreakOption(i)}
+                    style={{ background: 'none', border: 'none', color: '#ff6b6b', cursor: 'pointer', fontWeight: 700, fontSize: 12, paddingBottom: 12 }}>
+                    Hatao
+                  </button>
+                </div>
+              ))}
+
+              <button type="button" onClick={addStreakOption}
+                style={{ background: '#222', border: '1px solid #444', color: '#ddd', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontWeight: 600, fontSize: 12.5, marginBottom: 20 }}>
+                + Option jodiye
+              </button>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(170px,1fr))', gap: 16 }}>
+                <div>
+                  <label style={lbl}>Minimum minutes / din</label>
+                  <input className="input" type="number" value={formData.streakMinMinutes ?? 30}
+                    onChange={(e) => setFormData(p => ({ ...p, streakMinMinutes: Number(e.target.value) || 0 }))} />
+                </div>
+                <div>
+                  <label style={lbl}>Din kaise mark honge</label>
+                  <select className="input" value={formData.streakSource || 'both'}
+                    onChange={(e) => setFormData(p => ({ ...p, streakSource: e.target.value }))}>
+                    <option value="both">Strava ya manual upload</option>
+                    <option value="strava">Sirf Strava</option>
+                    <option value="manual">Sirf manual upload</option>
+                  </select>
+                </div>
+              </div>
+
+              <label style={{ ...lbl, marginTop: 16 }}>Kaun si activity ginegi</label>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {['Run', 'Walk', 'Ride', 'Hike', 'Swim', 'VirtualRun'].map((sp) => {
+                  const list = formData.streakSports || [];
+                  const on = list.includes(sp);
+                  return (
+                    <button key={sp} type="button"
+                      onClick={() => setFormData(p => ({
+                        ...p,
+                        streakSports: on ? list.filter(x => x !== sp) : [...list, sp],
+                      }))}
+                      style={{
+                        padding: '7px 15px', borderRadius: 100, cursor: 'pointer', fontFamily: 'inherit',
+                        fontSize: 12.5, fontWeight: 700,
+                        background: on ? '#00ff88' : 'transparent',
+                        color: on ? '#000' : '#aaa',
+                        border: `1.5px solid ${on ? '#00ff88' : '#444'}`,
+                      }}>
+                      {sp}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', marginTop: 18 }}>
+                <input type="checkbox" checked={formData.streakOutdoorOnly ?? true}
+                  onChange={(e) => setFormData(p => ({ ...p, streakOutdoorOnly: e.target.checked }))}
+                  style={{ width: 20, height: 20, cursor: 'pointer' }} />
+                <span>
+                  <strong style={{ color: '#ddd' }}>Sirf outdoor</strong>
+                  <span style={{ display: 'block', fontSize: 11.5, color: '#888', marginTop: 2 }}>
+                    Treadmill aur indoor trainer nahi ginenge
+                  </span>
+                </span>
+              </label>
+
+              <div style={{ background: 'rgba(0,255,136,.07)', border: '1px solid rgba(0,255,136,.25)', borderRadius: 9, padding: 13, marginTop: 18, fontSize: 12.5, color: '#9fe', lineHeight: 1.7 }}>
+                Save karte hi ye options registration page par categories ki jagah dikhenge.
+                Window har bande ka apna hota hai — uski registration ke agle din se.
+              </div>
+            </div>
+          )}
         </div>
 
         {/* ── Status Toggles ── */}
@@ -411,3 +600,6 @@ export default function EditEventPage() {
     </div>
   );
 }
+
+const lbl  = { display: 'block', color: '#ddd', fontSize: 12.5, fontWeight: 700, marginBottom: 6 };
+const hint = { color: '#888', fontSize: 11.5, marginTop: -2, marginBottom: 12, lineHeight: 1.6 };
