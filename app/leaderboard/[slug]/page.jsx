@@ -760,11 +760,9 @@ export default function LeaderboardPage() {
           <h1 className="lb-title">
             {eventTitle || slug?.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
           </h1>
-          <p className="lb-sub">
-            {allEntries.length > 0
-              ? `${allEntries.length} finishers · ranked by time`
-              : "Ranked by completion time"}
-          </p>
+          {/* Ginti jaan-bujh kar nahi — kam number dekhkar log hichakte hain,
+              aur yahan baat rank ki honi chahiye, bheed ki nahi. */}
+          <p className="lb-sub">Ranked by completion time · updated automatically</p>
         </div>
       </div>
 
@@ -841,14 +839,11 @@ export default function LeaderboardPage() {
             )}
 
             {/* ═══ STATS ═══ */}
-            <div className="lb-stats">
-              <div className="lb-stat">
-                <div className="lb-stat-v">{filtered.length}</div>
-                <div className="lb-stat-l">Finishers</div>
-              </div>
+            {/* Finisher ki ginti hata di — kisi bhi category mein nahi dikhani */}
+            <div className="lb-stats lb-stats-2">
               <div className="lb-stat">
                 <div className="lb-stat-v lb-stat-red">{fastest}</div>
-                <div className="lb-stat-l">Fastest</div>
+                <div className="lb-stat-l">Fastest time</div>
               </div>
               <div className="lb-stat">
                 <div className="lb-stat-v">{shortDist(activeTab) || "—"}</div>
@@ -974,6 +969,7 @@ const lbCss = `
 
   /* Stats */
   .lb-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; margin-bottom: 18px; }
+  .lb-stats-2 { grid-template-columns: repeat(2,1fr); }
   .lb-stat { background: #fff; border: 1px solid #ebedf0; border-radius: 14px;
              padding: 13px 8px; text-align: center; }
   .lb-stat-v { font-size: 17px; font-weight: 900; color: #1f2937; letter-spacing: -.3px;
