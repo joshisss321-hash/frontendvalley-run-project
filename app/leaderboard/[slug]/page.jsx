@@ -941,19 +941,19 @@ const lbCss = `
   /* Podium */
   .lb-podium { margin-bottom: 18px; }
   .lb-champ { background: linear-gradient(160deg,#fffbeb,#fff); border: 2px solid #fbbf24;
-              border-radius: 20px; padding: 20px 16px 18px; text-align: center;
+              border-radius: 20px; padding: 14px 14px 13px; text-align: center;
               box-shadow: 0 8px 26px rgba(251,191,36,.18); position: relative; }
-  .lb-champ-crown { font-size: 26px; line-height: 1; }
-  .lb-champ-ava { width: 60px; height: 60px; margin: 8px auto 0; border-radius: 50%;
-                  background: #fbbf24; color: #78350f; font-size: 25px; font-weight: 900;
+  .lb-champ-crown { font-size: 19px; line-height: 1; }
+  .lb-champ-ava { width: 46px; height: 46px; margin: 5px auto 0; border-radius: 50%;
+                  background: #fbbf24; color: #78350f; font-size: 19px; font-weight: 900;
                   display: flex; align-items: center; justify-content: center; }
-  .lb-champ-name { font-size: 18px; font-weight: 900; color: #1f2937; margin-top: 10px;
+  .lb-champ-name { font-size: 15.5px; font-weight: 900; color: #1f2937; margin-top: 7px;
                    letter-spacing: -.3px; }
   .lb-champ-time { display: inline-block; background: #dc2626; color: #fff;
-                   font-size: 19px; font-weight: 900; padding: 7px 20px;
-                   border-radius: 12px; margin-top: 10px; letter-spacing: .4px; }
+                   font-size: 16px; font-weight: 900; padding: 5px 16px;
+                   border-radius: 10px; margin-top: 7px; letter-spacing: .4px; }
   .lb-champ-tag { font-size: 10px; font-weight: 800; letter-spacing: 1.4px;
-                  color: #92400e; margin-top: 11px; }
+                  color: #92400e; margin-top: 8px; font-size: 9px; }
 
   .lb-runners { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
   .lb-runner { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px;
