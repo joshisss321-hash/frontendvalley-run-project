@@ -12,122 +12,71 @@ export default function LeaderboardIndex() {
 
   useEffect(() => {
     fetch(`${API}/api/events`)
-      .then(r => r.json())
-      .then(d => {
-        setEvents(d.events || []);
-        setLoading(false);
-      })
+      .then((r) => r.json())
+      .then((d) => { setEvents(d.events || []); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
 
-  const liveEvents = events.filter(e => e.active && !e.isPrevious);
-  const pastEvents = events.filter(e => e.active && e.isPrevious);
+  const liveEvents = events.filter((e) => e.active && !e.isPrevious);
+  const pastEvents = events.filter((e) => e.active && e.isPrevious);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f8f9fa", fontFamily: "system-ui,-apple-system,sans-serif" }}>
+    <div className="lbi">
+      <style>{css}</style>
       <Navbar />
 
-      {/* Hero */}
-      <div style={{ background: "linear-gradient(135deg, #dc2626, #b91c1c)", padding: "50px 20px 40px", textAlign: "center" }}>
-        <div style={{ display: "inline-block", background: "rgba(255,255,255,0.2)", color: "white", fontSize: 11, fontWeight: 700, padding: "4px 14px", borderRadius: 20, letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>
-          🏆 Leaderboards
+      <div className="lbi-hero">
+        <div className="lbi-hero-in">
+          <span className="lbi-tag">🏆 Leaderboards</span>
+          <h1 className="lbi-title">Event Leaderboards</h1>
+          <p className="lbi-sub">Ranked by time · updated automatically</p>
         </div>
-        <h1 style={{ fontSize: "clamp(24px,4vw,42px)", fontWeight: 900, color: "white", margin: "0 0 8px" }}>
-          Event Leaderboards
-        </h1>
-        <p style={{ color: "rgba(255,255,255,0.75)", fontSize: 14, margin: 0 }}>
-          Ranked by completion time · Updated automatically
-        </p>
       </div>
 
-      <div style={{ maxWidth: 700, margin: "0 auto", padding: "32px 16px 60px" }}>
-
+      <div className="lbi-wrap">
         {loading ? (
-          <div style={{ textAlign: "center", padding: 60, color: "#9ca3af" }}>Loading...</div>
+          <div className="lbi-empty">Loading…</div>
         ) : (
           <>
-            {/* Live Events */}
             {liveEvents.length > 0 && (
-              <div style={{ marginBottom: 40 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e", display: "inline-block", boxShadow: "0 0 0 3px rgba(34,197,94,0.2)" }}/>
-                  <span style={{ fontWeight: 700, fontSize: 13, color: "#374151", textTransform: "uppercase", letterSpacing: 1 }}>
-                    Active Events
-                  </span>
+              <section className="lbi-sec">
+                <div className="lbi-head">
+                  <span className="lbi-dot" /> Active events
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                  {liveEvents.map(ev => (
-                    <Link key={ev._id} href={`/leaderboard/${ev.slug}`}
-                      style={{ textDecoration: "none" }}>
-                      <div style={{
-                        background: "white", border: "2px solid #dc2626",
-                        borderRadius: 16, padding: "20px 24px",
-                        display: "flex", alignItems: "center", justifyContent: "space-between",
-                        boxShadow: "0 4px 16px rgba(220,38,38,0.1)",
-                        cursor: "pointer", transition: "transform 0.2s",
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.transform = "translateY(-2px)"}
-                      onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}
-                      >
-                        <div>
-                          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                            <span style={{ background: "#dcfce7", color: "#166534", fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 20 }}>● LIVE</span>
-                          </div>
-                          <div style={{ fontWeight: 800, fontSize: 17, color: "#1f2937", marginBottom: 2 }}>{ev.title}</div>
-                          <div style={{ color: "#9ca3af", fontSize: 12 }}>{ev.dates}</div>
-                        </div>
-                        <div style={{ textAlign: "right" }}>
-                          <div style={{ background: "#dc2626", color: "white", fontWeight: 700, fontSize: 13, padding: "8px 18px", borderRadius: 50 }}>
-                            View 🏆
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
+                {liveEvents.map((ev) => (
+                  <Link key={ev._id} href={`/leaderboard/${ev.slug}`} className="lbi-card lbi-card-live">
+                    <div className="lbi-card-main">
+                      <span className="lbi-live">● LIVE</span>
+                      <div className="lbi-name">{ev.title}</div>
+                      {ev.dates && <div className="lbi-dates">{ev.dates}</div>}
+                    </div>
+                    <span className="lbi-go">View →</span>
+                  </Link>
+                ))}
+              </section>
             )}
 
-            {/* Past Events */}
             {pastEvents.length > 0 && (
-              <div>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#9ca3af", display: "inline-block" }}/>
-                  <span style={{ fontWeight: 700, fontSize: 13, color: "#6b7280", textTransform: "uppercase", letterSpacing: 1 }}>
-                    Previous Events
-                  </span>
+              <section className="lbi-sec">
+                <div className="lbi-head lbi-head-muted">
+                  <span className="lbi-dot lbi-dot-off" /> Previous events
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {pastEvents.map(ev => (
-                    <Link key={ev._id} href={`/leaderboard/${ev.slug}`}
-                      style={{ textDecoration: "none" }}>
-                      <div style={{
-                        background: "white", border: "1px solid #e5e7eb",
-                        borderRadius: 14, padding: "16px 20px",
-                        display: "flex", alignItems: "center", justifyContent: "space-between",
-                        cursor: "pointer", transition: "all 0.2s",
-                      }}
-                      onMouseEnter={e => { e.currentTarget.style.borderColor = "#dc2626"; e.currentTarget.style.transform = "translateY(-1px)"; }}
-                      onMouseLeave={e => { e.currentTarget.style.borderColor = "#e5e7eb"; e.currentTarget.style.transform = "translateY(0)"; }}
-                      >
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: 15, color: "#374151", marginBottom: 2 }}>{ev.title}</div>
-                          <div style={{ color: "#9ca3af", fontSize: 12 }}>{ev.dates}</div>
-                        </div>
-                        <div style={{ color: "#9ca3af", fontWeight: 600, fontSize: 13 }}>
-                          Results →
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
+                {pastEvents.map((ev) => (
+                  <Link key={ev._id} href={`/leaderboard/${ev.slug}`} className="lbi-card">
+                    <div className="lbi-card-main">
+                      <div className="lbi-name lbi-name-past">{ev.title}</div>
+                      {ev.dates && <div className="lbi-dates">{ev.dates}</div>}
+                    </div>
+                    <span className="lbi-go lbi-go-past">Results →</span>
+                  </Link>
+                ))}
+              </section>
             )}
 
             {liveEvents.length === 0 && pastEvents.length === 0 && (
-              <div style={{ textAlign: "center", padding: 60, background: "white", borderRadius: 20, border: "1px solid #e5e7eb" }}>
-                <div style={{ fontSize: 50, marginBottom: 12 }}>🏃</div>
-                <div style={{ fontWeight: 700, color: "#1f2937", fontSize: 18 }}>No events yet</div>
+              <div className="lbi-empty">
+                <div className="lbi-empty-ico">🏃</div>
+                <div className="lbi-empty-h">No events yet</div>
               </div>
             )}
           </>
@@ -136,3 +85,68 @@ export default function LeaderboardIndex() {
     </div>
   );
 }
+
+const css = `
+  .lbi { min-height: 100vh; background: #f6f7f9;
+         font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+  .lbi-hero { background: linear-gradient(135deg,#dc2626,#991b1b); padding: 32px 18px 28px; }
+  .lbi-hero-in { max-width: 680px; margin: 0 auto; text-align: center; }
+  .lbi-tag { display: inline-block; background: rgba(255,255,255,.18); color: #fff;
+             font-size: 10.5px; font-weight: 800; letter-spacing: 1.6px;
+             text-transform: uppercase; padding: 5px 13px; border-radius: 100px; }
+  .lbi-title { font-size: clamp(22px,4.6vw,34px); font-weight: 900; color: #fff;
+               letter-spacing: -.8px; margin: 12px 0 0; }
+  .lbi-sub { color: rgba(255,255,255,.78); font-size: 13px; margin: 7px 0 0; }
+
+  .lbi-wrap { max-width: 680px; margin: 0 auto; padding: 22px 14px 64px; }
+  .lbi-sec + .lbi-sec { margin-top: 28px; }
+
+  .lbi-head { display: flex; align-items: center; gap: 8px; margin-bottom: 11px;
+              font-size: 11.5px; font-weight: 800; letter-spacing: 1.3px;
+              text-transform: uppercase; color: #374151; }
+  .lbi-head-muted { color: #9ca3af; }
+  .lbi-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e;
+             box-shadow: 0 0 0 3px rgba(34,197,94,.2); }
+  .lbi-dot-off { background: #d1d5db; box-shadow: none; }
+
+  /* Card ek flex row — pehle title aur button ek dusre ko dabate the,
+     aur lamba naam wrap hokar button ko neeche dhakel deta tha. */
+  .lbi-card { display: flex; align-items: center; gap: 12px; text-decoration: none;
+              background: #fff; border: 1px solid #e8eaed; border-radius: 16px;
+              padding: 15px 16px; margin-bottom: 10px; transition: all .2s; }
+  .lbi-card:hover { border-color: #dc2626; transform: translateY(-2px);
+                    box-shadow: 0 10px 24px rgba(0,0,0,.07); }
+  .lbi-card-live { border: 1.5px solid #fca5a5; }
+
+  .lbi-card-main { flex: 1; min-width: 0; }
+  .lbi-live { display: inline-block; background: #dcfce7; color: #166534;
+              font-size: 9.5px; font-weight: 800; letter-spacing: .6px;
+              padding: 3px 9px; border-radius: 100px; margin-bottom: 6px; }
+  .lbi-name { font-size: 15.5px; font-weight: 800; color: #1f2937;
+              line-height: 1.35; letter-spacing: -.2px; }
+  .lbi-name-past { font-weight: 700; color: #4b5563; font-size: 14.5px; }
+  .lbi-dates { font-size: 11.5px; color: #9ca3af; margin-top: 3px;
+               overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .lbi-go { flex-shrink: 0; background: #dc2626; color: #fff; font-size: 12.5px;
+            font-weight: 800; padding: 9px 16px; border-radius: 100px; white-space: nowrap; }
+  .lbi-go-past { background: #f3f4f6; color: #6b7280; }
+
+  .lbi-empty { background: #fff; border: 1px solid #e8eaed; border-radius: 18px;
+               padding: 50px 20px; text-align: center; color: #9ca3af; font-size: 14px; }
+  .lbi-empty-ico { font-size: 42px; margin-bottom: 10px; }
+  .lbi-empty-h { font-size: 17px; font-weight: 800; color: #1f2937; }
+
+  @media (max-width: 480px) {
+    .lbi-hero { padding: 26px 16px 24px; }
+    .lbi-wrap { padding: 18px 12px 56px; }
+    .lbi-card { padding: 13px 13px; gap: 10px; }
+    .lbi-name { font-size: 14.5px; }
+    .lbi-go { padding: 8px 13px; font-size: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lbi-card { transition: none; }
+    .lbi-card:hover { transform: none; }
+  }
+`;
