@@ -199,6 +199,13 @@ export default function Dashboard() {
             </button>
           )}
           {view !== 'detail' && (
+            <button onClick={()=>router.push('/admin/stories')}
+              title="Inspiring Stories"
+              style={{ background:'rgba(255,255,255,0.2)', border:'none', borderRadius:8, padding:'6px 12px', color:'white', fontWeight:600, fontSize:12, cursor:'pointer' }}>
+              📖 Stories
+            </button>
+          )}
+          {view !== 'detail' && (
             <button onClick={()=>router.push('/admin/store')}
               title="Valley Store — products aur categories"
               style={{ background:'rgba(255,255,255,0.2)', border:'none', borderRadius:8, padding:'6px 12px', color:'white', fontWeight:600, fontSize:12, cursor:'pointer' }}>
