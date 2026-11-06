@@ -1295,6 +1295,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "./components/Navbar";
 import HomeGallery from "./components/HomeGallery";
+import StoriesSection from "./components/StoriesSection";
 
 const WHATSAPP_URL = "https://whatsapp.com/channel/0029VbCM5KOBVJl3FdMMHI3M";
 
@@ -1366,6 +1367,7 @@ export default function HomePage() {
       <Reviews />
       {medalEvents.length > 0 && <Medal events={medalEvents} />}
       <HowItWorks />
+      <StoriesSection />
       <HomeGallery events={events} />
       {pastEvents.length > 0 && <Past events={pastEvents} router={router} />}
       <CTA router={router} />
