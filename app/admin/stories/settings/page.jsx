@@ -22,7 +22,7 @@ export default function StorySettingsPage() {
     setSaving(true);
     const res = await adminAPI.stories.saveSettings(s);
     setSaving(false);
-    if (res?.success === false) { alert('Save nahi hua — ' + res.message); return; }
+    if (res?.success === false) { alert('Could not save — ' + res.message); return; }
     setS(res.settings);
     setSaved(true);
   };
@@ -35,13 +35,13 @@ export default function StorySettingsPage() {
       <Card>
         <Sec>Homepage section</Sec>
 
-        <Check label="Homepage par Inspiring Stories dikhao" checked={s.sectionEnabled}
+        <Check label="Show Inspiring Stories on the homepage" checked={s.sectionEnabled}
           onChange={(v) => set('sectionEnabled', v)} />
 
         {!s.sectionEnabled && (
           <div style={{ fontSize: 12.5, color: '#6b7280', marginTop: 9, lineHeight: 1.6 }}>
-            Abhi band hai — homepage par stories ka section dikhta hi nahi,
-            chahe kitni bhi kahaniyan publish hon.
+            Currently off — the stories section does not appear on the homepage,
+            however many stories are published.
           </div>
         )}
 
@@ -53,14 +53,14 @@ export default function StorySettingsPage() {
             <Field label="Tagline">
               <input style={input} value={s.tagline || ''} onChange={(e) => set('tagline', e.target.value)} />
             </Field>
-            <Field label="Koi kahani chuni hi na ho to" hint="Ya to section gayab, ya ek line dikha dein">
+            <Field label="When no story is selected" hint="Either hide the section, or show a single line">
               <select style={input} value={s.whenEmpty} onChange={(e) => set('whenEmpty', e.target.value)}>
-                <option value="hide">Section chhupa do</option>
-                <option value="fallback">Ek line dikha do</option>
+                <option value="hide">Hide the section</option>
+                <option value="fallback">Show a line</option>
               </select>
             </Field>
             {s.whenEmpty === 'fallback' && (
-              <Field label="Wo line">
+              <Field label="That line">
                 <input style={input} value={s.fallbackText || ''} onChange={(e) => set('fallbackText', e.target.value)} />
               </Field>
             )}
@@ -69,11 +69,11 @@ export default function StorySettingsPage() {
       </Card>
 
       <Card>
-        <Sec>Kahani bhejne ka form</Sec>
-        <Check label="Log kahani bhej sakte hain" checked={s.submissionsOpen}
+        <Sec>Story submission form</Sec>
+        <Check label="People can submit stories" checked={s.submissionsOpen}
           onChange={(v) => set('submissionsOpen', v)} />
         <div style={{ marginTop: 14 }}>
-          <Field label="Form par chhoti si baat">
+          <Field label="Short note on the form">
             <textarea style={{ ...input, minHeight: 70, resize: 'vertical' }} value={s.submitIntro || ''}
               onChange={(e) => set('submitIntro', e.target.value)} />
           </Field>
@@ -82,7 +82,7 @@ export default function StorySettingsPage() {
 
       {/* ── CONSENT ── */}
       <Card style={{ background: '#fffbeb', border: '1px solid #fcd34d' }}>
-        <Sec color="#92400e">Consent ka text</Sec>
+        <Sec color="#92400e">Consent wording</Sec>
         <div style={{ fontSize: 12.5, color: '#a16207', marginBottom: 14, lineHeight: 1.7 }}>
           Ye wahi text hai jo form par dikhega aur jispe runner haan karega.
           <br /><br />
@@ -98,9 +98,9 @@ export default function StorySettingsPage() {
       <div style={{ position: 'sticky', bottom: 0, background: '#fff', padding: 14, borderRadius: 14,
         boxShadow: '0 -4px 16px rgba(0,0,0,.08)', display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
         <button onClick={save} disabled={saving} style={{ ...btn, flex: 1, minWidth: 150 }}>
-          {saving ? 'Save ho raha hai…' : '✓ Settings save karo'}
+          {saving ? 'Saving…' : '✓ Save settings'}
         </button>
-        {saved && <span style={{ fontSize: 13, fontWeight: 700, color: '#15803d' }}>✓ Save ho gaya</span>}
+        {saved && <span style={{ fontSize: 13, fontWeight: 700, color: '#15803d' }}>✓ Saved</span>}
       </div>
     </Shell>
   );

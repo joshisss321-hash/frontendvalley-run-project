@@ -135,7 +135,7 @@ export default function Dashboard() {
           status:    subStatus,
           search:    subSearch,
         });
-        if (res?.success === false) { alert('Download nahi hua — ' + res.message); return; }
+        if (res?.success === false) { alert('Download failed — ' + res.message); return; }
         if (!res?.rows?.length) { alert('Is filter mein koi submission nahi mili'); return; }
 
         const headers = ['Sr','Name','Email','Phone','Distance','Timing','Status','Admin Note','Date','Proof Image'];
@@ -152,9 +152,9 @@ export default function Dashboard() {
 
       const res = await adminAPI.exportRegistrations(selectedEvent.slug);
 
-      if (res?.success === false) { alert('Download nahi hua — ' + res.message); return; }
+      if (res?.success === false) { alert('Download failed — ' + res.message); return; }
       if (!res?.rows?.length) {
-        alert(`"${selectedEvent.title}" mein abhi koi registration nahi hai`);
+        alert(`"${selectedEvent.title}" has no registrations yet`);
         return;
       }
 
@@ -167,7 +167,7 @@ export default function Dashboard() {
     } catch (err) {
       // Pehle yahan sirf "Export failed" aata tha — wajah kabhi pata nahi chalti thi
       console.error('Excel export fail:', err);
-      alert('Download nahi hua — ' + (err?.message || err));
+      alert('Download failed — ' + (err?.message || err));
     }
   };
 

@@ -102,10 +102,10 @@ export default function StoriesAdmin() {
 
       <Card style={{ padding: 12 }}>
         <div style={{ display: 'flex', gap: 9 }}>
-          <input style={{ ...input, flex: 1 }} placeholder="Naam, email ya title se dhoondhiye…"
+          <input style={{ ...input, flex: 1 }} placeholder="Search by name, email or title…"
             value={search} onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && load(tab, 1)} />
-          <button onClick={() => load(tab, 1)} style={btn}>Dhoondho</button>
+          <button onClick={() => load(tab, 1)} style={btn}>Search</button>
         </div>
       </Card>
 
@@ -116,7 +116,7 @@ export default function StoriesAdmin() {
         <Card>
           <div style={{ textAlign: 'center', padding: '28px 10px' }}>
             <div style={{ fontSize: 32, marginBottom: 8 }}>📖</div>
-            <div style={{ fontWeight: 700 }}>Yahan abhi kuch nahi</div>
+            <div style={{ fontWeight: 700 }}>Nothing here yet</div>
           </div>
         </Card>
       ) : (
@@ -129,10 +129,10 @@ export default function StoriesAdmin() {
       {info.totalPages > 1 && (
         <div style={{ display: 'flex', justifyContent: 'center', gap: 10, alignItems: 'center', padding: 10 }}>
           <button disabled={info.page <= 1} onClick={() => load(tab, info.page - 1)}
-            style={{ ...btnLight, opacity: info.page <= 1 ? .4 : 1 }}>← Pichla</button>
+            style={{ ...btnLight, opacity: info.page <= 1 ? .4 : 1 }}>← Previous</button>
           <span style={{ fontSize: 13, color: '#6b7280' }}>{info.page} / {info.totalPages}</span>
           <button disabled={info.page >= info.totalPages} onClick={() => load(tab, info.page + 1)}
-            style={{ ...btnLight, opacity: info.page >= info.totalPages ? .4 : 1 }}>Agla →</button>
+            style={{ ...btnLight, opacity: info.page >= info.totalPages ? .4 : 1 }}>Next →</button>
         </div>
       )}
     </Shell>
@@ -170,7 +170,7 @@ function StoryRow({ s, open, onToggle, after }) {
           </div>
         </div>
 
-        <button onClick={onToggle} style={btnLight}>{open ? 'Band karo' : 'Poora dekho'}</button>
+        <button onClick={onToggle} style={btnLight}>{open ? 'Collapse' : 'Read full'}</button>
       </div>
 
       {/* ── CONSENT — approve se pehle sabse zaroori ── */}
@@ -183,18 +183,18 @@ function StoryRow({ s, open, onToggle, after }) {
           CONSENT
         </div>
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', fontSize: 12.5 }}>
-          <Consent ok={s.consent?.publishStory}  label="Kahani chhapna" />
-          <Consent ok={s.consent?.publishPhotos} label="Photos chhapna" />
-          <Consent ok={s.consent?.publishName}   label="Naam chhapna" />
+          <Consent ok={s.consent?.publishStory}  label="Publish story" />
+          <Consent ok={s.consent?.publishPhotos} label="Publish photos" />
+          <Consent ok={s.consent?.publishName}   label="Show name" />
         </div>
         {s.consent?.agreedAt && (
           <div style={{ fontSize: 11, color: '#6b7280', marginTop: 6 }}>
-            Haan ki: {new Date(s.consent.agreedAt).toLocaleString('en-IN')}
+            Agreed: {new Date(s.consent.agreedAt).toLocaleString('en-IN')}
           </div>
         )}
         {!s.consent?.publishStory && (
           <div style={{ fontSize: 12, color: '#991b1b', marginTop: 6, fontWeight: 600 }}>
-            Ye kahani publish nahi ho sakti — ijazat nahi di gayi.
+            This story cannot be published — permission was not given.
           </div>
         )}
       </div>
@@ -220,18 +220,18 @@ function StoryRow({ s, open, onToggle, after }) {
           {s.removalRequestedAt && (
             <div style={{ marginTop: 12, background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 10, padding: 12 }}>
               <div style={{ fontWeight: 700, fontSize: 13, color: '#991b1b' }}>
-                Runner ne hatane ko kaha — {new Date(s.removalRequestedAt).toLocaleString('en-IN')}
+                Runner asked for removal — {new Date(s.removalRequestedAt).toLocaleString('en-IN')}
               </div>
               {s.removalNote && <div style={{ fontSize: 12.5, color: '#b91c1c', marginTop: 4 }}>"{s.removalNote}"</div>}
               <button disabled={busy} onClick={() => run(() => adminAPI.stories.removal(s._id, { clear: true }))}
                 style={{ ...btnLight, marginTop: 9, borderColor: '#fca5a5', color: '#991b1b' }}>
-                Guzarish hata do (runner raazi hai)
+                Clear request (runner has agreed)
               </button>
             </div>
           )}
 
           <div style={{ marginTop: 12 }}>
-            <input style={input} placeholder="Admin note (sirf aapke liye)" value={note}
+            <input style={input} placeholder="Admin note (internal only)" value={note}
               onChange={(e) => setNote(e.target.value)} />
           </div>
         </div>
@@ -241,7 +241,7 @@ function StoryRow({ s, open, onToggle, after }) {
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12, paddingTop: 12, borderTop: '1px solid #f3f4f6' }}>
         {s.status !== 'published' && (
           <button disabled={busy || !canPublish}
-            title={canPublish ? '' : 'Consent nahi hai'}
+            title={canPublish ? '' : 'No consent'}
             onClick={() => run(() => adminAPI.stories.setStatus(s._id, 'published', note))}
             style={{ ...btn, background: canPublish ? '#15803d' : '#d1d5db', cursor: canPublish ? 'pointer' : 'not-allowed' }}>
             ✓ Publish
@@ -249,15 +249,15 @@ function StoryRow({ s, open, onToggle, after }) {
         )}
         {s.status === 'published' && (
           <button disabled={busy} onClick={() => run(() => adminAPI.stories.setStatus(s._id, 'approved', note))}
-            style={btnLight}>Public se hatao</button>
+            style={btnLight}>Unpublish</button>
         )}
         {s.status === 'pending' && (
           <button disabled={busy} onClick={() => run(() => adminAPI.stories.setStatus(s._id, 'approved', note))}
-            style={btnLight}>Approve (abhi public nahi)</button>
+            style={btnLight}>Approve (not public yet)</button>
         )}
         {s.status !== 'rejected' && (
           <button disabled={busy} onClick={() => {
-            if (!confirm('Reject kar dein?')) return;
+            if (!confirm('Reject this story?')) return;
             run(() => adminAPI.stories.setStatus(s._id, 'rejected', note));
           }} style={{ ...btnLight, color: '#dc2626', borderColor: '#fecaca' }}>Reject</button>
         )}
@@ -266,11 +266,11 @@ function StoryRow({ s, open, onToggle, after }) {
           <>
             <button disabled={busy} onClick={() => run(() => adminAPI.stories.setHomepage(s._id, { onHomepage: !s.onHomepage }))}
               style={{ ...btnLight, background: s.onHomepage ? '#dbeafe' : '#fff' }}>
-              {s.onHomepage ? 'Homepage se hatao' : 'Homepage par dikhao'}
+              {s.onHomepage ? 'Remove from homepage' : 'Show on homepage'}
             </button>
             <button disabled={busy} onClick={() => run(() => adminAPI.stories.setWeek(s._id, { isStoryOfWeek: !s.isStoryOfWeek }))}
               style={{ ...btnLight, background: s.isStoryOfWeek ? '#fef3c7' : '#fff' }}>
-              {s.isStoryOfWeek ? 'Week se hatao' : 'Story of the Week'}
+              {s.isStoryOfWeek ? 'Remove from Story of the Week' : 'Story of the Week'}
             </button>
             <select value={s.badge || ''} disabled={busy}
               onChange={(e) => run(() => adminAPI.stories.setBadge(s._id, e.target.value))}
@@ -278,7 +278,7 @@ function StoryRow({ s, open, onToggle, after }) {
               {BADGES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
             </select>
             <a href={`/stories/${s.slug}`} target="_blank" rel="noopener noreferrer"
-              style={{ ...btnLight, textDecoration: 'none', display: 'inline-block' }}>Site par dekho ↗</a>
+              style={{ ...btnLight, textDecoration: 'none', display: 'inline-block' }}>View on site ↗</a>
           </>
         )}
       </div>

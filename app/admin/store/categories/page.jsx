@@ -27,7 +27,7 @@ export default function StoreCategories() {
   useEffect(() => { load(); }, []);
 
   const save = async () => {
-    if (!form.name.trim()) { alert('Category ka naam likhiye'); return; }
+    if (!form.name.trim()) { alert('Please enter a category name'); return; }
     setSaving(true);
 
     const res = form._id
@@ -36,13 +36,13 @@ export default function StoreCategories() {
 
     setSaving(false);
 
-    if (res?.success === false) { alert('Save nahi hua — ' + res.message); return; }
+    if (res?.success === false) { alert('Could not save — ' + res.message); return; }
     setForm(null);
     load();
   };
 
   const remove = async (c) => {
-    if (!confirm(`"${c.name}" hata dein?`)) return;
+    if (!confirm(`"${c.name}" — delete it?`)) return;
     const res = await adminAPI.store.categories.remove(c._id);
     // Server product wali category hatane nahi deta — wajah seedhi dikhao
     if (res?.success === false) { alert(res.message); return; }
@@ -60,7 +60,7 @@ export default function StoreCategories() {
     setUploading(true);
     const res = await adminAPI.store.products.uploadImage(file);
     setUploading(false);
-    if (res?.success === false || !res?.url) { alert('Photo upload nahi hui — ' + (res?.message || '')); return; }
+    if (res?.success === false || !res?.url) { alert('Photo upload failed — ' + (res?.message || '')); return; }
     setForm((f) => ({ ...f, image: res.url }));
   };
 
@@ -71,7 +71,7 @@ export default function StoreCategories() {
       right={
         !form && (
           <button onClick={() => setForm({ ...BLANK })} style={{ ...btnPrimary, background: 'rgba(255,255,255,.18)', padding: '7px 13px', fontSize: 12 }}>
-            + Nayi category
+            + New category
           </button>
         )
       }
@@ -79,7 +79,7 @@ export default function StoreCategories() {
       {form && (
         <Card style={{ border: '2px solid #14532d' }}>
           <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 14, color: '#14532d' }}>
-            {form._id ? 'Category badliye' : 'Nayi category'}
+            {form._id ? 'Edit category' : 'New category'}
           </div>
 
           <Field label="Naam *" hint="Jaise: Pahadi Ghee">
@@ -87,40 +87,40 @@ export default function StoreCategories() {
               onChange={(e) => setForm({ ...form, name: e.target.value })} />
           </Field>
 
-          <Field label="Chhota description">
+          <Field label="Short description">
             <textarea style={{ ...input, minHeight: 70, resize: 'vertical' }} value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })} />
           </Field>
 
-          <Field label="Photo" hint="Category card par dikhegi">
+          <Field label="Photo" hint="Shown on the category card">
             {form.image && (
               <img src={form.image} alt="" style={{ width: 150, height: 100, objectFit: 'cover', borderRadius: 9, marginBottom: 8, display: 'block' }} />
             )}
             <input type="file" accept="image/*" onChange={(e) => pickImage(e.target.files?.[0])} />
-            {uploading && <div style={{ fontSize: 12, color: '#14532d', marginTop: 6 }}>Upload ho rahi hai…</div>}
+            {uploading && <div style={{ fontSize: 12, color: '#14532d', marginTop: 6 }}>Uploading…</div>}
             {form.image && (
               <button onClick={() => setForm({ ...form, image: '' })}
                 style={{ ...btnLight, marginTop: 8, padding: '6px 12px', fontSize: 12 }}>
-                Photo hatao
+                Remove photo
               </button>
             )}
           </Field>
 
-          <Field label="Kram" hint="Chhota number pehle dikhta hai">
+          <Field label="Order" hint="Lower number shows first">
             <input type="number" style={{ ...input, maxWidth: 120 }} value={form.sortOrder}
               onChange={(e) => setForm({ ...form, sortOrder: Number(e.target.value) || 0 })} />
           </Field>
 
           <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', marginBottom: 16 }}>
-            <Check label="Website par dikhao (publish)" checked={form.isPublished}
+            <Check label="Show on the website (publish)" checked={form.isPublished}
               onChange={(v) => setForm({ ...form, isPublished: v })} />
-            <Check label="Homepage par highlight" checked={form.isFeatured}
+            <Check label="Highlight on the homepage" checked={form.isFeatured}
               onChange={(v) => setForm({ ...form, isFeatured: v })} />
           </div>
 
           <div style={{ display: 'flex', gap: 10 }}>
             <button onClick={save} disabled={saving} style={btnPrimary}>
-              {saving ? 'Save ho raha hai…' : '✓ Save'}
+              {saving ? 'Saving…' : '✓ Save'}
             </button>
             <button onClick={() => setForm(null)} style={btnLight}>Cancel</button>
           </div>
@@ -133,11 +133,11 @@ export default function StoreCategories() {
         <Card>
           <div style={{ textAlign: 'center', padding: '30px 10px' }}>
             <div style={{ fontSize: 34, marginBottom: 10 }}>🗂️</div>
-            <div style={{ fontWeight: 700, marginBottom: 6 }}>Abhi koi category nahi</div>
+            <div style={{ fontWeight: 700, marginBottom: 6 }}>No categories yet</div>
             <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 16 }}>
-              Pehle category banayiye — Pahadi Ghee, Atta &amp; Grains, Honey. Product usi mein jayega.
+              Create a category first — Pahadi Ghee, Atta &amp; Grains, Honey. Product usi mein jayega.
             </div>
-            <button onClick={() => setForm({ ...BLANK })} style={btnPrimary}>+ Pehli category banayiye</button>
+            <button onClick={() => setForm({ ...BLANK })} style={btnPrimary}>+ Create the first category</button>
           </div>
         </Card>
       ) : (
@@ -151,7 +151,7 @@ export default function StoreCategories() {
               <div style={{ flex: 1, minWidth: 160 }}>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
                   <span style={{ fontWeight: 800, fontSize: 15 }}>{c.name}</span>
-                  <Pill ok={c.isPublished}>{c.isPublished ? 'LIVE' : 'BAND'}</Pill>
+                  <Pill ok={c.isPublished}>{c.isPublished ? 'LIVE' : 'OFF'}</Pill>
                   {c.isFeatured && <Pill ok>FEATURED</Pill>}
                 </div>
                 <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 4 }}>
@@ -161,11 +161,11 @@ export default function StoreCategories() {
 
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <button onClick={() => togglePublish(c)} style={btnLight}>
-                  {c.isPublished ? 'Band karo' : 'Live karo'}
+                  {c.isPublished ? 'Collapse' : 'Publish'}
                 </button>
                 <button onClick={() => setForm({ ...c })} style={btnLight}>Edit</button>
                 <button onClick={() => remove(c)} style={{ ...btnLight, color: '#dc2626', borderColor: '#fecaca' }}>
-                  Hatao
+                  Delete
                 </button>
               </div>
             </div>

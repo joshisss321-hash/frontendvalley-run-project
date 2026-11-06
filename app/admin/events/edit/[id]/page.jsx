@@ -130,8 +130,8 @@ export default function EditEventPage() {
   const removeBrokenImages = () => {
     if (!brokenList.length) return;
     if (!confirm(
-      `${brokenList.length} tooti hui photo list se hat jayengi.\n\n` +
-      `Yaad rakhiye: pakka tab hoga jab aap niche "Update Event" dabayenge.`
+      `${brokenList.length} broken photos will be removed from the list.\n\n` +
+      `Remember: this is only saved when you press "Update Event" below.`
     )) return;
     setFormData(prev => ({ ...prev, gallery: prev.gallery.filter(u => !broken.has(u)) }));
   };
@@ -162,13 +162,13 @@ export default function EditEventPage() {
 
       if (formData.challengeType === 'streak') {
         const opts = formData.streakOptions || [];
-        if (!opts.length) { alert('Kam se kam ek window option daliye'); setSaving(false); return; }
+        if (!opts.length) { alert('Add at least one window option'); setSaving(false); return; }
 
         const bad = opts.findIndex(
           (o) => !String(o.label).trim() || o.goalDays < 1 || o.windowDays < o.goalDays
         );
         if (bad >= 0) {
-          alert(`Option #${bad + 1} theek nahi hai.\n\nLabel chahiye, aur window days goal days se kam nahi ho sakte.`);
+          alert(`Option #${bad + 1} is not valid.\n\nIt needs a label, and window days cannot be fewer than goal days.`);
           setSaving(false);
           return;
         }
@@ -181,7 +181,7 @@ export default function EditEventPage() {
         return;
       }
 
-      /* Server ne jo lautaya usse milao.
+      /* Server returned jo usse milao.
          Agar backend purana chal raha ho to Mongoose anjaan fields
          CHUPCHAAP gira deta hai — "saved" dikhta hai par kuch bachta nahi.
          Pehle yahi hua tha, isliye ab saaf bata dete hain. */
@@ -276,7 +276,7 @@ export default function EditEventPage() {
             </div>
           </div>
 
-          {/* Is event ka WhatsApp group — email aur success page dono par lagta hai */}
+          {/* This event's WhatsApp group — email aur success page dono par lagta hai */}
           <div className="form-group">
             <label className="form-label">WhatsApp Group Link — optional</label>
             <input
@@ -322,8 +322,8 @@ export default function EditEventPage() {
 
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
             {[
-              ['distance', '🏃 Distance', 'Ek baar doori poori karo, proof bhejo'],
-              ['streak',   '🔥 Streak',   'Window mein itne din activity karo'],
+              ['distance', '🏃 Distance', 'Finish the distance once, send proof'],
+              ['streak',   '🔥 Streak',   'Be active on this many days in a window'],
             ].map(([val, label, desc]) => {
               const on = (formData.challengeType || 'distance') === val;
               return (
@@ -349,7 +349,7 @@ export default function EditEventPage() {
               {/* Window options — user inme se ek chunega */}
               <label style={lbl}>Window options</label>
               <p style={hint}>
-                User registration ke waqt inme se ek chunega. Window uske agle din se shuru hota hai.
+                The runner picks one of these at registration. Their window starts the next day.
               </p>
 
               {(formData.streakOptions || []).map((o, i) => (
@@ -371,39 +371,39 @@ export default function EditEventPage() {
                   </div>
                   <div style={{ fontSize: 11.5, color: '#888', paddingBottom: 10, minWidth: 90 }}>
                     {o.windowDays > o.goalDays
-                      ? `${o.windowDays - o.goalDays} miss allowed`
-                      : o.windowDays === o.goalDays ? 'koi miss nahi' : '⚠️ window chhota hai'}
+                      ? `${o.windowDays - o.goalDays} rest days`
+                      : o.windowDays === o.goalDays ? 'no rest days' : '⚠️ window is too small'}
                   </div>
                   <button type="button" onClick={() => removeStreakOption(i)}
                     style={{ background: 'none', border: 'none', color: '#ff6b6b', cursor: 'pointer', fontWeight: 700, fontSize: 12, paddingBottom: 12 }}>
-                    Hatao
+                    Delete
                   </button>
                 </div>
               ))}
 
               <button type="button" onClick={addStreakOption}
                 style={{ background: '#222', border: '1px solid #444', color: '#ddd', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontWeight: 600, fontSize: 12.5, marginBottom: 20 }}>
-                + Option jodiye
+                + Add an option
               </button>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(170px,1fr))', gap: 16 }}>
                 <div>
-                  <label style={lbl}>Minimum minutes / din</label>
+                  <label style={lbl}>Minimum minutes per day</label>
                   <input className="input" type="number" value={formData.streakMinMinutes ?? 30}
                     onChange={(e) => setFormData(p => ({ ...p, streakMinMinutes: Number(e.target.value) || 0 }))} />
                 </div>
                 <div>
-                  <label style={lbl}>Din kaise mark honge</label>
+                  <label style={lbl}>How days are marked</label>
                   <select className="input" value={formData.streakSource || 'both'}
                     onChange={(e) => setFormData(p => ({ ...p, streakSource: e.target.value }))}>
-                    <option value="both">Strava ya manual upload</option>
-                    <option value="strava">Sirf Strava</option>
-                    <option value="manual">Sirf manual upload</option>
+                    <option value="both">Strava or manual upload</option>
+                    <option value="strava">Strava only</option>
+                    <option value="manual">Manual upload only</option>
                   </select>
                 </div>
               </div>
 
-              <label style={{ ...lbl, marginTop: 16 }}>Kaun si activity ginegi</label>
+              <label style={{ ...lbl, marginTop: 16 }}>Which activities count</label>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {['Run', 'Walk', 'Ride', 'Hike', 'Swim', 'VirtualRun'].map((sp) => {
                   const list = formData.streakSports || [];
@@ -432,9 +432,9 @@ export default function EditEventPage() {
                   onChange={(e) => setFormData(p => ({ ...p, streakOutdoorOnly: e.target.checked }))}
                   style={{ width: 20, height: 20, cursor: 'pointer' }} />
                 <span>
-                  <strong style={{ color: '#ddd' }}>Sirf outdoor</strong>
+                  <strong style={{ color: '#ddd' }}>Outdoor only</strong>
                   <span style={{ display: 'block', fontSize: 11.5, color: '#888', marginTop: 2 }}>
-                    Treadmill aur indoor trainer nahi ginenge
+                    Treadmill and indoor trainer do not count
                   </span>
                 </span>
               </label>
@@ -510,7 +510,7 @@ export default function EditEventPage() {
           <h3 style={{ color: '#00ff88', marginTop: 0 }}>
             Gallery ({formData.gallery.length} photos
             {brokenList.length > 0 && (
-              <span style={{ color: '#ff4444' }}> — {brokenList.length} TOOTI HUI</span>
+              <span style={{ color: '#ff4444' }}> — {brokenList.length} BROKEN</span>
             )})
           </h3>
 
@@ -521,12 +521,12 @@ export default function EditEventPage() {
             <div style={{ background: 'rgba(255,170,0,.12)', border: '1px solid #ffaa00',
               borderRadius: 8, padding: '12px 14px', marginBottom: 16 }}>
               <div style={{ color: '#ffcc55', fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
-                ⚠️ Ye photos website par nahi dikhengi
+                ⚠️ These photos will not appear on the website
               </div>
               <div style={{ color: '#ffddaa', fontSize: 13, lineHeight: 1.6 }}>
-                Is event ka <strong>Active</strong> tick hata hua hai, isliye poora event
+                This event's <strong>Active</strong> tick hata hua hai, isliye poora event
                 website se chhupa hua hai — gallery ki photos bhi. Dikhani hain to upar{' '}
-                <strong>Active</strong> tick kijiye. (Purana event hai to{' '}
+                <strong>Active</strong> above. (For a past event, leave{' '}
                 <strong>Past Event</strong> ka tick lagaa rehne dijiye — wo Previous
                 Challenges mein chala jayega, live events mein nahi.)
               </div>
@@ -539,7 +539,7 @@ export default function EditEventPage() {
             <div style={{ background: 'rgba(255,68,68,.12)', border: '1px solid #ff4444',
               borderRadius: 8, padding: '12px 14px', marginBottom: 16 }}>
               <div style={{ color: '#ff8888', fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
-                ⚠️ {brokenList.length} photo khul nahi rahi
+                ⚠️ {brokenList.length} photos are not loading
               </div>
               <div style={{ color: '#ffaaaa', fontSize: 13, lineHeight: 1.6 }}>
                 Ye purane image account par padi hain, isliye website par khaali dikhti hain.
@@ -551,7 +551,7 @@ export default function EditEventPage() {
                 style={{ marginTop: 10, background: '#ff4444', color: '#fff', border: 'none',
                   borderRadius: 6, padding: '8px 16px', fontWeight: 700, cursor: 'pointer' }}
               >
-                Tooti hui {brokenList.length} photo hatao
+                Remove {brokenList.length} broken photos
               </button>
             </div>
           )}
@@ -571,7 +571,7 @@ export default function EditEventPage() {
                       justifyContent: 'center', background: 'rgba(0,0,0,.6)', borderRadius: 8,
                       color: '#ff6b6b', fontWeight: 700, fontSize: 12, textAlign: 'center', padding: 8,
                       pointerEvents: 'none' }}>
-                      ❌ Khul nahi rahi
+                      ❌ Not loading
                     </div>
                   )}
                   <button type="button" onClick={() => removeGalleryImage(index)}

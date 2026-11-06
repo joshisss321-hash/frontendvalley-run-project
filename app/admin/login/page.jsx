@@ -67,7 +67,7 @@ export default function AdminLogin() {
 
         {expired && !error && (
           <div className="notice-message">
-            Session 7 din baad khatam ho gaya tha — dobara sign in kijiye.
+            Your session expired after 7 days — please sign in again.
           </div>
         )}
 

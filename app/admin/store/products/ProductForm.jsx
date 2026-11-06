@@ -57,7 +57,7 @@ export default function ProductForm({ productId }) {
     setUploading(false);
 
     if (res?.success === false || !res?.url) {
-      alert('Photo upload nahi hui — ' + (res?.message || 'dobara koshish kijiye'));
+      alert('Photo upload failed — ' + (res?.message || 'please try again'));
       return;
     }
     setForm((f) => ({
@@ -86,14 +86,14 @@ export default function ProductForm({ productId }) {
 
   /* ── Save ── */
   const save = async () => {
-    if (!form.name.trim()) { alert('Product ka naam likhiye'); return; }
+    if (!form.name.trim()) { alert('Please enter a product name'); return; }
 
     if (useVariants) {
-      if (form.variants.length === 0) { alert('Kam se kam ek pack size daliye, ya variants band kar dijiye'); return; }
+      if (form.variants.length === 0) { alert('Kam se kam ek pack sizes daliye, ya variants band kar dijiye'); return; }
       const bad = form.variants.findIndex((v) => !String(v.label).trim() || Number(v.price) <= 0);
-      if (bad >= 0) { alert(`Pack size #${bad + 1} ka naam aur daam dono chahiye`); return; }
+      if (bad >= 0) { alert(`Pack size #${bad + 1} needs both a label and a price`); return; }
     } else if (Number(form.price) <= 0) {
-      alert('Daam daliye');
+      alert('Please enter a price');
       return;
     }
 
@@ -111,7 +111,7 @@ export default function ProductForm({ productId }) {
       : await adminAPI.store.products.create(payload);
     setSaving(false);
 
-    if (res?.success === false) { alert('Save nahi hua — ' + res.message); return; }
+    if (res?.success === false) { alert('Could not save — ' + res.message); return; }
     router.push('/admin/store/products');
   };
 
@@ -121,22 +121,22 @@ export default function ProductForm({ productId }) {
     <>
       {/* ── Basic ── */}
       <Card>
-        <Section>Product ki jaankari</Section>
+        <Section>Product details</Section>
 
         <Field label="Naam *" hint="Jaise: Pure Pahadi Bilona Ghee">
           <input style={input} value={form.name} onChange={(e) => set('name', e.target.value)} />
         </Field>
 
-        <Field label="Ek line ka description" hint="Card par dikhega">
+        <Field label="One-line description" hint="Shown on the card">
           <input style={input} value={form.shortDesc} onChange={(e) => set('shortDesc', e.target.value)} />
         </Field>
 
-        <Field label="Poora description">
+        <Field label="Full description">
           <textarea style={{ ...input, minHeight: 110, resize: 'vertical' }} value={form.longDesc}
             onChange={(e) => set('longDesc', e.target.value)} />
         </Field>
 
-        <Field label="Category" hint={cats.length === 0 ? '⚠️ Pehle category banayiye' : 'Ek se zyada chun sakte hain'}>
+        <Field label="Category" hint={cats.length === 0 ? '⚠️ Create a category first' : 'You can pick more than one'}>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {cats.map((c) => {
               const on = form.categories.includes(c._id);
@@ -182,7 +182,7 @@ export default function ProductForm({ productId }) {
                       border: 'none', cursor: 'pointer', fontSize: 10.5, fontWeight: 700, fontFamily: 'inherit',
                       background: isFeatured ? '#14532d' : '#f3f4f6', color: isFeatured ? '#fff' : '#6b7280',
                     }}>
-                    {isFeatured ? 'MAIN' : 'Main banao'}
+                    {isFeatured ? 'MAIN' : 'Make main'}
                   </button>
                 </div>
               );
@@ -191,29 +191,29 @@ export default function ProductForm({ productId }) {
         )}
 
         <input type="file" accept="image/*" onChange={(e) => { addImage(e.target.files?.[0]); e.target.value = ''; }} />
-        {uploading && <div style={{ fontSize: 12, color: '#14532d', marginTop: 6 }}>Upload ho rahi hai…</div>}
+        {uploading && <div style={{ fontSize: 12, color: '#14532d', marginTop: 6 }}>Uploading…</div>}
         <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 6 }}>
-          Photo apne aap chhoti ho jaati hai — badi file bhi chalegi.
+          Photos are resized automatically — large files are fine.
         </div>
       </Card>
 
-      {/* ── Daam aur stock ── */}
+      {/* ── Price and stock ── */}
       <Card>
-        <Section>Daam aur stock</Section>
+        <Section>Price and stock</Section>
 
         <label style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13.5, fontWeight: 700, marginBottom: 14, cursor: 'pointer' }}>
           <input type="checkbox" checked={useVariants} onChange={(e) => setUseVariants(e.target.checked)}
             style={{ width: 17, height: 17, cursor: 'pointer' }} />
-          Alag-alag pack size hain (250g / 500g / 1kg)
+          Alag-alag pack sizes hain (250g / 500g / 1kg)
         </label>
 
         {!useVariants ? (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: 12 }}>
-            <Field label="Daam (₹) *">
+            <Field label="Price (₹) *">
               <input type="number" style={input} value={form.price}
                 onChange={(e) => set('price', Number(e.target.value) || 0)} />
             </Field>
-            <Field label="MRP (₹)" hint="Daam se zyada ho tabhi dikhegi">
+            <Field label="MRP (₹)" hint="Only shown when higher than the price">
               <input type="number" style={input} value={form.mrp}
                 onChange={(e) => set('mrp', e.target.value)} />
             </Field>
@@ -224,7 +224,7 @@ export default function ProductForm({ productId }) {
             <Field label="Unit" hint="500 g, 1 L">
               <input style={input} value={form.unit} onChange={(e) => set('unit', e.target.value)} />
             </Field>
-            <Field label="Weight (gram)" hint="Shipping ke liye">
+            <Field label="Weight (gram)" hint="For shipping">
               <input type="number" style={input} value={form.weightGm}
                 onChange={(e) => set('weightGm', Number(e.target.value) || 0)} />
             </Field>
@@ -240,7 +240,7 @@ export default function ProductForm({ productId }) {
                   <span style={{ fontWeight: 700, fontSize: 12.5, color: '#14532d' }}>Pack size #{i + 1}</span>
                   <button type="button" onClick={() => removeVariant(i)}
                     style={{ background: 'none', border: 'none', color: '#dc2626', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
-                    Hatao
+                    Delete
                   </button>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(110px,1fr))', gap: 10 }}>
@@ -257,11 +257,11 @@ export default function ProductForm({ productId }) {
                 </div>
               </div>
             ))}
-            <button type="button" onClick={addVariant} style={btnLight}>+ Pack size jodiye</button>
+            <button type="button" onClick={addVariant} style={btnLight}>+ Add a pack size</button>
           </>
         )}
 
-        <Field label="Stock kam ka alert" hint="Itna ya kam bacha to dashboard par dikhega">
+        <Field label="Low stock alert" hint="Flagged on the dashboard at or below this">
           <input type="number" style={{ ...input, maxWidth: 120 }} value={form.lowStockAt}
             onChange={(e) => set('lowStockAt', Number(e.target.value) || 0)} />
         </Field>
@@ -269,17 +269,17 @@ export default function ProductForm({ productId }) {
 
       {/* ── Khane ki jaankari ── */}
       <Card>
-        <Section>Product ki detail</Section>
-        <Field label="Kya-kya hai (ingredients)">
+        <Section>More details</Section>
+        <Field label="Ingredients">
           <input style={input} value={form.ingredients} onChange={(e) => set('ingredients', e.target.value)} />
         </Field>
-        <Field label="Kahan se aaya" hint="Jaise: Chamoli, Uttarakhand">
+        <Field label="Where it comes from" hint="Jaise: Chamoli, Uttarakhand">
           <input style={input} value={form.sourceRegion} onChange={(e) => set('sourceRegion', e.target.value)} />
         </Field>
-        <Field label="Kaise rakhein">
+        <Field label="How to store">
           <input style={input} value={form.storage} onChange={(e) => set('storage', e.target.value)} />
         </Field>
-        <Field label="Kitne din chalega">
+        <Field label="Shelf life">
           <input style={input} value={form.shelfLife} onChange={(e) => set('shelfLife', e.target.value)} />
         </Field>
       </Card>
@@ -289,14 +289,14 @@ export default function ProductForm({ productId }) {
         <button type="button" onClick={() => setShowLegal(!showLegal)}
           style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', width: '100%' }}>
           <div style={{ fontWeight: 800, fontSize: 14, color: '#92400e' }}>
-            {showLegal ? '▾' : '▸'} Kanooni jaankari (FSSAI, GST) — baad mein bhar sakte hain
+            {showLegal ? '▾' : '▸'} Legal details (FSSAI, GST) — can be filled in later
           </div>
         </button>
 
         {!showLegal && (
           <div style={{ fontSize: 12.5, color: '#a16207', marginTop: 8, lineHeight: 1.65 }}>
-            Khali chhod dijiye to product page par ye hissa dikhega hi nahi — koi jhoota dava
-            nahi hoga. License aate hi yahan bhar dijiye, apne aap aa jayega.
+            Left empty, this section does not appear on the product page at all — nothing
+            untrue is shown. Fill it in when the licence arrives and it appears by itself.
           </div>
         )}
 
@@ -322,28 +322,28 @@ export default function ProductForm({ productId }) {
 
       {/* ── Shipping / return ── */}
       <Card>
-        <Section>Shipping aur return</Section>
-        <Field label="Is product ke liye shipping note">
+        <Section>Shipping and returns</Section>
+        <Field label="Shipping note for this product">
           <input style={input} value={form.shippingNote} onChange={(e) => set('shippingNote', e.target.value)} />
         </Field>
-        <Check label="Ye product wapas liya ja sakta hai" checked={form.isReturnable}
+        <Check label="This product can be returned" checked={form.isReturnable}
           onChange={(v) => set('isReturnable', v)} />
         {form.isReturnable && (
-          <Field label="Return ki shart"><input style={input} value={form.returnNote}
+          <Field label="Return conditions"><input style={input} value={form.returnNote}
             onChange={(e) => set('returnNote', e.target.value)} /></Field>
         )}
       </Card>
 
       {/* ── Dikhna ── */}
       <Card>
-        <Section>Website par</Section>
+        <Section>On the website</Section>
         <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', marginBottom: 14 }}>
-          <Check label="Live karo (publish)" checked={form.isPublished} onChange={(v) => set('isPublished', v)} />
+          <Check label="Publish (publish)" checked={form.isPublished} onChange={(v) => set('isPublished', v)} />
           <Check label="Featured" checked={form.isFeatured} onChange={(v) => set('isFeatured', v)} />
           <Check label="Best seller" checked={form.isBestSeller} onChange={(v) => set('isBestSeller', v)} />
           <Check label="New arrival" checked={form.isNewArrival} onChange={(v) => set('isNewArrival', v)} />
         </div>
-        <Field label="Kram" hint="Chhota number pehle">
+        <Field label="Order" hint="Lower number first">
           <input type="number" style={{ ...input, maxWidth: 120 }} value={form.sortOrder}
             onChange={(e) => set('sortOrder', Number(e.target.value) || 0)} />
         </Field>
@@ -356,7 +356,7 @@ export default function ProductForm({ productId }) {
         display: 'flex', gap: 10, flexWrap: 'wrap',
       }}>
         <button onClick={save} disabled={saving} style={{ ...btnPrimary, flex: 1, minWidth: 150 }}>
-          {saving ? 'Save ho raha hai…' : productId ? '✓ Update karo' : '✓ Product banao'}
+          {saving ? 'Saving…' : productId ? '✓ Update' : '✓ Create product'}
         </button>
         <button onClick={() => router.push('/admin/store/products')} style={btnLight}>Cancel</button>
       </div>
