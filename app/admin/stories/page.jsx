@@ -155,6 +155,7 @@ export default function StoriesAdmin() {
 /* ── Ek kahani ── */
 function StoryRow({ s, open, onToggle, after }) {
   const [busy, setBusy] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [note, setNote] = useState(s.adminNote || '');
 
   const run = async (fn) => { setBusy(true); await after(await fn()); setBusy(false); };
@@ -182,8 +183,20 @@ function StoryRow({ s, open, onToggle, after }) {
           </div>
           <div style={{ fontWeight: 800, fontSize: 15.5 }}>{s.title}</div>
           <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 3 }}>
-            {s.name} · {s.email}{s.city ? ` · ${s.city}` : ''} · {new Date(s.createdAt).toLocaleDateString('en-IN')}
+            {s.name} · {s.email}{s.city ? ` · ${s.city}` : ''}
+            {s.phone ? ` · ${s.phone}` : ''} · {new Date(s.createdAt).toLocaleDateString('en-IN')}
           </div>
+
+          {/* Instagram sirf admin ko. Public par tabhi jab runner ne
+              uski alag ijazat di ho — isliye haalat saaf likhi hai. */}
+          {s.instaId && (
+            <div style={{ fontSize: 12, marginTop: 4, color: '#6b7280' }}>
+              Instagram: <strong>@{String(s.instaId).replace(/^@+/, '')}</strong>{' '}
+              <span style={{ color: s.consent?.publishInsta ? '#15803d' : '#9ca3af' }}>
+                {s.consent?.publishInsta ? '· runner allowed this publicly' : '· admin only, not shown on the site'}
+              </span>
+            </div>
+          )}
         </div>
 
         <button onClick={onToggle} style={btnLight}>{open ? 'Collapse' : 'Read full'}</button>
@@ -202,6 +215,7 @@ function StoryRow({ s, open, onToggle, after }) {
           <Consent ok={s.consent?.publishStory}  label="Publish story" />
           <Consent ok={s.consent?.publishPhotos} label="Publish photos" />
           <Consent ok={s.consent?.publishName}   label="Show name" />
+          {s.instaId && <Consent ok={s.consent?.publishInsta} label="Show Instagram" />}
         </div>
         {s.consent?.agreedAt && (
           <div style={{ fontSize: 11, color: '#6b7280', marginTop: 6 }}>
@@ -217,20 +231,45 @@ function StoryRow({ s, open, onToggle, after }) {
 
       {open && (
         <div style={{ marginTop: 14 }}>
-          {s.summary && (
-            <p style={{ fontSize: 13.5, color: '#4b5563', fontStyle: 'italic', margin: '0 0 10px' }}>{s.summary}</p>
-          )}
-          <div style={{ fontSize: 14, lineHeight: 1.8, color: '#374151', whiteSpace: 'pre-line',
-            background: '#f9fafb', borderRadius: 10, padding: 14, maxHeight: 320, overflowY: 'auto' }}>
-            {s.body}
-          </div>
+          {editing ? (
+            <StoryEditor s={s} onCancel={() => setEditing(false)}
+              onSaved={async (res) => { if (await after(res)) setEditing(false); }} />
+          ) : (
+            <>
+              {s.summary ? (
+                <p style={{ fontSize: 13.5, color: '#4b5563', fontStyle: 'italic', margin: '0 0 10px' }}>{s.summary}</p>
+              ) : (
+                <p style={{ fontSize: 12.5, color: '#b45309', background: '#fffbeb', border: '1px solid #fde68a',
+                  borderRadius: 9, padding: '8px 11px', margin: '0 0 10px' }}>
+                  No one-line description. Write one in Edit — it is used on the story card
+                  and in the WhatsApp / Facebook preview.
+                </p>
+              )}
 
-          {s.photos?.length > 0 && (
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 10 }}>
-              {s.photos.map((p) => (
-                <img key={p.url} src={p.url} alt="" style={{ width: 92, height: 92, objectFit: 'cover', borderRadius: 9 }} />
-              ))}
-            </div>
+              <div style={{ fontSize: 14, lineHeight: 1.8, color: '#374151', whiteSpace: 'pre-line',
+                background: '#f9fafb', borderRadius: 10, padding: 14, maxHeight: 320, overflowY: 'auto' }}>
+                {s.body}
+              </div>
+
+              {s.photos?.length > 0 && (
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 10 }}>
+                  {s.photos.map((p) => (
+                    <div key={p.url} style={{ position: 'relative' }}>
+                      <img src={p.url} alt="" style={{ width: 92, height: 92, objectFit: 'cover', borderRadius: 9,
+                        outline: p.url === s.featuredPhoto ? '3px solid #15803d' : 'none', outlineOffset: 1 }} />
+                      {p.url === s.featuredPhoto && (
+                        <span style={{ position: 'absolute', bottom: 4, left: 4, fontSize: 8.5, fontWeight: 800,
+                          background: '#15803d', color: '#fff', borderRadius: 20, padding: '2px 6px' }}>COVER</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <button onClick={() => setEditing(true)} style={{ ...btnLight, marginTop: 12 }}>
+                ✎ Edit story
+              </button>
+            </>
           )}
 
           {s.removalRequestedAt && (
@@ -311,6 +350,111 @@ function StoryRow({ s, open, onToggle, after }) {
         )}
       </div>
     </Card>
+  );
+}
+
+/* ── Kahani theek karna ──
+   Admin typo sudhar sakta hai, chhoti si ek-line likh sakta hai,
+   cover photo chun sakta hai. Matlab badalna iska kaam nahi — ye
+   kisi aur ki kahani hai. */
+function StoryEditor({ s, onCancel, onSaved }) {
+  const [f, setF] = useState({
+    title: s.title || '',
+    summary: s.summary || '',
+    body: s.body || '',
+    eventTitle: s.eventTitle || '',
+    eventSlug: s.eventSlug || '',
+    featuredPhoto: s.featuredPhoto || '',
+  });
+  const [events, setEvents] = useState([]);
+  const [busy, setBusy] = useState(false);
+
+  const set = (k, v) => setF((x) => ({ ...x, [k]: v }));
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/stories/event-options`)
+      .then((r) => r.json())
+      .then((d) => setEvents(d?.events || []))
+      .catch(() => setEvents([]));
+  }, []);
+
+  const save = async () => {
+    if (!f.title.trim() || !f.body.trim()) { alert('Title and story cannot be empty.'); return; }
+    setBusy(true);
+    const res = await adminAPI.stories.update(s._id, f);
+    setBusy(false);
+    onSaved(res);
+  };
+
+  const L = ({ children }) => (
+    <label style={{ fontSize: 11.5, fontWeight: 700, color: '#6b7280', display: 'block', margin: '12px 0 5px' }}>
+      {children}
+    </label>
+  );
+
+  return (
+    <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 12, padding: 14 }}>
+      <div style={{ fontWeight: 800, fontSize: 13.5, color: '#7c2d12' }}>Editing this story</div>
+      <div style={{ fontSize: 11.5, color: '#9ca3af', marginTop: 3, lineHeight: 1.55 }}>
+        Fix typos and tighten the wording, but keep what the runner meant.
+      </div>
+
+      <L>TITLE</L>
+      <input style={input} value={f.title} onChange={(e) => set('title', e.target.value)} />
+
+      <L>ONE-LINE DESCRIPTION — used on the card and in link previews</L>
+      <input style={input} value={f.summary} placeholder="A small step that changed my life"
+        onChange={(e) => set('summary', e.target.value)} />
+
+      <L>VALLEY RUN CHALLENGE</L>
+      <select style={input} value={f.eventSlug || ''}
+        onChange={(e) => {
+          const picked = events.find((x) => x.slug === e.target.value);
+          setF((x) => ({ ...x, eventSlug: picked?.slug || '', eventTitle: picked?.title || '' }));
+        }}>
+        <option value="">Not related to a specific Valley Run event</option>
+        {/* Purani kahani ka event list mein na mile to use gayab nahi
+            hone dete — warna save karte hi wo chup-chaap mit jaata. */}
+        {!f.eventSlug && f.eventTitle && <option value="">{f.eventTitle} (saved earlier)</option>}
+        {events.map((e) => <option key={e.slug || e.title} value={e.slug}>{e.title}</option>)}
+      </select>
+
+      <L>STORY</L>
+      <textarea style={{ ...input, minHeight: 260, resize: 'vertical', lineHeight: 1.7 }}
+        value={f.body} onChange={(e) => set('body', e.target.value)} />
+
+      {s.photos?.length > 0 && (
+        <>
+          <L>COVER PHOTO — click one to use it on the card and in link previews</L>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {s.photos.map((p) => {
+              const on = f.featuredPhoto === p.url;
+              return (
+                <button key={p.url} type="button" onClick={() => set('featuredPhoto', on ? '' : p.url)}
+                  style={{ padding: 0, border: 'none', background: 'none', cursor: 'pointer', position: 'relative' }}>
+                  <img src={p.url} alt="" style={{ width: 92, height: 92, objectFit: 'cover', borderRadius: 9,
+                    outline: on ? '3px solid #15803d' : '1px solid #e5e7eb', outlineOffset: 1, opacity: on ? 1 : .72 }} />
+                  {on && (
+                    <span style={{ position: 'absolute', bottom: 4, left: 4, fontSize: 8.5, fontWeight: 800,
+                      background: '#15803d', color: '#fff', borderRadius: 20, padding: '2px 6px' }}>COVER</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          {!s.consent?.publishPhotos && (
+            <div style={{ fontSize: 12, color: '#991b1b', marginTop: 7 }}>
+              The runner did not allow photos to be published — these will not appear on the site.
+            </div>
+          )}
+        </>
+      )}
+
+      <div style={{ display: 'flex', gap: 8, marginTop: 16, flexWrap: 'wrap' }}>
+        <button onClick={save} disabled={busy} style={btn}>{busy ? 'Saving…' : '✓ Save changes'}</button>
+        <button onClick={onCancel} disabled={busy} style={btnLight}>Cancel</button>
+      </div>
+    </div>
   );
 }
 

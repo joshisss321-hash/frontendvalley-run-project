@@ -71,6 +71,15 @@ export default function StoryView({ data, url }) {
             <strong style={{ color: "#fff" }}>{s.name}</strong>
             {(s.city || s.state) && <span>· {[s.city, s.state].filter(Boolean).join(", ")}</span>}
             {s.eventTitle && <span>· {s.eventTitle}</span>}
+            {/* Server ye tabhi bhejta hai jab runner ne alag se haan
+                ki ho — yahan dobara jaanchne ki zaroorat nahi. */}
+            {s.instaId && (
+              <a href={`https://instagram.com/${String(s.instaId).replace(/^@+/, "")}`}
+                target="_blank" rel="noopener noreferrer"
+                style={{ color: "rgba(255,255,255,.8)", textDecoration: "none" }}>
+                · @{String(s.instaId).replace(/^@+/, "")}
+              </a>
+            )}
             {s.publishedAt && (
               <span>· {new Date(s.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
             )}
