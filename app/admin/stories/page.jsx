@@ -47,8 +47,17 @@ export default function StoriesAdmin() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [open, setOpen] = useState(null);   // khuli hui kahani ka id
+  const [sectionOn, setSectionOn] = useState(null);   // null = abhi pata nahi
 
   const loadStats = () => adminAPI.stories.stats().then((r) => setStats(r?.stats || {}));
+
+  /* Homepage ka master switch. Story par "Show on homepage" dabane se
+     kuch nahi hota agar ye band hai — aur pehle iska koi ishaara nahi
+     milta tha. Ab seedha upar likh dete hain. */
+  const loadSection = () =>
+    adminAPI.stories.getSettings().then((r) => {
+      if (r?.success !== false) setSectionOn(Boolean(r.settings?.sectionEnabled));
+    });
 
   const load = async (t = tab, page = 1) => {
     setLoading(true);
@@ -59,7 +68,7 @@ export default function StoriesAdmin() {
     setLoading(false);
   };
 
-  useEffect(() => { loadStats(); load('pending', 1); }, []);
+  useEffect(() => { loadStats(); loadSection(); load('pending', 1); }, []);
   useEffect(() => { load(tab, 1); }, [tab]);
 
   const after = async (res) => {
@@ -81,6 +90,30 @@ export default function StoriesAdmin() {
         </button>
       }
     >
+      {/* ── Homepage ka master switch band hai ──
+          Ye warning tabhi dikhti hai jab sach mein band ho. Isse
+          pehle admin kahani par "Show on homepage" daba kar maan
+          leta tha ki ho gaya, aur homepage khali rehti thi. */}
+      {sectionOn === false && (
+        <div style={{ background: '#fffbeb', border: '1.5px solid #fcd34d', borderRadius: 12,
+          padding: '14px 16px', marginBottom: 14, display: 'flex', gap: 13,
+          alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: 220 }}>
+            <div style={{ fontWeight: 800, fontSize: 13.5, color: '#92400e' }}>
+              The stories section is switched off on the homepage
+            </div>
+            <div style={{ fontSize: 12.5, color: '#a16207', marginTop: 4, lineHeight: 1.6 }}>
+              Marking a story “Show on homepage” will not do anything until you turn
+              the section on. Published stories still appear on the Stories page.
+            </div>
+          </div>
+          <button onClick={() => router.push('/admin/stories/settings')}
+            style={{ ...btn, background: '#b45309', whiteSpace: 'nowrap' }}>
+            Turn it on
+          </button>
+        </div>
+      )}
+
       {/* ── Stats ── */}
       <Card>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(96px,1fr))', gap: 10 }}>
