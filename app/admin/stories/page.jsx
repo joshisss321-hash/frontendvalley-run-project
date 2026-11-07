@@ -365,6 +365,7 @@ function StoryEditor({ s, onCancel, onSaved }) {
     eventTitle: s.eventTitle || '',
     eventSlug: s.eventSlug || '',
     featuredPhoto: s.featuredPhoto || '',
+    pullQuote: s.pullQuote || '',
   });
   const [events, setEvents] = useState([]);
   const [busy, setBusy] = useState(false);
@@ -378,8 +379,24 @@ function StoryEditor({ s, onCancel, onSaved }) {
       .catch(() => setEvents([]));
   }, []);
 
+  /* Wahi jaanch jo server karta hai, bas pehle — taaki admin ko save
+     dabane se pehle hi pata chal jaaye. Asli rok server par hi hai. */
+  const flat = (t) => String(t || '')
+    .replace(/[‘’‛ʼ]/g, "'")
+    .replace(/[“”‟]/g, '"')
+    .replace(/[–—−]/g, '-')
+    .replace(/\s+/g, ' ').trim().toLowerCase();
+
+  const quoteState = !f.pullQuote.trim()
+    ? 'empty'
+    : flat(f.body).includes(flat(f.pullQuote)) ? 'ok' : 'bad';
+
   const save = async () => {
     if (!f.title.trim() || !f.body.trim()) { alert('Title and story cannot be empty.'); return; }
+    if (quoteState === 'bad') {
+      alert('The highlighted line is not in the story. Copy the sentence exactly as the runner wrote it.');
+      return;
+    }
     setBusy(true);
     const res = await adminAPI.stories.update(s._id, f);
     setBusy(false);
@@ -422,6 +439,21 @@ function StoryEditor({ s, onCancel, onSaved }) {
       <L>STORY</L>
       <textarea style={{ ...input, minHeight: 260, resize: 'vertical', lineHeight: 1.7 }}
         value={f.body} onChange={(e) => set('body', e.target.value)} />
+
+      {/* Ubhri hui line. Admin ise likhta nahi — kahani mein se chunta
+          hai. Server bhi yahi jaanchta hai; wahi aakhri rok hai. */}
+      <L>HIGHLIGHTED LINE — copy one sentence from the story above</L>
+      <textarea style={{ ...input, minHeight: 64, resize: 'vertical', lineHeight: 1.6 }}
+        placeholder="Paste a sentence the runner actually wrote"
+        value={f.pullQuote} onChange={(e) => set('pullQuote', e.target.value)} />
+      <div style={{ fontSize: 11.5, lineHeight: 1.55, marginTop: 5,
+        color: quoteState === 'bad' ? '#b91c1c' : quoteState === 'ok' ? '#15803d' : '#9ca3af' }}>
+        {quoteState === 'bad'
+          ? '✕ This line is not in the story. Copy it exactly — we never put words in someone’s mouth.'
+          : quoteState === 'ok'
+            ? '✓ Found in the story. It will appear in large type in the middle of the page.'
+            : 'Optional. Leave it empty and no highlighted line is shown.'}
+      </div>
 
       {s.photos?.length > 0 && (
         <>

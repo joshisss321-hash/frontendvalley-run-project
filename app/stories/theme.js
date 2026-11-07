@@ -138,6 +138,143 @@ export const storyCss = `
   .sc-cta-p { font-size: 15.5px; line-height: 1.78; color: rgba(255,255,255,.62);
               margin: 15px auto 26px; max-width: 520px; }
 
+  /* ═══════════════════════════════════════════
+     EK KAHANI KA PAGE — magazine jaisa
+     ═══════════════════════════════════════════ */
+
+  /* Padhne ki chaudai. 720px par ek line mein 70-80 akshar aate
+     hain — ussey zyada par aankh agli line dhoondhte waqt bhatakti
+     hai, kam par baar-baar toot-ti hai. */
+  .sd { max-width: 720px; margin: 0 auto; padding: 0 22px; }
+
+  .sd-top { background: #171717; color: #fff; padding: 30px 22px 46px; }
+  .sd-top-in { max-width: 720px; margin: 0 auto; }
+  .sd-back { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px;
+             color: rgba(255,255,255,.5); text-decoration: none; transition: color .18s; }
+  .sd-back:hover { color: #fff; }
+  .sd-kicker { display: block; font-size: 10px; font-weight: 800; letter-spacing: 2.4px;
+               text-transform: uppercase; color: #f87171; margin-top: 26px; }
+  .sd-h1 { font-size: clamp(27px, 5.2vw, 46px); font-weight: 900; letter-spacing: -1.4px;
+           line-height: 1.1; margin: 13px 0 0; color: #fff; }
+  .sd-lede { font-size: clamp(15px, 1.9vw, 17.5px); line-height: 1.68;
+             color: rgba(255,255,255,.7); margin: 15px 0 0; }
+
+  /* Lekhak ki patti */
+  .sd-by { display: flex; align-items: center; gap: 13px; margin-top: 26px;
+           padding-top: 20px; border-top: 1px solid rgba(255,255,255,.12); }
+  .sd-ava { width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+            background: #dc2626; color: #fff; display: flex; align-items: center;
+            justify-content: center; font-size: 16px; font-weight: 800; }
+  .sd-by-name { font-size: 14.5px; font-weight: 800; color: #fff; }
+  .sd-by-meta { display: flex; flex-wrap: wrap; gap: 4px 13px; margin-top: 4px;
+                font-size: 12.2px; color: rgba(255,255,255,.55); }
+  .sd-by-meta span, .sd-by-meta a { display: inline-flex; align-items: center; gap: 5px; }
+  .sd-by-meta a { color: rgba(255,255,255,.75); text-decoration: none; }
+  .sd-by-meta a:hover { color: #fff; text-decoration: underline; }
+  .sd-ico { width: 13px; height: 13px; flex-shrink: 0; opacity: .75; }
+
+  /* Pehli photo — asli naap par, kaate bina */
+  .sd-lead { margin: -26px auto 0; max-width: 760px; padding: 0 22px; position: relative; }
+  .sd-lead img { width: 100%; height: auto; display: block; border-radius: 16px;
+                 box-shadow: 0 18px 44px rgba(28,25,23,.16); background: #ebe8e4;
+                 animation: sd-rise .6s cubic-bezier(.2,.7,.3,1); }
+
+  /* ⚠️ Na opacity 0 se shuru, na koi fill-mode.
+     Pehle fill-mode "both" ke saath 0 se shuru hota tha, aur agar animation
+     chali hi nahi (chhupa hua tab, purana browser, animation band)
+     to tasveer 0 par hi atak jaati thi — yaani kahani ki sabse
+     zaroori cheez gayab. Ab bura se bura ye hoga ki jhalak na dikhe;
+     tasveer phir bhi poori dikhegi. */
+  @keyframes sd-rise { from { opacity: .4; transform: translateY(12px); } }
+
+  .sd-article { padding-top: 38px; padding-bottom: 8px; }
+  .sd-body { font-size: 17.5px; line-height: 1.78; color: #3f3b38; margin: 0; }
+  .sd-body p { margin: 0 0 25px; }
+  .sd-body > p:last-child { margin-bottom: 0; }
+
+  /* Ubhri hui line */
+  .sd-quote { margin: 38px 0; padding: 4px 0 4px 24px; border-left: 4px solid #dc2626; }
+  .sd-quote p { font-size: clamp(19px, 2.6vw, 24px); line-height: 1.5; font-weight: 700;
+                letter-spacing: -.45px; color: #1c1917; margin: 0; }
+  .sd-quote cite { display: block; font-size: 12px; font-style: normal; font-weight: 700;
+                   letter-spacing: 1.4px; text-transform: uppercase;
+                   color: #a8a29e; margin-top: 13px; }
+
+  /* Baaki photos */
+  .sd-gal { display: grid; gap: 14px; margin-top: 34px;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .sd-gal figure { margin: 0; }
+  .sd-gal img { width: 100%; height: auto; display: block; border-radius: 13px; background: #ebe8e4; }
+  .sd-gal figcaption { font-size: 12.2px; color: #a8a29e; margin-top: 8px; line-height: 1.5; }
+  .sd-gal-one { grid-template-columns: 1fr; }
+
+  /* Baantna */
+  .sd-share { margin-top: 46px; padding: 24px; border-radius: 16px;
+              background: #f7f7f5; border: 1px solid #ebe8e4; }
+  .sd-share-h { font-size: 11px; font-weight: 800; letter-spacing: 2px;
+                text-transform: uppercase; color: #dc2626; }
+  .sd-share-p { font-size: 14.2px; line-height: 1.65; color: #57534e; margin: 9px 0 16px; }
+  .sd-btns { display: flex; gap: 9px; flex-wrap: wrap; }
+  .sd-b { display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+          min-height: 44px; padding: 0 18px; border-radius: 100px; cursor: pointer;
+          border: 1.5px solid #e2e0dc; background: #fff; color: #44403c;
+          font-family: inherit; font-size: 13.5px; font-weight: 700;
+          text-decoration: none; transition: transform .18s, border-color .18s, color .18s; }
+  .sd-b:hover { transform: translateY(-2px); border-color: #a8a29e; }
+  .sd-b-wa:hover { border-color: #25d366; color: #128c7e; }
+  .sd-b-fb:hover { border-color: #1877f2; color: #1877f2; }
+  .sd-b-ok { border-color: #86efac; color: #15803d; background: #f0fdf4; }
+  .sd-b svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  .sd-linkbox { margin-top: 14px; }
+  .sd-linkbox label { display: block; font-size: 12px; color: #78716c; margin-bottom: 6px; }
+  .sd-linkbox input { width: 100%; box-sizing: border-box; padding: 11px 13px; border-radius: 10px;
+                      border: 1.5px solid #e2e0dc; background: #fff; font-family: inherit;
+                      font-size: 13.5px; color: #1c1917; }
+
+  .sd-takedown { margin-top: 20px; font-size: 11.8px; color: #b4afa9; }
+  .sd-takedown button { background: none; border: none; padding: 0; cursor: pointer;
+                        color: #b4afa9; font-size: 11.8px; font-family: inherit;
+                        text-decoration: underline; }
+  .sd-takedown button:hover { color: #78716c; }
+
+  /* Aur kahaniyan */
+  .sd-more { background: #f7f7f5; border-top: 1px solid #ebe8e4; margin-top: 54px;
+             padding: 54px 22px 58px; }
+  .sd-more-in { max-width: 1060px; margin: 0 auto; }
+  .sd-more-h { font-size: clamp(21px, 3vw, 28px); font-weight: 900; letter-spacing: -.9px;
+               color: #1c1917; margin: 9px 0 3px; }
+  .sd-more-p { font-size: 14px; color: #78716c; margin: 0 0 24px; }
+  .sd-read { margin-top: 13px; font-size: 12.5px; font-weight: 800; color: #dc2626;
+             display: inline-flex; align-items: center; gap: 6px; }
+  .st-card:hover .sd-read { gap: 10px; }
+  .sd-read { transition: gap .2s; }
+
+  @media (max-width: 760px) {
+    .sd, .sd-top, .sd-lead { padding-left: 18px; padding-right: 18px; }
+    .sd-top { padding-top: 22px; padding-bottom: 40px; }
+    .sd-lead { margin-top: -22px; }
+    .sd-lead img { border-radius: 13px; }
+    .sd-article { padding-top: 28px; }
+    .sd-body { font-size: 16.5px; line-height: 1.8; }
+    .sd-body p { margin-bottom: 22px; }
+    .sd-quote { margin: 30px 0; padding-left: 18px; border-left-width: 3px; }
+    .sd-gal { grid-template-columns: 1fr; }
+    .sd-share { padding: 19px 17px; border-radius: 14px; }
+    .sd-b { flex: 1 1 calc(50% - 5px); padding: 0 12px; }
+    .sd-more { padding: 42px 18px 46px; margin-top: 42px; }
+  }
+  @media (max-width: 370px) {
+    .sd-b { flex: 1 1 100%; }
+  }
+
+  /* Badi screen par tasveer text ke column se thoda bahar nikalti
+     hai — magazine mein yahi hota hai, aur 1440px par 716px ki photo
+     chhoti lagti hai. Text ki chaudai nahi badalti. */
+  @media (min-width: 1100px) {
+    .sd-lead { max-width: 900px; }
+  }
+
   @media (max-width: 760px) {
     .sh, .sh-photo { padding: 52px 16px 48px; }
     .st-card-feature { grid-template-columns: 1fr; }
@@ -155,9 +292,18 @@ export const storyCss = `
     .st-grid { grid-template-columns: 1fr; gap: 14px; }
     .st-sh { padding: 9px 14px; font-size: 12.5px; }
   }
+  /* Page ke andar ke anchor (jaise "Explore stories") par jhatka
+     na lage. Ye sirf stories ke pages par lagta hai, poori site par
+     nahi — kyunki ye CSS wahin inject hota hai. */
+  html { scroll-behavior: smooth; }
+
   @media (prefers-reduced-motion: reduce) {
-    .st-card, .st-btn, .st-sh, .st-card-img img { transition: none !important; }
-    .st-card:hover, .st-btn:hover, .st-sh:hover { transform: none !important; }
+    html { scroll-behavior: auto; }
+    .st-card, .st-btn, .st-sh, .st-card-img img,
+    .sd-b, .sd-back, .sd-read { transition: none !important; }
+    .st-card:hover, .st-btn:hover, .st-sh:hover, .sd-b:hover { transform: none !important; }
+    /* Tasveer dikhni chahiye, bas aate waqt uchhalni nahi chahiye */
+    .sd-lead img { animation: none !important; }
   }
 `;
 
