@@ -17,6 +17,19 @@ const TABS = [
   { key: 'all',       label: 'All',             stat: 'total' },
 ];
 
+/* /stories page ke filter chips isi se bante hain. Keys backend ke
+   enum se bilkul milni chahiye (models/Story.js). */
+const CATEGORIES = [
+  ['', 'No category'],
+  ['running_journey',        'Running Journeys'],
+  ['fitness_transformation', 'Fitness Transformation'],
+  ['beginner_story',         'Beginner Stories'],
+  ['walking_journey',        'Walking Journeys'],
+  ['cycling_journey',        'Cycling Journeys'],
+  ['overcoming_challenges',  'Overcoming Challenges'],
+  ['personal_achievement',   'Personal Achievements'],
+];
+
 const BADGES = [
   ['', 'No badge'],
   ['featured', 'Valley Run Featured Story'],
@@ -162,6 +175,9 @@ function StoryRow({ s, open, onToggle, after }) {
             {s.onHomepage && <Pill bg="#dbeafe" fg="#1e40af">HOMEPAGE</Pill>}
             {s.isStoryOfWeek && <Pill bg="#fef3c7" fg="#92400e">STORY OF WEEK</Pill>}
             {s.badge && <Pill bg="#f3e8ff" fg="#6b21a8">{s.badge.replace(/_/g, ' ').toUpperCase()}</Pill>}
+            {s.category && <Pill bg="#f1f5f9" fg="#334155">
+              {(CATEGORIES.find(([v]) => v === s.category)?.[1] || s.category).toUpperCase()}
+            </Pill>}
             {s.removalRequestedAt && <Pill bg="#fee2e2" fg="#991b1b">REMOVAL ASKED</Pill>}
           </div>
           <div style={{ fontWeight: 800, fontSize: 15.5 }}>{s.title}</div>
@@ -229,6 +245,18 @@ function StoryRow({ s, open, onToggle, after }) {
               </button>
             </div>
           )}
+
+          {/* Category — /stories page par isse filter chips bante hain */}
+          <div style={{ marginTop: 12 }}>
+            <label style={{ fontSize: 11.5, fontWeight: 700, color: '#6b7280', display: 'block', marginBottom: 5 }}>
+              CATEGORY — shows as a filter on the stories page
+            </label>
+            <select value={s.category || ''} disabled={busy}
+              onChange={(e) => run(() => adminAPI.stories.update(s._id, { category: e.target.value }))}
+              style={{ ...input, width: 'auto', fontSize: 12.5, padding: '8px 10px' }}>
+              {CATEGORIES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+            </select>
+          </div>
 
           <div style={{ marginTop: 12 }}>
             <input style={input} placeholder="Admin note (internal only)" value={note}

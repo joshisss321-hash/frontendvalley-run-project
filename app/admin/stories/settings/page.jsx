@@ -30,7 +30,7 @@ export default function StorySettingsPage() {
   if (!s) return <Shell title="Story Settings"><div style={{ padding: 40, textAlign: 'center', color: '#9ca3af' }}>Loading…</div></Shell>;
 
   return (
-    <Shell title="Story Settings" subtitle="Homepage section aur consent">
+    <Shell title="Story Settings" subtitle="Homepage section, stories page and consent">
 
       <Card>
         <Sec>Homepage section</Sec>
@@ -68,6 +68,29 @@ export default function StorySettingsPage() {
         )}
       </Card>
 
+      {/* ── /stories page ka hero ── */}
+      <Card>
+        <Sec>Stories page hero</Sec>
+        <div style={{ fontSize: 12.5, color: '#6b7280', marginBottom: 14, lineHeight: 1.7 }}>
+          This is the big banner at the top of <strong>valleyrun.in/stories</strong>.
+          A wide Himalayan running photo works best. If you leave it empty the page
+          shows a clean dark banner instead — it never looks broken.
+        </div>
+
+        <HeroPicker url={s.pageHeroImage} onChange={(u) => set('pageHeroImage', u)} />
+
+        <div style={{ marginTop: 16 }}>
+          <Field label="Heading" hint="Put | where the line should break — the part after | turns red">
+            <input style={input} value={s.pageHeroHeading || ''}
+              onChange={(e) => set('pageHeroHeading', e.target.value)} />
+          </Field>
+          <Field label="Paragraph below the heading">
+            <textarea style={{ ...input, minHeight: 80, resize: 'vertical' }} value={s.pageHeroText || ''}
+              onChange={(e) => set('pageHeroText', e.target.value)} />
+          </Field>
+        </div>
+      </Card>
+
       <Card>
         <Sec>Story submission form</Sec>
         <Check label="People can submit stories" checked={s.submissionsOpen}
@@ -84,12 +107,14 @@ export default function StorySettingsPage() {
       <Card style={{ background: '#fffbeb', border: '1px solid #fcd34d' }}>
         <Sec color="#92400e">Consent wording</Sec>
         <div style={{ fontSize: 12.5, color: '#a16207', marginBottom: 14, lineHeight: 1.7 }}>
-          Ye wahi text hai jo form par dikhega aur jispe runner haan karega.
+          This is the exact text shown on the submission form, and the text the
+          runner agrees to.
           <br /><br />
-          <strong>Yaad rakhiye:</strong> jo text runner ne us waqt dekha tha, wahi uski
-          kahani ke saath save ho jaata hai. Aap ise baad mein badlein to bhi{' '}
-          <strong>purani kahaniyon ka record nahi badalta</strong> — unke paas apna,
-          us waqt ka text rehta hai. Kabhi sawaal uthe to jawab maujood hai.
+          <strong>Please note:</strong> whatever text a runner saw at the time is saved
+          along with their story. If you change it later,{' '}
+          <strong>older stories keep their own record</strong> — each one holds the
+          wording that was shown to that runner. So if a question ever comes up, the
+          answer is on file.
         </div>
         <textarea style={{ ...input, minHeight: 130, resize: 'vertical' }} value={s.consentText || ''}
           onChange={(e) => set('consentText', e.target.value)} />
@@ -103,6 +128,71 @@ export default function StorySettingsPage() {
         {saved && <span style={{ fontSize: 13, fontWeight: 700, color: '#15803d' }}>✓ Saved</span>}
       </div>
     </Shell>
+  );
+}
+
+/* Hero photo chunna.
+   Upload hote hi settings mein URL baith jaata hai, par save karna
+   alag kaam hai — niche "Save settings" dabana hi padega. Isliye
+   upload ke baad saaf-saaf likh diya hai. */
+function HeroPicker({ url, onChange }) {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+  const [justUploaded, setJustUploaded] = useState(false);
+
+  const pick = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';            // same file dobara chune to bhi chale
+    if (!file) return;
+
+    setErr(''); setBusy(true);
+    const res = await adminAPI.stories.uploadHero(file);
+    setBusy(false);
+
+    if (!res?.success) { setErr(res?.message || 'Upload failed'); return; }
+    onChange(res.url);
+    setJustUploaded(true);
+  };
+
+  return (
+    <div>
+      {url ? (
+        <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', background: '#111827' }}>
+          <img src={url} alt="" style={{ width: '100%', maxHeight: 210, objectFit: 'cover', display: 'block' }} />
+        </div>
+      ) : (
+        <div style={{
+          borderRadius: 12, border: '2px dashed #d1d5db', background: '#f9fafb',
+          padding: '34px 16px', textAlign: 'center', color: '#9ca3af', fontSize: 13,
+        }}>
+          No hero photo yet
+        </div>
+      )}
+
+      <div style={{ display: 'flex', gap: 9, flexWrap: 'wrap', marginTop: 10, alignItems: 'center' }}>
+        <label style={{ ...btn, cursor: busy ? 'wait' : 'pointer', display: 'inline-block' }}>
+          {busy ? 'Uploading…' : url ? 'Replace photo' : 'Upload photo'}
+          <input type="file" accept="image/*" onChange={pick} disabled={busy} style={{ display: 'none' }} />
+        </label>
+
+        {url && (
+          <button onClick={() => { onChange(''); setJustUploaded(false); }}
+            style={{ background: '#fff', border: '1.5px solid #fecaca', color: '#dc2626',
+              borderRadius: 9, padding: '9px 14px', fontWeight: 700, fontSize: 12.5,
+              cursor: 'pointer', fontFamily: 'inherit' }}>
+            Remove photo
+          </button>
+        )}
+      </div>
+
+      {justUploaded && (
+        <div style={{ fontSize: 12.5, color: '#92400e', background: '#fffbeb',
+          border: '1px solid #fcd34d', borderRadius: 9, padding: '9px 11px', marginTop: 10 }}>
+          Photo uploaded. It is not live yet — press <strong>Save settings</strong> below.
+        </div>
+      )}
+      {err && <div style={{ fontSize: 12.5, color: '#dc2626', marginTop: 8 }}>{err}</div>}
+    </div>
   );
 }
 

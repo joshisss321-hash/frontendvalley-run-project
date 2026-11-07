@@ -77,6 +77,77 @@ export const storyCss = `
   .st-empty { background: #fff; border: 1px solid #ebe8e4; border-radius: 18px;
               padding: 58px 22px; text-align: center; }
 
+
+  /* ── /stories ka hero ── */
+  .sh { background: #171717; color: #fff; position: relative; overflow: hidden;
+        padding: 74px 20px 68px; }
+  .sh-photo { padding: 110px 20px 96px; }
+  .sh-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .sh-veil { position: absolute; inset: 0;
+    background: linear-gradient(100deg, rgba(23,23,23,.93) 0%, rgba(23,23,23,.72) 48%, rgba(23,23,23,.28) 100%); }
+  .sh-in { position: relative; max-width: 1060px; margin: 0 auto; }
+  .sh-kicker { font-size: 10.5px; font-weight: 800; letter-spacing: 2.6px;
+               text-transform: uppercase; color: #f87171; }
+  .sh-h1 { font-size: clamp(38px, 7vw, 76px); font-weight: 900; letter-spacing: -.045em;
+           line-height: .98; margin: 14px 0 0; text-transform: uppercase; }
+  .sh-red { color: #dc2626; }
+  .sh-sub { font-size: clamp(16px, 2.1vw, 21px); font-weight: 700;
+            color: rgba(255,255,255,.9); margin: 20px 0 0; }
+  .sh-text { font-size: 15.5px; line-height: 1.78; color: rgba(255,255,255,.66);
+             margin: 12px 0 0; max-width: 540px; }
+  .sh-cta { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
+  .st-btn-onhero { background: rgba(255,255,255,.1); color: #fff;
+                   border: 1.5px solid rgba(255,255,255,.32); }
+  .st-btn-onhero:hover { background: #fff; color: #171717; border-color: #fff; }
+
+  /* ── section head + filters ── */
+  .sx-head { margin-bottom: 24px; }
+  .sx-h2 { font-size: clamp(22px, 3.1vw, 32px); font-weight: 900; letter-spacing: -.9px;
+           line-height: 1.2; color: #1c1917; margin: 9px 0 0; max-width: 620px; }
+  .sx-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 26px; }
+  .sx-chip { padding: 9px 16px; border-radius: 100px; cursor: pointer; font-family: inherit;
+             font-size: 12.5px; font-weight: 700; background: #fff; color: #57534e;
+             border: 1.5px solid #e7e5e4; transition: all .18s; }
+  .sx-chip:hover { border-color: #a8a29e; }
+  .sx-chip-on { background: #dc2626; border-color: #dc2626; color: #fff; }
+  .sx-n { opacity: .55; margin-left: 3px; }
+
+  /* ── badi (featured) kahani ── */
+  .st-card-feature { display: grid; grid-template-columns: 1.15fr 1fr; align-items: stretch; }
+  .st-card-feature .st-card-img { aspect-ratio: auto; height: 100%; min-height: 300px; }
+  .st-card-feature .st-card-body { padding: 34px 32px; display: flex;
+                                   flex-direction: column; justify-content: center; }
+  .st-card-feature .st-card-title { font-size: 27px; letter-spacing: -.7px; line-height: 1.18; }
+  .st-card-feature .st-card-sum { font-size: 15px; margin-top: 11px; }
+  .st-card-feature .st-read { margin-top: 18px; font-size: 13.5px; font-weight: 800; color: #dc2626; }
+
+  /* ── khali page ── */
+  .sx-empty { background: #171717; color: #fff; padding: 86px 20px 90px; text-align: center; }
+  .sx-empty .st-wrap { max-width: 640px; }
+  .sx-empty-h { font-size: clamp(26px, 4.2vw, 40px); font-weight: 900; letter-spacing: -1.3px;
+                line-height: 1.12; margin: 12px 0 0; }
+  .sx-empty-p { font-size: 15.5px; line-height: 1.78; color: rgba(255,255,255,.6);
+                margin: 16px auto 0; max-width: 480px; }
+  .sx-empty-foot { font-size: 12.5px; color: rgba(255,255,255,.36); margin-top: 18px; }
+
+  /* ── aakhri bulawa ── */
+  .sc-cta { background: #1c1917; color: #fff; padding: 76px 20px; text-align: center;
+            margin-top: 60px; }
+  .sc-cta-h { font-size: clamp(23px, 3.4vw, 36px); font-weight: 900; letter-spacing: -1.1px;
+              line-height: 1.16; margin: 0; }
+  .sc-cta-p { font-size: 15.5px; line-height: 1.78; color: rgba(255,255,255,.62);
+              margin: 15px auto 26px; max-width: 520px; }
+
+  @media (max-width: 760px) {
+    .sh, .sh-photo { padding: 52px 16px 48px; }
+    .st-card-feature { grid-template-columns: 1fr; }
+    .st-card-feature .st-card-img { min-height: 0; aspect-ratio: 16/10; }
+    .st-card-feature .st-card-body { padding: 20px 18px 22px; }
+    .st-card-feature .st-card-title { font-size: 20px; letter-spacing: -.4px; }
+    .sx-empty { padding: 58px 16px 62px; }
+    .sc-cta { padding: 54px 16px; margin-top: 44px; }
+  }
+
   @media (max-width: 640px) {
     .st-wrap { padding: 0 16px; }
     .st-hero { padding: 30px 16px 28px; }
@@ -97,3 +168,14 @@ export const badgeLabel = (b) => ({
   community_inspiration: "Community Inspiration",
   journey_of_month: "Journey of the Month",
 }[b] || "");
+
+/** Category ka padhne layak naam — backend ki key se */
+export const CATEGORY_LABEL = {
+  running_journey:       "Running Journeys",
+  fitness_transformation:"Fitness Transformation",
+  beginner_story:        "Beginner Stories",
+  walking_journey:       "Walking Journeys",
+  cycling_journey:       "Cycling Journeys",
+  overcoming_challenges: "Overcoming Challenges",
+  personal_achievement:  "Personal Achievements",
+};

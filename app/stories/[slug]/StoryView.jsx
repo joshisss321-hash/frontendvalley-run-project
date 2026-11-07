@@ -213,13 +213,20 @@ function RemovalForm({ slug, onDone }) {
   );
 }
 
-export function StoryCard({ s }) {
+/* `feature` = pehli, badi kahani (magazine jaisi). Photo ke bina bada
+   do-column layout khaali dikhta hai, isliye photo ho tabhi. */
+export function StoryCard({ s, feature = false }) {
   const badge = badgeLabel(s.badge);
+  const big = feature && !!s.featuredPhoto;
+
   return (
-    <Link href={`/stories/${s.slug}`} className="st-card">
+    <Link
+      href={`/stories/${s.slug}`}
+      className={`st-card ${big ? "st-card-feature" : ""}`}
+    >
       {s.featuredPhoto && (
         <div className="st-card-img">
-          <img src={s.featuredPhoto} alt={s.title} loading="lazy" />
+          <img src={s.featuredPhoto} alt={s.title} loading={big ? "eager" : "lazy"} />
           {badge && (
             <span className="st-badge" style={{ position: "absolute", top: 11, left: 11 }}>{badge}</span>
           )}
@@ -234,6 +241,7 @@ export function StoryCard({ s }) {
         <div className="st-card-by">
           {s.name}{s.city ? ` · ${s.city}` : ""}
         </div>
+        {big && <div className="st-read">Read the story →</div>}
       </div>
     </Link>
   );
