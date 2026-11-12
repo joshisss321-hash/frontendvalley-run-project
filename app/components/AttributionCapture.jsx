@@ -118,14 +118,28 @@ export default function AttributionCapture() {
 }
 
 /** Register page create-order ke saath ye token bhejta hai.
- *  Token opaque hai — client ise na padh sakta hai na badal sakta. */
+ *  Token opaque hai — client ise na padh sakta hai na badal sakta.
+ *
+ *  ⚠️ 2 second ka pakka timeout.
+ *  Ye call payment button dabane ke BAAD chalti hai, Razorpay
+ *  khulne se theek pehle. Kaam sirf itna hai ki apne hi server se
+ *  ek cookie padh li jaye — milliseconds ka kaam, network par kahin
+ *  nahi jaata. Par ye paise wala raasta hai, aur yahan "shayad
+ *  theek hai" chhodna theek nahi. Kuch bhi atka to 2 second baad
+ *  khali token lautega aur payment bina ruke aage badh jayega;
+ *  zyada se zyada us ek registration ki ginti chhoot jayegi. */
 export async function getAttributionToken() {
   try {
-    const res = await fetch("/api/attribution", { cache: "no-store" });
+    const res = await fetch("/api/attribution", {
+      cache: "no-store",
+      signal: AbortSignal.timeout(2000),
+    });
     if (!res.ok) return "";
     const data = await res.json();
     return data?.token || "";
   } catch {
+    /* Timeout, network, purana browser jisme AbortSignal.timeout
+       nahi hai — kuch bhi ho, payment rukna nahi chahiye. */
     return "";
   }
 }
