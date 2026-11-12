@@ -11,6 +11,10 @@ import "react-toastify/dist/ReactToastify.css";
 // ?ref=CODE ko yaad rakhta hai taaki checkout par apne aap lag jaye
 import ReferralCapture from "./components/ReferralCapture";
 
+// ?via=CODE aur utm_* — influencer/marketing ki ginti. Ye upar wale
+// se alag cheez hai: ?ref= discount deta hai, ?via= sirf ginta hai.
+import AttributionCapture from "./components/AttributionCapture";
+
 // Har page par support chatbot
 import ChatBot from "./components/ChatBot";
 
@@ -20,6 +24,7 @@ export default function RootLayout({ children }) {
       <body className="bg-white text-gray-900">
 
         <ReferralCapture />
+        <AttributionCapture />
 
         <Navbar />
 

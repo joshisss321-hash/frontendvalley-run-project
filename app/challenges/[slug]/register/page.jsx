@@ -269,6 +269,7 @@ import { useState, useEffect } from "react";
 import Navbar from "../../../components/Navbar";
 import PaymentBox from "../../../components/PaymentBox";
 import { getSavedReferral } from "../../../components/ReferralCapture";
+import { getAttributionToken } from "@/app/components/AttributionCapture";
 import { userAPI } from "../../../../lib/userApi";
 import { CATEGORY_GROUPS } from "../../../../lib/categories";
 
@@ -433,6 +434,10 @@ export default function RegisterPage() {
     setLoading(true);
     setBlocked(null);
 
+    /* Attribution token — na mile to khali. Ye kabhi throw nahi karta
+       aur payment ko kabhi nahi rokta. */
+    const attrToken = await getAttributionToken();
+
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/payment/create-order`,
@@ -458,6 +463,14 @@ export default function RegisterPage() {
             source:    form.source,
             // Server khud dobara verify karta hai — yahan sirf code jaata hai
             couponCode: applied ? applied.code : "",
+
+            /* Marketing attribution — ek opaque signed token jo server
+               ne hi banaya tha. Isme influencer ki id ho sakti hai, par
+               hum wo id bhejte nahi aur na hi padh sakte hain; token ka
+               ek akshar badla to server use thukra dega. Khali bhi ja
+               sakta hai (cookie band, ya koi campaign link nahi) — tab
+               registration bilkul waise hi banti hai jaise pehle. */
+            attributionToken: attrToken,
           }),
         }
       );

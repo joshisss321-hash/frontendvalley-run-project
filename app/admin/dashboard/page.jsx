@@ -212,6 +212,13 @@ export default function Dashboard() {
               🛒 Store
             </button>
           )}
+          {view !== 'detail' && (
+            <button onClick={()=>router.push('/admin/marketing')}
+              title="Marketing & Influencer Tracking — registration kahan se aa rahi hai"
+              style={{ background:'rgba(255,255,255,0.2)', border:'none', borderRadius:8, padding:'6px 12px', color:'white', fontWeight:600, fontSize:12, cursor:'pointer' }}>
+              📣 Marketing
+            </button>
+          )}
           <button onClick={()=>{localStorage.removeItem('adminToken');router.push('/admin/login');}}
             style={{ background:'rgba(0,0,0,0.2)', border:'none', borderRadius:8, padding:'6px 12px', color:'white', fontWeight:600, fontSize:12, cursor:'pointer' }}>
             Logout
