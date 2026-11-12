@@ -56,24 +56,53 @@ export default function AttributionCapture() {
       const m = url.pathname.match(/^\/challenges\/([^/]+)/);
       if (m) eventSlug = decodeURIComponent(m[1]).slice(0, 120);
 
-      fetch("/api/attribution", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          via,
-          ...utm,
-          eventSlug,
-          landing: url.pathname.slice(0, 200),
-          referrer: (document.referrer || "").slice(0, 300),
-        }),
-        keepalive: true,
-      })
-        .then(() => {
-          /* Ek saadharan, bina kisi raaz wala nishaan — sirf ye yaad
-             rakhne ke liye ki ek baar poochh chuke hain. Asli
-             attribution HttpOnly cookie mein hai jise JS chhoo bhi
-             nahi sakti. */
-          document.cookie = "vr_attr_seen=1; path=/; max-age=2592000; samesite=lax";
+      const payload = JSON.stringify({
+        via,
+        ...utm,
+        eventSlug,
+        landing: url.pathname.slice(0, 200),
+        referrer: (document.referrer || "").slice(0, 300),
+      });
+
+      const send = () =>
+        fetch("/api/attribution", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: payload,
+          keepalive: true,
+        }).then((r) => r.json());
+
+      send()
+        .then((r) => {
+          if (r?.tracked) {
+            /* Ek saadharan, bina kisi raaz wala nishaan — sirf ye
+               yaad rakhne ke liye ki ginti ho chuki hai. Asli
+               attribution HttpOnly cookie mein hai jise JS chhoo
+               bhi nahi sakti.
+
+               ⚠️ Ye sirf KAMYAABI par lagta hai. Pehle har soorat
+               mein lag jaata tha, to agar pehli koshish fail hoti
+               (server so raha tha) to wo visitor dobara kabhi
+               ginna hi nahi jaata. */
+            document.cookie = "vr_attr_seen=1; path=/; max-age=2592000; samesite=lax";
+            return;
+          }
+
+          /* Campaign ka link tha par ginti nahi hui — ek baar aur.
+             Render thanda ho to pehli request uthne mein hi lag
+             jaati hai. Sirf ek retry, aur sirf tab jab sach mein
+             kuch ginne layak ho. */
+          if (hasSignal) {
+            setTimeout(() => {
+              send()
+                .then((r2) => {
+                  if (r2?.tracked) {
+                    document.cookie = "vr_attr_seen=1; path=/; max-age=2592000; samesite=lax";
+                  }
+                })
+                .catch(() => {});
+            }, 2500);
+          }
         })
         .catch(() => {
           /* Network gaya, cookie band hai, ad-blocker ne roka — kuch

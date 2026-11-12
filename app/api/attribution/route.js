@@ -73,8 +73,15 @@ export async function POST(request) {
         token: cookies().get(COOKIE)?.value || "",
       }),
       cache: "no-store",
-      // Backend thoda sa sust ho to visitor ka page latka nahi rehna chahiye
-      signal: AbortSignal.timeout(4000),
+      /* Render ka instance so jaata hai aur pehli request par uth-ne
+         mein 30-60 second le sakta hai. Influencer ka traffic bursty
+         hota hai — Instagram story girte hi pehle kuch click bilkul
+         usi thandi server par aate hain. 4 second ka timeout un
+         clicks ko chupchaap gira raha tha.
+
+         Ye call user ke page ko rokti nahi (background mein hai),
+         isliye 15 second dena bilkul theek hai. */
+      signal: AbortSignal.timeout(15000),
     });
 
     if (!res.ok) return quiet();
