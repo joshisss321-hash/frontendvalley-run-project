@@ -1,0 +1,158 @@
+/* Medal Store ka CSS.
+
+   Pahadi store jaan-bujh kar gehra hara hai — wo alag dukaan hai.
+   Ye Valley Run ka apna laal aur charcoal rakhta hai, kyunki medal
+   Valley Run ke hi hain aur log unhe usi bharose se khareedte hain.
+
+   Namespace `ms-` — store ke `vs-` se kabhi nahi takrayega. */
+
+export const C = {
+  ink:    "#171717",
+  inkSoft:"#44403c",
+  muted:  "#78716c",
+  faint:  "#a8a29e",
+  line:   "#e7e5e4",
+  paper:  "#faf9f7",
+  red:    "#dc2626",
+  redDark:"#b91c1c",
+  gold:   "#b45309",
+  green:  "#15803d",
+};
+
+export const medalCss = `
+  .ms { background: ${C.paper}; color: ${C.inkSoft}; min-height: 100vh;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+  .ms-wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+  .ms-narrow { max-width: 760px; }
+
+  /* ── Hero ── */
+  .ms-hero { background: ${C.ink}; color: #fff; position: relative; overflow: hidden;
+             padding: 56px 20px 54px; }
+  .ms-hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .32; }
+  .ms-hero-in { position: relative; max-width: 1120px; margin: 0 auto; }
+  .ms-kicker { font-size: 10.5px; font-weight: 800; letter-spacing: 2.4px;
+               text-transform: uppercase; color: #f87171; }
+  .ms-h1 { font-size: clamp(28px, 5vw, 46px); font-weight: 900; letter-spacing: -1.4px;
+           line-height: 1.08; margin: 13px 0 0; }
+  .ms-sub { font-size: clamp(14.5px, 1.9vw, 16.5px); line-height: 1.7;
+            color: rgba(255,255,255,.68); margin: 14px 0 0; max-width: 540px; }
+
+  /* ── Grid ── */
+  .ms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+
+  .ms-card { background: #fff; border: 1px solid ${C.line}; border-radius: 16px;
+             overflow: hidden; text-decoration: none; color: inherit; display: block;
+             transition: transform .22s, box-shadow .22s, border-color .22s; }
+  .ms-card:hover { transform: translateY(-4px); border-color: #fca5a5;
+                   box-shadow: 0 16px 34px rgba(28,25,23,.1); }
+  .ms-card-img { aspect-ratio: 1/1; background: #f1efec; position: relative; overflow: hidden; }
+  .ms-card-img img { width: 100%; height: 100%; object-fit: cover; display: block;
+                     transition: transform .4s cubic-bezier(.2,.7,.3,1); }
+  .ms-card:hover .ms-card-img img { transform: scale(1.04); }
+  .ms-card-body { padding: 15px 16px 17px; }
+  .ms-event { font-size: 10.5px; font-weight: 800; letter-spacing: 1.2px;
+              text-transform: uppercase; color: ${C.gold}; }
+  .ms-name { font-size: 16px; font-weight: 800; letter-spacing: -.3px;
+             line-height: 1.3; color: ${C.ink}; margin-top: 6px; }
+  .ms-price { display: flex; align-items: baseline; gap: 8px; margin-top: 9px; }
+  .ms-price b { font-size: 18px; font-weight: 900; color: ${C.ink}; }
+  .ms-mrp { font-size: 13px; color: ${C.faint}; text-decoration: line-through; }
+  .ms-off { font-size: 11px; font-weight: 800; color: ${C.green}; }
+
+  .ms-tag { position: absolute; top: 10px; left: 10px; font-size: 10px; font-weight: 800;
+            letter-spacing: .8px; text-transform: uppercase; padding: 5px 10px;
+            border-radius: 100px; background: ${C.red}; color: #fff; }
+
+  /* ── Buttons ── */
+  .ms-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            min-height: 50px; padding: 0 28px; border-radius: 100px; border: none;
+            cursor: pointer; font-family: inherit; font-weight: 800; font-size: 15px;
+            text-decoration: none; background: ${C.red}; color: #fff; transition: all .2s; }
+  .ms-btn:hover:not(:disabled) { background: ${C.redDark}; transform: translateY(-2px); }
+  .ms-btn:disabled { background: #d6d3d1; cursor: not-allowed; transform: none; }
+  .ms-btn-ghost { background: #fff; color: ${C.ink}; border: 1.5px solid ${C.line}; }
+  .ms-btn-ghost:hover:not(:disabled) { background: ${C.ink}; color: #fff; border-color: ${C.ink}; }
+
+  /* ── Detail ── */
+  .ms-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 42px; align-items: start; }
+  .ms-shot { background: #fff; border: 1px solid ${C.line}; border-radius: 18px;
+             overflow: hidden; aspect-ratio: 1/1; cursor: zoom-in; }
+  .ms-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ms-thumbs { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .ms-thumb { width: 74px; height: 74px; border-radius: 11px; overflow: hidden;
+              cursor: pointer; background: #fff; padding: 0;
+              border: 2.5px solid transparent; transition: border-color .15s; }
+  .ms-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ms-thumb-on { border-color: ${C.red}; }
+  .ms-side-label { font-size: 10px; font-weight: 800; letter-spacing: 1px;
+                   text-transform: uppercase; color: ${C.faint}; text-align: center; margin-top: 4px; }
+
+  .ms-title { font-size: clamp(23px, 3.4vw, 32px); font-weight: 900; letter-spacing: -1px;
+              line-height: 1.15; color: ${C.ink}; margin: 10px 0 0; }
+  .ms-big-price { font-size: 30px; font-weight: 900; color: ${C.ink}; }
+  .ms-desc { font-size: 15px; line-height: 1.75; color: ${C.inkSoft}; white-space: pre-line; }
+
+  .ms-left { display: inline-block; font-size: 12.5px; font-weight: 700;
+             background: #fef2f2; color: ${C.redDark}; border-radius: 100px; padding: 5px 13px; }
+  .ms-instock { display: inline-block; font-size: 12.5px; font-weight: 700;
+                background: #f0fdf4; color: ${C.green}; border-radius: 100px; padding: 5px 13px; }
+
+  /* ── Quantity ── */
+  .ms-qty { display: inline-flex; align-items: center; border: 1.5px solid ${C.line};
+            border-radius: 100px; background: #fff; overflow: hidden; }
+  .ms-qty button { width: 46px; height: 46px; border: none; background: none; cursor: pointer;
+                   font-size: 21px; color: ${C.ink}; font-family: inherit; line-height: 1; }
+  .ms-qty button:disabled { color: ${C.line}; cursor: not-allowed; }
+  .ms-qty span { min-width: 44px; text-align: center; font-weight: 800; font-size: 16px; }
+
+  /* ── Form ── */
+  .ms-input { width: 100%; padding: 13px 15px; border-radius: 11px; border: 1.5px solid ${C.line};
+              background: #fff; font-family: inherit; font-size: 15px; color: ${C.ink};
+              outline: none; box-sizing: border-box; }
+  .ms-input:focus { border-color: ${C.red}; }
+  .ms-label { display: block; font-size: 12.5px; font-weight: 700; color: ${C.inkSoft}; margin-bottom: 6px; }
+  .ms-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .ms-field { margin-bottom: 15px; }
+
+  .ms-box { background: #fff; border: 1px solid ${C.line}; border-radius: 16px; padding: 22px; }
+  .ms-err { background: #fef2f2; border: 1px solid #fecaca; border-radius: 11px;
+            padding: 13px 15px; font-size: 13.5px; color: #991b1b; line-height: 1.6; }
+  .ms-note { background: #fffbeb; border: 1px solid #fde68a; border-radius: 11px;
+             padding: 12px 14px; font-size: 12.8px; color: #92400e; line-height: 1.6; }
+
+  /* ── Lightbox ── */
+  .ms-lb { position: fixed; inset: 0; z-index: 1000; background: rgba(23,23,23,.93);
+           backdrop-filter: blur(12px); display: flex; align-items: center;
+           justify-content: center; padding: 20px; }
+  .ms-lb img { max-width: 92vw; max-height: 82vh; border-radius: 12px; display: block; }
+  .ms-lb-x { position: absolute; top: 18px; right: 20px; width: 42px; height: 42px;
+             border-radius: 50%; border: none; cursor: pointer; font-size: 23px;
+             background: rgba(255,255,255,.14); color: #fff; font-family: inherit; }
+  .ms-lb-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 48px;
+               border-radius: 50%; border: none; cursor: pointer; font-size: 25px;
+               background: rgba(255,255,255,.14); color: #fff; font-family: inherit; }
+  .ms-lb-cap { position: absolute; bottom: 22px; left: 0; right: 0; text-align: center;
+               color: rgba(255,255,255,.75); font-size: 13px; }
+
+  @media (max-width: 860px) {
+    .ms-detail { grid-template-columns: 1fr; gap: 26px; }
+  }
+  @media (max-width: 620px) {
+    .ms-wrap { padding: 0 16px; }
+    .ms-hero { padding: 38px 16px 36px; }
+    .ms-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 13px; }
+    .ms-card-body { padding: 11px 12px 13px; }
+    .ms-name { font-size: 14px; }
+    .ms-price b { font-size: 16px; }
+    .ms-row { grid-template-columns: 1fr; gap: 0; }
+    .ms-box { padding: 16px; }
+    /* Phone par 16px se chhota input zoom kara deta hai */
+    .ms-input { font-size: 16px; }
+    .ms-btn { width: 100%; }
+    .ms-lb-nav { width: 40px; height: 40px; font-size: 21px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ms-card, .ms-btn, .ms-card-img img { transition: none !important; }
+    .ms-card:hover, .ms-btn:hover { transform: none !important; }
+  }
+`;

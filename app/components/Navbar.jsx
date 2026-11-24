@@ -129,6 +129,7 @@ export default function Navbar() {
     // { name: "Challenges", href: "/challenges" },
     { name: "Gallery", href: "/gallery" },
     { name: "Inspiring Stories", href: "/stories" },
+    { name: "Medal Store", href: "/medal-store" },
   { name: "Leaderboard", href: "/leaderboard" },
     { name: "About", href: "/about" },
     { name: "My Profile", href: "/profile" },

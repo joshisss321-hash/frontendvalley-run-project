@@ -213,6 +213,13 @@ export default function Dashboard() {
             </button>
           )}
           {view !== 'detail' && (
+            <button onClick={()=>router.push('/admin/medal-store')}
+              title="Medal Store — pichhle events ke bache hue medal bechna"
+              style={{ background:'rgba(255,255,255,0.2)', border:'none', borderRadius:8, padding:'6px 12px', color:'white', fontWeight:600, fontSize:12, cursor:'pointer' }}>
+              🏅 Medals
+            </button>
+          )}
+          {view !== 'detail' && (
             <button onClick={()=>router.push('/admin/marketing')}
               title="Marketing & Influencer Tracking — registration kahan se aa rahi hai"
               style={{ background:'rgba(255,255,255,0.2)', border:'none', borderRadius:8, padding:'6px 12px', color:'white', fontWeight:600, fontSize:12, cursor:'pointer' }}>
