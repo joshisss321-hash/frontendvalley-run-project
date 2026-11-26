@@ -128,6 +128,18 @@ export default function MedalDetail() {
               Buy now
             </button>
 
+            {/* Gift ka zikr yahin, kyunki faisla yahin hota hai —
+                checkout tak pahunchne se pehle pata hona chahiye
+                ki ye kisi aur ko bheja ja sakta hai. */}
+            <div style={{ display: "flex", gap: 9, alignItems: "flex-start",
+              marginTop: 14, fontSize: 12.8, color: "#78716c", lineHeight: 1.6 }}>
+              <span style={{ fontSize: 15, lineHeight: 1.3 }}>🎁</span>
+              <span>
+                Buying it for someone? Tick <strong style={{ color: "#44403c" }}>“This is a gift”</strong>{" "}
+                at checkout — we send it to their address with your message, and no price in the parcel.
+              </span>
+            </div>
+
             {settings.dispatchNote && (
               <p style={{ fontSize: 12.5, color: "#78716c", marginTop: 14, lineHeight: 1.65 }}>
                 {settings.dispatchNote}

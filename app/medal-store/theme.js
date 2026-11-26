@@ -37,6 +37,45 @@ export const medalCss = `
   .ms-sub { font-size: clamp(14.5px, 1.9vw, 16.5px); line-height: 1.7;
             color: rgba(255,255,255,.68); margin: 14px 0 0; max-width: 540px; }
 
+  /* ── Hero ke teen point ──
+     Hero ke andar, kyunki yahi teen baatein faisla karati hain:
+     asli hai, gift ho sakta hai, aur dobara nahi milega. */
+  .ms-points { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px;
+               margin-top: 30px; padding-top: 26px;
+               border-top: 1px solid rgba(255,255,255,.14); max-width: 760px; }
+  .ms-point { display: flex; gap: 11px; align-items: flex-start; }
+  .ms-point-i { font-size: 19px; line-height: 1.2; flex-shrink: 0; }
+  .ms-point-t { font-size: 13px; font-weight: 800; color: #fff; }
+  .ms-point-x { font-size: 12.2px; line-height: 1.55; color: rgba(255,255,255,.58); margin-top: 3px; }
+
+  /* ── Do raaste: apne liye / kisi aur ke liye ──
+     Barabar chaudai, barabar vazan — kyunki dono barabar sahi hain. */
+  .ms-two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+            margin-top: 26px; max-width: 700px; }
+  .ms-two-card { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
+                 border-radius: 14px; padding: 17px 18px; }
+  .ms-two-i { font-size: 21px; line-height: 1.2; }
+  .ms-two-t { font-size: 14.5px; font-weight: 800; color: #fff; margin-top: 8px; }
+  .ms-two-x { font-size: 12.8px; line-height: 1.6; color: rgba(255,255,255,.62); margin-top: 5px; }
+
+  /* ── Tohfe wala block ── */
+  .ms-gift { background: ${C.ink}; color: #fff; border-radius: 20px;
+             padding: 44px 36px; margin-top: 54px; text-align: center; }
+  .ms-gift-h { font-size: clamp(21px, 3.2vw, 30px); font-weight: 900; letter-spacing: -1px;
+               line-height: 1.18; margin: 11px 0 0; color: #fff; }
+  .ms-gift-p { font-size: 14.5px; line-height: 1.75; color: rgba(255,255,255,.66);
+               margin: 14px auto 0; max-width: 480px; }
+  .ms-gift-p strong { color: #fff; }
+
+  /* ── Checkout ka gift dabba ── */
+  .ms-giftbox { border: 1.5px solid ${C.line}; border-radius: 14px; padding: 15px 16px;
+                background: #fff; transition: border-color .18s, background .18s; }
+  .ms-giftbox-on { border-color: #f59e0b; background: #fffbeb; }
+  .ms-gifttick { display: flex; align-items: flex-start; gap: 11px; cursor: pointer;
+                 font-size: 14px; font-weight: 700; color: ${C.ink}; }
+  .ms-gifttick input { width: 18px; height: 18px; margin-top: 1px; flex-shrink: 0;
+                       cursor: pointer; accent-color: ${C.red}; }
+
   /* ── Grid ── */
   .ms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
 
@@ -136,6 +175,11 @@ export const medalCss = `
 
   @media (max-width: 860px) {
     .ms-detail { grid-template-columns: 1fr; gap: 26px; }
+  }
+  @media (max-width: 760px) {
+    .ms-two { grid-template-columns: 1fr; gap: 11px; margin-top: 22px; }
+    .ms-points { grid-template-columns: 1fr; gap: 14px; margin-top: 24px; padding-top: 20px; }
+    .ms-gift { padding: 32px 22px; margin-top: 40px; border-radius: 16px; }
   }
   @media (max-width: 620px) {
     .ms-wrap { padding: 0 16px; }

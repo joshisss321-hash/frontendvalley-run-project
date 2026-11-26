@@ -24,6 +24,8 @@ const BLANK = {
   pincode: "", city: "", state: "", note: "",
 };
 
+const GIFT_MAX = 200;
+
 function Inner() {
   const router = useRouter();
   const params = useSearchParams();
@@ -37,6 +39,8 @@ function Inner() {
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const [rzp, setRzp] = useState(null);      // server ne order bana diya
+  const [isGift, setIsGift] = useState(false);
+  const [giftMsg, setGiftMsg] = useState("");
 
   const set = (k, v) => { setF((x) => ({ ...x, [k]: v })); setErr(""); };
 
@@ -70,7 +74,15 @@ function Inner() {
     if (!filled) { setErr("Please fill in every field marked with *."); return; }
 
     setBusy(true);
-    const r = await medalAPI.checkout({ slug, qty, ...f });
+    /* Gift ka note wahi `note` field hai jo pehle se server tak
+       jaata hai — naya kuch nahi. Aage "GIFT —" lagane se admin ko
+       orders list mein turant dikh jaata hai ki parcel alag tarah
+       se pack karna hai. */
+    const note = isGift
+      ? `GIFT — ${giftMsg.trim() || "(no message)"}`.slice(0, 300)
+      : f.note;
+
+    const r = await medalAPI.checkout({ slug, qty, ...f, note });
     setBusy(false);
 
     if (r?.success) { setRzp({ order: r.order, orderNo: r.orderNo }); return; }
@@ -120,10 +132,12 @@ function Inner() {
       {/* ── Pata ── */}
       <div className="ms-box" style={{ marginTop: 14 }}>
         <div style={{ fontWeight: 800, fontSize: 15, color: "#171717", marginBottom: 4 }}>
-          Where should we send it?
+          {isGift ? "Where should we send the gift?" : "Where should we send it?"}
         </div>
         <p style={{ fontSize: 12.5, color: "#a8a29e", margin: "0 0 16px" }}>
-          Please check the address carefully — this is where your medal goes.
+          {isGift
+            ? "This should be the address of the person you are gifting it to."
+            : "Please check the address carefully — this is where your medal goes."}
         </p>
 
         <div className="ms-row">
@@ -157,6 +171,37 @@ function Inner() {
 
         <F label="State *"><input className="ms-input" value={f.state}
           onChange={(e) => set("state", e.target.value)} disabled={!!rzp} /></F>
+      </div>
+
+      {/* ── Tohfa ── */}
+      <div className={`ms-giftbox ${isGift ? "ms-giftbox-on" : ""}`} style={{ marginTop: 14 }}>
+        <label className="ms-gifttick">
+          <input type="checkbox" checked={isGift} disabled={!!rzp}
+            onChange={(e) => setIsGift(e.target.checked)} />
+          <span>
+            🎁 This is a gift
+            <span style={{ display: "block", fontWeight: 500, fontSize: 12.5,
+              color: "#78716c", marginTop: 3 }}>
+              We will leave the price out of the parcel and put your message on the slip.
+            </span>
+          </span>
+        </label>
+
+        {isGift && (
+          <div style={{ marginTop: 13 }}>
+            <label className="ms-label">Your message (optional)</label>
+            <textarea className="ms-input" rows={3} maxLength={GIFT_MAX} value={giftMsg}
+              disabled={!!rzp}
+              placeholder="You earned this one the hard way. Here's to the next."
+              onChange={(e) => setGiftMsg(e.target.value)}
+              style={{ resize: "vertical", lineHeight: 1.6 }} />
+            <div style={{ display: "flex", justifyContent: "space-between",
+              fontSize: 11.5, color: "#a8a29e", marginTop: 5 }}>
+              <span>Make sure the address above is theirs, not yours.</span>
+              <span>{giftMsg.length}/{GIFT_MAX}</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── Paisa ── */}

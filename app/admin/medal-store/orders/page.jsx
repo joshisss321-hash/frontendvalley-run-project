@@ -130,6 +130,12 @@ function OrderRow({ o, open, onToggle, after }) {
     setBusy(false);
   };
 
+  /* GIFT wala order alag se dikhna CHAHIYE — warna buyer ka likha
+     message kabhi padha hi nahi jayega aur parcel mein price slip
+     chali jayegi. Isliye badge upar, aur note khol kar. */
+  const isGift = String(o.customerNote || "").startsWith("GIFT —");
+  const giftMsg = isGift ? o.customerNote.replace(/^GIFT —\s*/, "") : "";
+
   const addr = o.address || {};
   const full = [addr.line1, addr.line2, addr.landmark, addr.city, addr.state, addr.pincode]
     .filter(Boolean).join(', ');
@@ -148,6 +154,7 @@ function OrderRow({ o, open, onToggle, after }) {
             <strong style={{ fontSize: 14 }}>{o.orderNo}</strong>
             <Pill bg={pay[0]} fg={pay[1]}>{o.paymentStatus.toUpperCase()}</Pill>
             <Pill bg="#f3f4f6" fg="#374151">{o.orderStatus.replace(/_/g, ' ').toUpperCase()}</Pill>
+            {isGift && <Pill bg="#fef3c7" fg="#92400e">🎁 GIFT</Pill>}
           </div>
           <div style={{ fontSize: 13.5, fontWeight: 600, color: '#111827' }}>
             {o.items.map((i) => `${i.qty} × ${i.name}`).join(', ')}
@@ -190,12 +197,27 @@ function OrderRow({ o, open, onToggle, after }) {
             {money(o.subtotal)} + {o.shipping > 0 ? `${money(o.shipping)} delivery` : 'free delivery'}
             {o.razorpayPaymentId && <> · payment {o.razorpayPaymentId}</>}
           </div>
-          {o.customerNote && (
+          {isGift ? (
+            <div style={{ background: '#fffbeb', border: '1.5px solid #fcd34d', borderRadius: 10,
+              padding: '12px 14px', marginTop: 11 }}>
+              <div style={{ fontWeight: 800, fontSize: 13, color: '#92400e' }}>
+                🎁 Pack this one as a gift
+              </div>
+              <div style={{ fontSize: 12.5, color: '#b45309', marginTop: 5, lineHeight: 1.6 }}>
+                No price slip in the parcel. Write this on the card:
+              </div>
+              <div style={{ background: '#fff', border: '1px solid #fde68a', borderRadius: 8,
+                padding: '9px 11px', marginTop: 8, fontSize: 13.5, color: '#171827',
+                fontStyle: giftMsg === '(no message)' ? 'italic' : 'normal' }}>
+                {giftMsg === '(no message)' ? 'Buyer left no message' : giftMsg}
+              </div>
+            </div>
+          ) : o.customerNote ? (
             <div style={{ fontSize: 12.5, color: '#92400e', background: '#fffbeb',
               borderRadius: 8, padding: '8px 11px', marginTop: 9 }}>
               Note from buyer: {o.customerNote}
             </div>
-          )}
+          ) : null}
 
           {/* ── Bhejne ka intezaam ── */}
           {paid ? (
