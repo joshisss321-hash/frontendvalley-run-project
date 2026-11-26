@@ -27,54 +27,60 @@ export const medalCss = `
 
   /* ── Hero ── */
   .ms-hero { background: ${C.ink}; color: #fff; position: relative; overflow: hidden;
-             padding: 56px 20px 54px; }
-  .ms-hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .32; }
+             padding: 54px 20px 56px; }
+  .ms-hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .22; }
+
+  /* Halki si roshni — flat kaala dabba bejaan lagta hai */
+  .ms-glow { position: absolute; top: -140px; right: -80px; width: 460px; height: 460px;
+             border-radius: 50%; pointer-events: none;
+             background: radial-gradient(circle, rgba(220,38,38,.26) 0%, rgba(220,38,38,0) 68%); }
+
   .ms-hero-in { position: relative; max-width: 1120px; margin: 0 auto; }
+  .ms-hero-split .ms-hero-in { display: grid; grid-template-columns: 1fr 340px;
+                               gap: 40px; align-items: center; }
+  .ms-hero-text { min-width: 0; }
+
   .ms-kicker { font-size: 10.5px; font-weight: 800; letter-spacing: 2.4px;
                text-transform: uppercase; color: #f87171; }
-  .ms-h1 { font-size: clamp(28px, 5vw, 46px); font-weight: 900; letter-spacing: -1.4px;
-           line-height: 1.08; margin: 13px 0 0; }
-  .ms-sub { font-size: clamp(14.5px, 1.9vw, 16.5px); line-height: 1.7;
-            color: rgba(255,255,255,.68); margin: 14px 0 0; max-width: 540px; }
+  .ms-h1 { font-size: clamp(30px, 5vw, 50px); font-weight: 900; letter-spacing: -1.6px;
+           line-height: 1.04; margin: 13px 0 0; }
+  .ms-sub { font-size: clamp(14.5px, 1.9vw, 16.5px); line-height: 1.72;
+            color: rgba(255,255,255,.66); margin: 15px 0 0; max-width: 520px; }
 
-  /* ── Hero ke teen point ──
-     Hero ke andar, kyunki yahi teen baatein faisla karati hain:
-     asli hai, gift ho sakta hai, aur dobara nahi milega. */
-  .ms-points { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px;
-               margin-top: 30px; padding-top: 26px;
-               border-top: 1px solid rgba(255,255,255,.14); max-width: 760px; }
-  .ms-point { display: flex; gap: 11px; align-items: flex-start; }
-  .ms-point-i { font-size: 19px; line-height: 1.2; flex-shrink: 0; }
-  .ms-point-t { font-size: 13px; font-weight: 800; color: #fff; }
-  .ms-point-x { font-size: 12.2px; line-height: 1.55; color: rgba(255,255,255,.58); margin-top: 3px; }
+  .ms-chips { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 22px; }
+  .ms-chip { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.82);
+             background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.16);
+             border-radius: 100px; padding: 7px 14px; }
+
+  /* ── Asli medals, ek ke peeche ek ──
+     Stock photo nahi lagayi — jo sach mein bik raha hai wahi upar
+     dikhna chahiye. Teen se zyada daalne par bheed ho jaati hai. */
+  .ms-stack { position: relative; height: 300px; }
+  .ms-stack img { position: absolute; border-radius: 18px; object-fit: cover;
+                  box-shadow: 0 26px 60px rgba(0,0,0,.5);
+                  border: 1px solid rgba(255,255,255,.12); }
+  .ms-stack-0 { width: 210px; height: 210px; top: 42px; left: 58px; z-index: 3;
+                transform: rotate(-5deg); }
+  .ms-stack-1 { width: 160px; height: 160px; top: 6px; left: 2px; z-index: 2;
+                transform: rotate(7deg); opacity: .9; }
+  .ms-stack-2 { width: 140px; height: 140px; bottom: 2px; right: 4px; z-index: 1;
+                transform: rotate(-11deg); opacity: .8; }
 
   /* ── Do raaste: apne liye / kisi aur ke liye ──
      Barabar chaudai, barabar vazan — kyunki dono barabar sahi hain. */
-  .ms-two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
-            margin-top: 26px; max-width: 700px; }
-  .ms-two-card { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
-                 border-radius: 14px; padding: 17px 18px; }
-  .ms-two-i { font-size: 21px; line-height: 1.2; }
-  .ms-two-t { font-size: 14.5px; font-weight: 800; color: #fff; margin-top: 8px; }
-  .ms-two-x { font-size: 12.8px; line-height: 1.6; color: rgba(255,255,255,.62); margin-top: 5px; }
+  .ms-two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 30px 0 38px; }
+  .ms-two-card { background: #fff; border: 1px solid ${C.line}; border-radius: 16px;
+                 padding: 20px 22px; }
+  .ms-two-i { font-size: 23px; line-height: 1.2; }
+  .ms-two-t { font-size: 15.5px; font-weight: 800; color: ${C.ink}; margin-top: 9px; }
+  .ms-two-x { font-size: 13.2px; line-height: 1.68; color: ${C.muted}; margin-top: 6px; }
 
-  /* ── Tohfe wala block ── */
-  .ms-gift { background: ${C.ink}; color: #fff; border-radius: 20px;
-             padding: 44px 36px; margin-top: 54px; text-align: center; }
-  .ms-gift-h { font-size: clamp(21px, 3.2vw, 30px); font-weight: 900; letter-spacing: -1px;
-               line-height: 1.18; margin: 11px 0 0; color: #fff; }
-  .ms-gift-p { font-size: 14.5px; line-height: 1.75; color: rgba(255,255,255,.66);
-               margin: 14px auto 0; max-width: 480px; }
-  .ms-gift-p strong { color: #fff; }
-
-  /* ── Checkout ka gift dabba ── */
-  .ms-giftbox { border: 1.5px solid ${C.line}; border-radius: 14px; padding: 15px 16px;
-                background: #fff; transition: border-color .18s, background .18s; }
-  .ms-giftbox-on { border-color: #f59e0b; background: #fffbeb; }
-  .ms-gifttick { display: flex; align-items: flex-start; gap: 11px; cursor: pointer;
-                 font-size: 14px; font-weight: 700; color: ${C.ink}; }
-  .ms-gifttick input { width: 18px; height: 18px; margin-top: 1px; flex-shrink: 0;
-                       cursor: pointer; accent-color: ${C.red}; }
+  /* ── Grid ka sir ── */
+  .ms-head { display: flex; justify-content: space-between; align-items: baseline;
+             flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .ms-head-h { font-size: 21px; font-weight: 900; color: ${C.ink};
+               letter-spacing: -.6px; margin: 0; }
+  .ms-head-x { font-size: 13px; color: ${C.muted}; }
 
   /* ── Grid ── */
   .ms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
@@ -89,6 +95,12 @@ export const medalCss = `
                      transition: transform .4s cubic-bezier(.2,.7,.3,1); }
   .ms-card:hover .ms-card-img img { transform: scale(1.04); }
   .ms-card-body { padding: 15px 16px 17px; }
+  .ms-noimg { display: flex; align-items: center; justify-content: center;
+              height: 100%; font-size: 40px;
+              background: linear-gradient(140deg, #f5f3f0, #e9e5e0); }
+  .ms-card-go { display: inline-block; font-size: 12px; font-weight: 800;
+                color: ${C.red}; margin-top: 11px; transition: transform .2s; }
+  .ms-card:hover .ms-card-go { transform: translateX(3px); }
   .ms-event { font-size: 10.5px; font-weight: 800; letter-spacing: 1.2px;
               text-transform: uppercase; color: ${C.gold}; }
   .ms-name { font-size: 16px; font-weight: 800; letter-spacing: -.3px;
@@ -176,10 +188,17 @@ export const medalCss = `
   @media (max-width: 860px) {
     .ms-detail { grid-template-columns: 1fr; gap: 26px; }
   }
+  @media (max-width: 940px) {
+    /* Stack ke liye jagah nahi bachti — medals waise bhi neeche
+       grid mein poore dikhte hain */
+    .ms-hero-split .ms-hero-in { grid-template-columns: 1fr; gap: 0; }
+    .ms-stack { display: none; }
+  }
   @media (max-width: 760px) {
-    .ms-two { grid-template-columns: 1fr; gap: 11px; margin-top: 22px; }
-    .ms-points { grid-template-columns: 1fr; gap: 14px; margin-top: 24px; padding-top: 20px; }
+    .ms-two { grid-template-columns: 1fr; gap: 11px; margin: 24px 0 30px; }
+    .ms-two-card { padding: 16px 17px; }
     .ms-gift { padding: 32px 22px; margin-top: 40px; border-radius: 16px; }
+    .ms-glow { width: 300px; height: 300px; top: -110px; right: -70px; }
   }
   @media (max-width: 620px) {
     .ms-wrap { padding: 0 16px; }
