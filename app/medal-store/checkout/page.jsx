@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { medalAPI, rupees } from "@/lib/medalApi";
-import { medalCss, cartCss } from "../theme";
+import { medalCss } from "../theme";
 import { useCart, cartClear, priceCart } from "@/lib/medalCart";
 import MedalPay from "../MedalPay";
 
@@ -193,6 +193,15 @@ export default function CheckoutPage() {
 
         {/* ── Paisa ── */}
         <div className="ms-box" style={{ marginTop: 14 }}>
+          {/* Yahan sirf bachat ka hisaab — "ek aur lo" ka suggestion
+              jaan-boojh kar nahi. Paisa dene wale bande ko dukaan
+              mein wapas bhejna uski hi galti hai. */}
+          {money.discount > 0 && (
+            <div className="ms-saved">
+              🏅 You saved <strong>{rupees(money.discount)}</strong> on {money.totalQty} medals
+            </div>
+          )}
+
           <Line label={`Medals (${money.totalQty})`} value={rupees(money.subtotal)} />
           {money.discount > 0 && (
             <Line label="Multi-medal discount" value={`− ${rupees(money.discount)}`} green />
@@ -245,7 +254,7 @@ export default function CheckoutPage() {
 
 const Shell = ({ children }) => (
   <div className="ms">
-    <style>{medalCss + cartCss}</style>
+    <style>{medalCss}</style>
     {children}
   </div>
 );

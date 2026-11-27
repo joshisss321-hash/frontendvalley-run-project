@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { medalAPI, rupees } from "@/lib/medalApi";
-import { medalCss, cartCss } from "./theme";
-import { cartAdd, useCart } from "@/lib/medalCart";
+import { medalCss } from "./theme";
+import { cartAdd, useCart, nextSaving } from "@/lib/medalCart";
+import SavingsLadder from "./SavingsLadder";
 
 /* Medal Store ka mukhya page.
 
@@ -20,6 +21,10 @@ export default function MedalStore() {
   const [medals, setMedals] = useState(null);
   const [settings, setSettings] = useState({});
   const [closed, setClosed] = useState(false);
+
+  /* Cart mein pehle se kitne pade hain — seedhi par "you are here"
+     isi se tay hota hai */
+  const { count: cartCount } = useCart();
 
   useEffect(() => {
     Promise.all([medalAPI.list(), medalAPI.settings()]).then(([l, s]) => {
@@ -46,7 +51,7 @@ export default function MedalStore() {
 
   return (
     <div className="ms">
-      <style>{medalCss + cartCss}</style>
+      <style>{medalCss}</style>
 
       {/* ═══ HERO ═══ */}
       <header className={`ms-hero ${shots.length ? "ms-hero-split" : ""}`}>
@@ -124,8 +129,18 @@ export default function MedalStore() {
               </div>
             </section>
 
+            {/* ═══ CHHOOT KI SEEDHI ═══
+                Grid se pehle, taaki card dekhne se PEHLE pata ho ki
+                do lene par sasta pad jaata hai. Grid ke baad rakhne
+                se log bina jaane ek hi utha kar chale jaate. */}
+            <SavingsLadder
+              qty={cartCount}
+              per={nextSaving(settings)}
+              discount={nextSaving(settings) * Math.max(0, cartCount - 1)}
+            />
+
             {/* ═══ GRID ═══ */}
-            <div className="ms-head">
+            <div className="ms-head" style={{ marginTop: 26 }}>
               <h2 className="ms-head-h">What's left</h2>
               <div className="ms-head-x">
                 {totalLeft > 0 && totalLeft <= 40

@@ -1,11 +1,17 @@
 import CartBar from "./CartBar";
+import { cartCss } from "./theme";
 
 /* Medal Store ke har page ke neeche cart ki patti.
 
    Layout mein isliye, har page mein alag-alag nahi: warna ek page
    par lagana bhool jaate aur cart wahan gayab ho jaata. Patti khud
    faisla karti hai ki dikhni hai ya nahi (cart khali, ya cart/
-   checkout page khula ho to nahi dikhti). */
+   checkout page khula ho to nahi dikhti).
+
+   Cart ka CSS bhi yahan, ek hi baar. Pehle har page apna inject
+   karta tha aur cart page par wo chhoot gaya — seedha /medal-store/
+   cart kholne par lines bina style dikhti thi. Layout har page ke
+   saath rehta hai, isliye ab chhoot hi nahi sakta. */
 
 export const metadata = {
   title: "Medal Store · Valley Run",
@@ -16,6 +22,7 @@ export const metadata = {
 export default function MedalStoreLayout({ children }) {
   return (
     <>
+      <style>{cartCss}</style>
       {children}
       <CartBar />
     </>

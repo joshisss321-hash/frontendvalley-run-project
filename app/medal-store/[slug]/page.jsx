@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { medalAPI, rupees } from "@/lib/medalApi";
-import { medalCss, cartCss } from "../theme";
-import { cartAdd, priceCart, nextSaving, useCart } from "@/lib/medalCart";
+import { medalCss } from "../theme";
+import { cartAdd, nextSaving, useCart } from "@/lib/medalCart";
 import MedalGallery from "../MedalGallery";
+import SavingsLadder from "../SavingsLadder";
 
 export default function MedalDetail() {
   const { slug } = useParams();
@@ -17,6 +18,10 @@ export default function MedalDetail() {
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const [state, setState] = useState("loading");   // loading | ok | soldout | gone
+
+  /* Cart mein pehle se kitne pade hain — chhoot ki seedhi usi par
+     tiki hai, is ek page par nahi. */
+  const { count: cartCount } = useCart();
 
   useEffect(() => {
     Promise.all([medalAPI.one(slug), medalAPI.settings()]).then(([r, s]) => {
@@ -146,14 +151,18 @@ export default function MedalDetail() {
               {added ? "✓ Added to cart" : "Add to cart"}
             </button>
 
-            {/* Agle medal par kitna bachega — seedhi baat, koi
-                jhootha "hurry up" nahi */}
-            {per > 0 && (
-              <div style={{ fontSize: 12.5, color: "#15803d", fontWeight: 700,
-                marginTop: 12, textAlign: "center" }}>
-                🏅 Add a second medal and save {rupees(per)}
-              </div>
-            )}
+            {/* Chhoot ki poori seedhi — cart mein jo pehle se pada
+                hai use bhi ginkar, warna banda do jagah hisaab
+                lagata rehta hai. Koi jhootha "hurry up" nahi. */}
+            {/* Ginti cart ki asli haalat se — "you are here" wahin
+                dikhna chahiye jahan banda sach mein khada hai, us
+                jagah nahi jahan tap karne ke baad pahunchega. */}
+            <SavingsLadder
+              qty={cartCount}
+              per={per}
+              discount={per * Math.max(0, cartCount - 1)}
+              compact
+            />
 
             {/* Gift ka zikr yahin, kyunki faisla yahin hota hai —
                 checkout tak pahunchne se pehle pata hona chahiye
@@ -215,7 +224,7 @@ export default function MedalDetail() {
 
 const Shell = ({ children }) => (
   <div className="ms">
-    <style>{medalCss + cartCss}</style>
+    <style>{medalCss}</style>
     {children}
   </div>
 );

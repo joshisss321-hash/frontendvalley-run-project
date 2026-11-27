@@ -45,13 +45,13 @@ export default function CartBar() {
               {count === 1 ? "1 medal" : `${count} medals`}
               {m.discount > 0 && <span className="ms-bar-save"> · {rupees(m.discount)} off</span>}
             </div>
-            {/* Agle medal par kitna bachega — seedhi baat, koi
-                jhootha "hurry up" nahi */}
+            {/* Agle medal par TOTAL kitna bachega — "₹20 more off"
+                jaisa likhne se banda jod nahi lagata. Poora number
+                dikhana hi kaam karta hai.
+                count+1 medal par chhoot = per × count. */}
             {per > 0 && (
               <div className="ms-bar-x">
-                {count === 1
-                  ? `Add one more and save ${rupees(per)}`
-                  : `${rupees(per)} more off with each extra medal`}
+                Add one more → {rupees(per * count)} off
               </div>
             )}
           </div>

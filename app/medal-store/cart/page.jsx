@@ -6,6 +6,7 @@ import Link from "next/link";
 import { medalAPI, rupees } from "@/lib/medalApi";
 import { medalCss } from "../theme";
 import { useCart, cartSetQty, cartRemove, priceCart, nextSaving, MAX_QTY } from "@/lib/medalCart";
+import SavingsLadder from "../SavingsLadder";
 
 export default function CartPage() {
   const router = useRouter();
@@ -136,21 +137,8 @@ export default function CartPage() {
           ))}
         </div>
 
-        {/* ── Agla medal lene ka seedha karan ── */}
-        {per > 0 && (
-          <div className="ms-save">
-            <span style={{ fontSize: 17 }}>🏅</span>
-            <span>
-              {money.totalQty === 1
-                ? <>Add one more medal and <strong>save {rupees(per)}</strong>.</>
-                : <>You are saving <strong>{rupees(money.discount)}</strong>. Each extra medal saves another {rupees(per)}.</>}
-              {" "}
-              <Link href="/medal-store" style={{ color: "#dc2626", fontWeight: 700, textDecoration: "none" }}>
-                Browse medals →
-              </Link>
-            </span>
-          </div>
-        )}
+        {/* ── Kitni chhoot mili, aur aage kitni milegi ── */}
+        <SavingsLadder qty={money.totalQty} per={per} discount={money.discount} />
 
         {/* ── Paisa ── */}
         <div className="ms-box" style={{ marginTop: 14 }}>

@@ -277,6 +277,65 @@ export const cartCss = `
   .ms-add-in { background: #f0fdf4; border-color: #86efac; color: #15803d; }
   .ms-add-in:hover { background: #f0fdf4; border-color: #86efac; color: #15803d; }
 
+  /* ── Chhoot ki seedhi ──
+     Hara rang jaan-boojh kar: laal "khatra/jaldi karo" bolta hai,
+     hara "bach gaya". Yahan baat bachat ki hai. */
+  .ms-lad { background: linear-gradient(180deg, #f0fdf4, #fff);
+            border: 1.5px solid #bbf7d0; border-radius: 16px;
+            padding: 16px 17px; margin-top: 14px; }
+
+  .ms-lad-top { display: flex; gap: 12px; align-items: flex-start; }
+  .ms-lad-medal { font-size: 21px; line-height: 1.2; flex-shrink: 0; }
+  .ms-lad-now { font-size: 16px; font-weight: 900; color: #15803d;
+                letter-spacing: -.3px; }
+  .ms-lad-next { font-size: 13px; line-height: 1.6; color: #3f6212; margin-top: 3px; }
+  .ms-lad-next strong { color: #15803d; }
+
+  .ms-lad-steps { display: grid; grid-template-columns: repeat(4, 1fr);
+                  gap: 8px; margin-top: 14px; }
+  .ms-lad-step { background: #fff; border: 1.5px solid #e7e5e4; border-radius: 11px;
+                 padding: 9px 7px; text-align: center; position: relative;
+                 transition: all .2s; }
+  .ms-lad-qty { font-size: 10.5px; font-weight: 800; letter-spacing: .4px;
+                text-transform: uppercase; color: #a8a29e; }
+  .ms-lad-off { font-size: 14.5px; font-weight: 900; color: #57534e; margin-top: 3px; }
+
+  /* Jo kadam paar ho gaye */
+  .ms-lad-done { background: #dcfce7; border-color: #86efac; }
+  .ms-lad-done .ms-lad-qty { color: #3f6212; }
+  .ms-lad-done .ms-lad-off { color: #15803d; }
+
+  /* Jahan abhi khade ho */
+  .ms-lad-here { border-color: #15803d; border-width: 2px;
+                 box-shadow: 0 3px 10px rgba(21,128,61,.14); }
+  .ms-lad-you { position: absolute; left: 50%; transform: translateX(-50%);
+                bottom: -8px; background: #15803d; color: #fff;
+                font-size: 8.5px; font-weight: 800; letter-spacing: .5px;
+                text-transform: uppercase; padding: 2px 7px; border-radius: 100px;
+                white-space: nowrap; }
+
+  .ms-lad-link { display: block; text-align: center; margin-top: 16px;
+                 font-size: 13.5px; font-weight: 800; color: #15803d;
+                 text-decoration: none; background: #fff;
+                 border: 1.5px solid #86efac; border-radius: 100px;
+                 padding: 11px 16px; transition: all .18s; }
+  .ms-lad-link:hover { background: #15803d; color: #fff; border-color: #15803d; }
+
+  .ms-lad-note { font-size: 11.5px; color: #78716c; text-align: center;
+                 margin-top: 11px; }
+
+  /* Checkout par bachat ka badge — yahan koi suggestion nahi,
+     bas ye ki paisa bacha hai */
+  .ms-saved { background: #dcfce7; border: 1.5px solid #86efac;
+              border-radius: 11px; padding: 11px 14px; margin-bottom: 14px;
+              font-size: 13.5px; color: #15803d; text-align: center; }
+  .ms-saved strong { font-weight: 900; }
+
+  .ms-lad-c { padding: 13px 14px; }
+  .ms-lad-c .ms-lad-now { font-size: 14.5px; }
+  .ms-lad-c .ms-lad-steps { margin-top: 11px; gap: 6px; }
+  .ms-lad-c .ms-lad-note { display: none; }
+
   @media (max-width: 620px) {
     .ms-bar-in { padding: 10px 14px; gap: 10px; }
     .ms-bar-x { display: none; }
@@ -284,5 +343,21 @@ export const cartCss = `
     .ms-line { padding: 13px; gap: 11px; }
     .ms-line-img { width: 68px; height: 68px; }
     .ms-line-sum { font-size: 14px; }
+
+    /* Chaar kadam 375px par bhi ghus jaate hain, bas chhote
+       akshar ke saath — todkar do line mein karne se seedhi
+       seedhi nahi lagti */
+    .ms-lad { padding: 14px; }
+    .ms-lad-steps { gap: 5px; }
+    .ms-lad-step { padding: 8px 3px; border-radius: 9px; }
+    .ms-lad-qty { font-size: 9px; letter-spacing: 0; }
+    .ms-lad-off { font-size: 12.5px; }
+    .ms-lad-you { font-size: 8px; padding: 2px 5px; }
+    .ms-lad-now { font-size: 15px; }
+    .ms-lad-next { font-size: 12.5px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ms-lad-step, .ms-lad-link { transition: none !important; }
   }
 `;

@@ -47,8 +47,21 @@ export default function MedalStoreSection() {
               finishers. A few are left over, and we are not making them again.
               Keep one, or send it to someone as a gift.
             </p>
+            {/* Chhoot ki seedhi, yahin homepage par. Sirf "₹20 off"
+                likhne se banda ye nahi samajhta ki teen lene par 40
+                bachega — isliye ginti saaf dikha di. */}
             {per > 0 && (
-              <div className="vmz-save">🏅 Every extra medal takes {rupees(per)} off</div>
+              <div className="vmz-lad">
+                <div className="vmz-lad-h">🏅 Buy more, pay less</div>
+                <div className="vmz-lad-row">
+                  {[2, 3, 4].map((n) => (
+                    <span key={n} className="vmz-lad-s">
+                      <b>{n} medals</b> − {rupees(per * (n - 1))}
+                    </span>
+                  ))}
+                </div>
+                <div className="vmz-lad-n">Any events — they all count together.</div>
+              </div>
             )}
           </div>
 
@@ -99,9 +112,21 @@ const css = `
             line-height: 1.1; color: #fff; margin: 12px 0 0; }
   .vmz-p { font-size: 14.5px; line-height: 1.72; color: rgba(255,255,255,.62);
            margin: 13px 0 0; max-width: 520px; }
-  .vmz-save { display: inline-block; font-size: 12.5px; font-weight: 700; color: #4ade80;
-              background: rgba(74,222,128,.1); border: 1px solid rgba(74,222,128,.26);
-              border-radius: 100px; padding: 6px 14px; margin-top: 15px; }
+  /* Chhoot ki seedhi — dark band par, isliye hara halka aur
+     background bhi halka hara. Laal yahan "khatra" bolta, aur baat
+     bachat ki hai. */
+  .vmz-lad { display: inline-block; margin-top: 17px; padding: 13px 16px;
+             background: rgba(74,222,128,.08);
+             border: 1px solid rgba(74,222,128,.24); border-radius: 13px; }
+  .vmz-lad-h { font-size: 12.5px; font-weight: 800; color: #4ade80;
+               letter-spacing: .2px; }
+  .vmz-lad-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+  .vmz-lad-s { font-size: 12px; color: rgba(255,255,255,.72);
+               background: rgba(255,255,255,.06);
+               border: 1px solid rgba(255,255,255,.12);
+               border-radius: 100px; padding: 5px 11px; white-space: nowrap; }
+  .vmz-lad-s b { color: #fff; font-weight: 800; }
+  .vmz-lad-n { font-size: 11px; color: rgba(255,255,255,.42); margin-top: 9px; }
 
   .vmz-all { flex-shrink: 0; font-size: 13.5px; font-weight: 800; color: #fff;
              text-decoration: none; border: 1.5px solid rgba(255,255,255,.26);
