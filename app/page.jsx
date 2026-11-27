@@ -1297,6 +1297,9 @@ import Navbar from "./components/Navbar";
 import HomeGallery from "./components/HomeGallery";
 import StoriesSection from "./components/StoriesSection";
 
+// Pichhle events ke bache hue medal — homepage par jhalak
+import MedalStoreSection from "./components/MedalStoreSection";
+
 const WHATSAPP_URL = "https://whatsapp.com/channel/0029VbCM5KOBVJl3FdMMHI3M";
 
 const REVIEWS = [
@@ -1369,6 +1372,7 @@ export default function HomePage() {
       <HowItWorks />
       <StoriesSection />
       <HomeGallery events={events} />
+      <MedalStoreSection />
       {pastEvents.length > 0 && <Past events={pastEvents} router={router} />}
       <CTA router={router} />
     </div>

@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { medalAPI, rupees } from "@/lib/medalApi";
-import { medalCss } from "../theme";
+import { medalCss, cartCss } from "../theme";
+import { cartAdd, priceCart, nextSaving, useCart } from "@/lib/medalCart";
 import MedalGallery from "../MedalGallery";
 
 export default function MedalDetail() {
@@ -14,6 +15,7 @@ export default function MedalDetail() {
   const [data, setData] = useState(null);
   const [settings, setSettings] = useState({});
   const [qty, setQty] = useState(1);
+  const [added, setAdded] = useState(false);
   const [state, setState] = useState("loading");   // loading | ok | soldout | gone
 
   useEffect(() => {
@@ -49,15 +51,27 @@ export default function MedalDetail() {
   }
 
   const m = data.medal;
+  const per = nextSaving(settings);
   const subtotal = m.price * qty;
   const shipFlat = Number(settings.shippingFlat) || 0;
   const freeOver = Number(settings.freeOver) || 0;
   const shipping = shipFlat <= 0 ? 0 : (freeOver > 0 && subtotal >= freeOver ? 0 : shipFlat);
 
+  /* Cart mein daalo — page nahi badalta, sirf neeche wali patti
+     badh jaati hai. Isse log aur medal dekhte rehte hain, jo poora
+     maqsad hai. */
+  const add = () => {
+    const r = cartAdd(m, qty);
+    if (!r.ok) { alert(r.reason); return; }
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1600);
+  };
+
+  /* Buy now = cart mein daalo aur seedha checkout */
   const buy = () => {
-    /* Quantity URL mein — checkout page apne aap server se dobara
-       jaanchta hai, isliye yahan se chhed-chaad ka koi faayda nahi */
-    router.push(`/medal-store/checkout?medal=${encodeURIComponent(m.slug)}&qty=${qty}`);
+    const r = cartAdd(m, qty);
+    if (!r.ok) { alert(r.reason); return; }
+    router.push("/medal-store/checkout");
   };
 
   return (
@@ -128,6 +142,19 @@ export default function MedalDetail() {
               Buy now
             </button>
 
+            <button onClick={add} className={`ms-add ${added ? "ms-add-in" : ""}`}>
+              {added ? "✓ Added to cart" : "Add to cart"}
+            </button>
+
+            {/* Agle medal par kitna bachega — seedhi baat, koi
+                jhootha "hurry up" nahi */}
+            {per > 0 && (
+              <div style={{ fontSize: 12.5, color: "#15803d", fontWeight: 700,
+                marginTop: 12, textAlign: "center" }}>
+                🏅 Add a second medal and save {rupees(per)}
+              </div>
+            )}
+
             {/* Gift ka zikr yahin, kyunki faisla yahin hota hai —
                 checkout tak pahunchne se pehle pata hona chahiye
                 ki ye kisi aur ko bheja ja sakta hai. */}
@@ -188,7 +215,7 @@ export default function MedalDetail() {
 
 const Shell = ({ children }) => (
   <div className="ms">
-    <style>{medalCss}</style>
+    <style>{medalCss + cartCss}</style>
     {children}
   </div>
 );

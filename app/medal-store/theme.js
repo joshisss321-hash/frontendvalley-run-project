@@ -219,3 +219,70 @@ export const medalCss = `
     .ms-card:hover, .ms-btn:hover { transform: none !important; }
   }
 `;
+
+/* Cart ka CSS — alag se jodda gaya taaki upar wala hissa waisa hi
+   rahe jaise tha. */
+export const cartCss = `
+  /* ── Neeche chipki patti ── */
+  .ms-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+            background: ${C.ink}; color: #fff;
+            box-shadow: 0 -8px 28px rgba(0,0,0,.26);
+            padding-bottom: env(safe-area-inset-bottom); }
+  .ms-bar-in { max-width: 1120px; margin: 0 auto; padding: 12px 20px;
+               display: flex; align-items: center; gap: 14px; justify-content: space-between; }
+  .ms-bar-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .ms-bar-n { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+              background: ${C.red}; color: #fff; font-weight: 900; font-size: 14px;
+              display: flex; align-items: center; justify-content: center; }
+  .ms-bar-t { font-size: 14px; font-weight: 800; }
+  .ms-bar-save { color: #4ade80; font-weight: 800; }
+  .ms-bar-x { font-size: 11.8px; color: rgba(255,255,255,.58); margin-top: 2px; }
+  .ms-bar-btn { background: ${C.red}; color: #fff; border: none; border-radius: 100px;
+                padding: 0 20px; min-height: 44px; font-family: inherit; font-weight: 800;
+                font-size: 14px; cursor: pointer; white-space: nowrap; transition: background .18s; }
+  .ms-bar-btn:hover { background: ${C.redDark}; }
+
+  /* Patti page ke aakhri hisse ko na dhake */
+  .ms-haspad { padding-bottom: 92px; }
+
+  /* ── Cart ki line ── */
+  .ms-line { display: flex; gap: 14px; padding: 16px; align-items: flex-start; }
+  .ms-line-img { width: 84px; height: 84px; border-radius: 12px; object-fit: cover;
+                 flex-shrink: 0; background: #f1efec; }
+  .ms-line-mid { flex: 1; min-width: 0; }
+  .ms-line-name { display: block; font-size: 15px; font-weight: 800; color: ${C.ink};
+                  text-decoration: none; margin-top: 3px; }
+  .ms-line-name:hover { color: ${C.red}; }
+  .ms-line-each { font-size: 12.5px; color: ${C.muted}; margin-top: 3px; }
+  .ms-line-ctl { display: flex; align-items: center; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+  .ms-line-x { background: none; border: none; padding: 0; cursor: pointer; font-family: inherit;
+               font-size: 12.5px; color: ${C.faint}; text-decoration: underline; }
+  .ms-line-x:hover { color: ${C.red}; }
+  .ms-line-sum { font-size: 15px; font-weight: 900; color: ${C.ink}; white-space: nowrap; }
+
+  .ms-qty-sm button { width: 36px; height: 36px; font-size: 18px; }
+  .ms-qty-sm span { min-width: 34px; font-size: 14px; }
+
+  /* ── Bachat ki patti ── */
+  .ms-save { display: flex; gap: 11px; align-items: flex-start; margin-top: 14px;
+             background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px;
+             padding: 13px 15px; font-size: 13.2px; line-height: 1.6; color: #166534; }
+
+  /* ── Add to cart ── */
+  .ms-add { width: 100%; min-height: 44px; border-radius: 100px; cursor: pointer;
+            font-family: inherit; font-weight: 800; font-size: 13.5px;
+            background: #fff; color: ${C.ink}; border: 1.5px solid ${C.line};
+            transition: all .18s; margin-top: 11px; }
+  .ms-add:hover { border-color: ${C.ink}; background: ${C.ink}; color: #fff; }
+  .ms-add-in { background: #f0fdf4; border-color: #86efac; color: #15803d; }
+  .ms-add-in:hover { background: #f0fdf4; border-color: #86efac; color: #15803d; }
+
+  @media (max-width: 620px) {
+    .ms-bar-in { padding: 10px 14px; gap: 10px; }
+    .ms-bar-x { display: none; }
+    .ms-bar-btn { padding: 0 15px; font-size: 13px; }
+    .ms-line { padding: 13px; gap: 11px; }
+    .ms-line-img { width: 68px; height: 68px; }
+    .ms-line-sum { font-size: 14px; }
+  }
+`;

@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { medalAPI, rupees } from "@/lib/medalApi";
-import { medalCss } from "./theme";
+import { medalCss, cartCss } from "./theme";
+import { cartAdd, useCart } from "@/lib/medalCart";
 
 /* Medal Store ka mukhya page.
 
@@ -45,7 +46,7 @@ export default function MedalStore() {
 
   return (
     <div className="ms">
-      <style>{medalCss}</style>
+      <style>{medalCss + cartCss}</style>
 
       {/* ═══ HERO ═══ */}
       <header className={`ms-hero ${shots.length ? "ms-hero-split" : ""}`}>
@@ -162,7 +163,21 @@ function MedalCard({ m }) {
   /* Card ki photo bhi toot sakti hai — tab saaf placeholder, toota
      hua icon nahi. */
   const [broken, setBroken] = useState(false);
+  const [added, setAdded] = useState(false);
+  const { items } = useCart();
   const showImg = m.featuredImage && !broken;
+  const inCart = items.find((i) => i.slug === m.slug);
+
+  /* Card poora ek link hai, isliye button ka click rokna zaroori
+     hai — warna "Add to cart" dabate hi page badal jaata. */
+  const add = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const r = cartAdd(m, 1);
+    if (!r.ok) { alert(r.reason); return; }
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1400);
+  };
 
   return (
     <Link href={`/medal-store/${m.slug}`} className="ms-card">
@@ -187,7 +202,11 @@ function MedalCard({ m }) {
           {m.mrp && <span className="ms-mrp">{rupees(m.mrp)}</span>}
           {m.discountPercent > 0 && <span className="ms-off">{m.discountPercent}% off</span>}
         </div>
-        <span className="ms-card-go">View medal →</span>
+
+        <button onClick={add}
+          className={`ms-add ${added || inCart ? "ms-add-in" : ""}`}>
+          {added ? "✓ Added" : inCart ? `In cart (${inCart.qty}) · Add another` : "Add to cart"}
+        </button>
       </div>
     </Link>
   );
